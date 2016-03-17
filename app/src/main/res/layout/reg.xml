@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/actionBar_layout"
+        layout="@layout/reg_actionbar"></include>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/reg_bg"
+        android:padding="20dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reg_hint"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_et_bg_topc">
+
+            <ImageView
+                android:id="@+id/reg_phone_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:src="@mipmap/phone" />
+
+            <Button
+                android:id="@+id/reg_code_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="@string/quick_login_code_btn_text"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/quick_login_code_btn_bg"
+                android:textColor="@color/quick_login_code_btn_text_color"
+                android:textSize="@dimen/quick_login_code_btn_text_size"
+                android:onClick="getRegCode"
+                />
+
+            <EditText
+                android:id="@+id/reg_phone_et"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/reg_phone_icon"
+                android:layout_toLeftOf="@+id/reg_code_btn"
+                android:layout_centerVertical="true"
+                android:background="@drawable/login_et_bg"
+                android:hint="@string/reg_phone_et_hint" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/login_et_bg_bottomc"
+            >
+
+            <ImageView
+                android:id="@+id/reg_pwd_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@mipmap/pwd" />
+
+            <ImageView
+                android:id="@+id/reg_pwd_see"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@drawable/eye"
+                />
+
+            <EditText
+                android:id="@+id/reg_pwd_et"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/reg_pwd_icon"
+                android:layout_toLeftOf="@id/reg_pwd_see"
+                android:background="@drawable/login_et_bg"
+                android:inputType="textPassword"
+                android:hint="@string/reg_pwd_et_hint" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/login_et_bg_bottomc"
+            >
+
+            <ImageView
+                android:id="@+id/reg_code_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@drawable/code" />
+
+            <ImageView
+                android:id="@+id/reg_code_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@drawable/et_delete"
+                android:visibility="invisible" />
+
+            <EditText
+                android:id="@+id/reg_code_et"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/reg_code_icon"
+                android:layout_toLeftOf="@id/reg_code_clear"
+                android:background="@drawable/login_et_bg"
+                android:hint="@string/reg_code_et_hint" />
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/reg_btn_bg"
+            android:layout_marginTop="20dp"
+            android:text="@string/reg_btn_text"
+            android:textColor="@color/reg_btn_text_color"
+            android:onClick="reg"
+            />
+    </LinearLayout>
+
+</LinearLayout>

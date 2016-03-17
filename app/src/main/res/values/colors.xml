@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="onTabColor">#009b4c</color>
+    <color name="defaultTabColor">#000000</color>
+    <color name="moneyColor">#FF0000</color>
+    <color name="tab_select_color">#FF0000</color>
+    <color name="login_bg">#f5f5f5</color>
+    <color name="login_btn_text_color">#FFFFFF</color>
+    <color name="quick_login_code_btn_text_color">#FFFFFF</color>
+    <color name="reg_bg">#f5f5f5</color>
+    <color name="reg_btn_text_color">#FFFFFF</color>
+    <color name="forget_pwd_bg">#f5f5f5</color>
+    <color name="accountmanage_bg">#f5f5f5</color>
+    <color name="accountmanage_item_bg">#FFFFFF</color>
+    <color name="loginout_btn_bg">#FFFFFF</color>
+    <color name="loginout_btn_text_color">#FF0000</color>
+    <color name="location_round_fill_color">#00000000</color>
+    <color name="location_round_stroke_color">#00000000</color>
+    <color name="dianzhuanpw_bg">#f5f5f5</color>
+    <color name="dianzhuanpw_item_bg">#FFFFFF</color>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="time_select_color">#009b4c</color>
+    <color name="time_noselect_color">#d6d6d6</color>
+    <color name="actionbar_bg">#009b4c</color>
+    <color name="actionbar_title_color">#FFFFFF</color>
+    <color name="slidelayout_bg">#f4f4f4</color>
+    <color name="slideitem_bg">#FFFFFF</color>
+</resources>

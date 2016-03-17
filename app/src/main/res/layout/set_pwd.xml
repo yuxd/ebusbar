@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/actionBar_layout"
+        layout="@layout/forget_pwd_actionbar"></include>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/forget_pwd_bg"
+        android:padding="20dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reg_pwd_et_hint"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/login_et_bg_topc">
+
+            <ImageView
+                android:id="@+id/set_pwd_et01_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@mipmap/pwd" />
+
+            <ImageView
+                android:id="@+id/set_pwd_et01_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@drawable/et_delete"
+                android:visibility="invisible"
+                />
+
+            <EditText
+                android:id="@+id/set_pwd_et01"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/set_pwd_et01_icon"
+                android:layout_toLeftOf="@+id/set_pwd_et01_clear"
+                android:layout_centerVertical="true"
+                android:background="@drawable/login_et_bg"
+                android:inputType="textPassword"
+                android:hint="@string/set_pwd_et01_hint" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/login_et_bg_bottomc">
+
+            <ImageView
+                android:id="@+id/set_pwd_et02_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@mipmap/pwd" />
+
+            <ImageView
+                android:id="@+id/set_pwd_et02_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="10dp"
+                android:src="@drawable/et_delete"
+                android:visibility="invisible"
+                />
+
+            <EditText
+                android:id="@+id/set_pwd_et02"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@+id/set_pwd_et02_icon"
+                android:layout_toLeftOf="@+id/set_pwd_et02_clear"
+                android:background="@drawable/login_et_bg"
+                android:inputType="textPassword"
+                android:hint="@string/set_pwd_et02_hint" />
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/reg_btn_bg"
+            android:layout_marginTop="20dp"
+            android:text="@string/set_pwd_btn_text"
+            android:textColor="@color/reg_btn_text_color"
+            android:onClick="setPassword"
+            />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/screen_bg"
+    >
+
+    <LinearLayout
+        android:id="@+id/use_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/use_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="空闲电桩"
+            />
+
+        <com.ebusbar.myview.SlideSwitch
+            android:id="@+id/use_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/enough_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/use_layout"
+        >
+
+        <TextView
+            android:id="@+id/enough_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="适合我的"
+            />
+
+        <com.ebusbar.myview.SlideSwitch
+            android:id="@+id/enough_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/line"
+        style="@style/vertLine"
+        android:layout_toRightOf="@id/enough_layout"
+        android:layout_marginLeft="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/close"
+        android:layout_width="45dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@id/line"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/delete"
+        android:scaleType="centerInside"
+        />
+
+</RelativeLayout>

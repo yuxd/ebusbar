@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        >
+
+        <!-- 真正的内容区 -->
+        <FrameLayout
+            android:id="@+id/real_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_width="match_parent"></FrameLayout>
+
+        <android.support.v4.app.FragmentTabHost
+            android:id="@android:id/tabhost"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+            <!-- 假的内容区 -->
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_height="0dp"
+                android:layout_weight="0"
+                android:layout_width="0dp"></FrameLayout>
+
+        </android.support.v4.app.FragmentTabHost>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:clickable="true"
+        android:background="@android:color/white">
+        <include
+            android:id="@+id/slidebar_layout"
+            layout="@layout/slidebar_layout"></include>
+    </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>
+

@@ -1,0 +1,43 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    
+    <style name="vertLine">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">#DDDDDD</item>
+    </style>
+
+    <style name="horLine">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">#DDDDDD</item>
+    </style>
+
+    <!-- 充电点详情PW弹出动画 -->
+    <style name="markerpw_anim">
+        <item name="android:windowEnterAnimation">@anim/markerpw_show</item>
+        <item name="android:windowExitAnimation">@anim/markerpw_dismiss</item>
+    </style>
+
+    <!-- 支付PW弹出动画 -->
+    <style name="paypw_anim">
+        <item name="android:windowEnterAnimation">@anim/paypw_show</item>
+        <item name="android:windowExitAnimation">@anim/paypw_dismiss</item>
+    </style>
+</resources>

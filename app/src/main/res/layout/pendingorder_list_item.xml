@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        >
+        <TextView
+            android:id="@+id/type_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="电桩充电"
+            />
+
+        <TextView
+            android:id="@+id/state_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="充电中"
+            android:textColor="#FF0000"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/position_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        >
+
+        <ImageView
+            android:id="@+id/position_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/charge_location"
+            />
+
+        <TextView
+            android:id="@+id/position_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/position_icon"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="充电点"
+            />
+
+        <TextView
+            android:id="@+id/position_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/position_title"
+            android:layout_marginLeft="15dp"
+            android:text="天明科技大厦"
+            />
+
+        <TextView
+            android:id="@+id/order_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="2016-3-10 10:50:45"
+            />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/EPId_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        >
+
+        <ImageView
+            android:id="@+id/EPId_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/charge_dianzhuan"
+            />
+
+        <TextView
+            android:id="@+id/EPId_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/EPId_icon"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:text="电桩号"
+            />
+
+        <TextView
+            android:id="@+id/EPId_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/EPId_title"
+            android:layout_marginLeft="15dp"
+            android:text="000000"
+            />
+    </RelativeLayout>
+
+</LinearLayout>
