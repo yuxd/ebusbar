@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 
 import com.ebusbar.pile.R;
 
+/**
+ * 自定义Switch
+ * @author Jelly
+ */
 public class SlideSwitch extends View
 {
     public static final String TAG = "SlideSwitch";
