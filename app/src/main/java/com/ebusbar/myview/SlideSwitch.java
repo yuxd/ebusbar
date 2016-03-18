@@ -5,12 +5,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +20,28 @@ public class SlideSwitch extends View
     public static final int SWITCH_OFF = 0;//关闭状态
     public static final int SWITCH_ON = 1;//打开状态
     public static final int SWITCH_SCROLING = 2;//滚动状态
-     
-    //用于显示的文本,这里用不到
-    private String mOnText = "";
-    private String mOffText = "";
  
     private int mSwitchStatus = SWITCH_OFF;
- 
-    private boolean mHasScrolled = false;//表示是否发生过滚动
- 
-    private int mSrcX = 0, mDstX = 0;
-     
+
+    /**
+     * 按下的x坐标
+     */
+    private int downX;
+    /**
+     * 移动时的x坐标
+     */
+    private int moveX;
+    /**
+     * 抬起时的x坐标
+     */
+    private int upX;
+    /**
+     * 当前滑块中心的x坐标
+     */
+    private int thumbCenterX;
+
+
+
     private int mBmpWidth = 0;
     private int mBmpHeight = 0;
     private int mThumbWidth = 0;
@@ -66,14 +74,18 @@ public class SlideSwitch extends View
     private void init()
     {
         Resources res = getResources();
-        mSwitch_off = BitmapFactory.decodeResource(res, R.mipmap.switch_close);
-        mSwitch_on = BitmapFactory.decodeResource(res, R.mipmap.switch_open);
-        mSwitch_thumb = BitmapFactory.decodeResource(res,R.mipmap.oval);
+        mSwitch_off = BitmapFactory.decodeResource(res, R.drawable.switch_close);
+        mSwitch_on = BitmapFactory.decodeResource(res, R.drawable.switch_on);
+        mSwitch_thumb = BitmapFactory.decodeResource(res,R.drawable.oval);
         mBmpWidth = mSwitch_on.getWidth();
         mBmpHeight = mSwitch_on.getHeight();
         mThumbWidth = mSwitch_thumb.getWidth();
     }
- 
+
+    /**
+     * 设置LayoutParams
+     * @param params
+     */
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params)
     {
@@ -89,18 +101,6 @@ public class SlideSwitch extends View
     public void setOnSwitchChangedListener(OnSwitchChangedListener onSwitchChangedListener)
     {
         mOnSwitchChangedListener = onSwitchChangedListener;
-    }
-     
-    /**
-     * 设置开关上面的文本
-     * @param onText  控件打开时要显示的文本
-     * @param offText  控件关闭时要显示的文本
-     */
-    public void setText(final String onText, final String offText)
-    {
-        mOnText = onText;
-        mOffText =offText;
-        invalidate();
     }
      
     /**
@@ -120,7 +120,7 @@ public class SlideSwitch extends View
             setStatus(false);
         else
             setStatus(true);
-        invalidate();
+        invalidate(); //重画
         //状态改变的时候 回调事件函数
         if(mOnSwitchChangedListener != null)
         {
@@ -132,39 +132,37 @@ public class SlideSwitch extends View
     public boolean onTouchEvent(MotionEvent event)
     {
         int action = event.getAction();
-        Log.d(TAG, "onTouchEvent  x="  + event.getX());
         switch (action) {
         case MotionEvent.ACTION_DOWN:
-            mSrcX = (int) event.getX();
+            downX = (int)event.getX();
+            if((mSwitchStatus == SWITCH_ON && downX>mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2) || (mSwitchStatus == SWITCH_OFF)&&downX<mSwitch_thumb.getWidth()/2) return true;//如果点击的位置不能滑动直接返回
+            mSwitchStatus = SWITCH_SCROLING;
+            thumbCenterX = downX;
+            invalidate();
             break;
-        case MotionEvent.ACTION_MOVE:
-            mDstX = Math.max( (int) event.getX(), 10);
-            mDstX = Math.min( mDstX, 62);
-            if(mSrcX == mDstX)
+        case MotionEvent.ACTION_MOVE: //移动
+            moveX = (int) event.getX();
+            if((moveX > 0 &&moveX<mSwitch_thumb.getWidth()/2)||(moveX>(mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2)&&moveX<mSwitch_on.getWidth())) return true;
+            mSwitchStatus = SWITCH_SCROLING;
+            if(moveX < downX){ //左滑
+                thumbCenterX--;
+            }else{
+                thumbCenterX++;
+            }
+            if(thumbCenterX > (mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2) || thumbCenterX < (mSwitch_thumb.getWidth()/2)){
                 return true;
-            mHasScrolled = true;
-            AnimationTransRunnable aTransRunnable = new AnimationTransRunnable(mSrcX, mDstX, 0);
-            new Thread(aTransRunnable).start();
-            mSrcX = mDstX;
+            }
+            invalidate();
+            downX = thumbCenterX;
             break;
         case MotionEvent.ACTION_UP:
-            if(mHasScrolled == false)//如果没有发生过滑动，就意味着这是一次单击过程
-            {
-                mSwitchStatus = Math.abs(mSwitchStatus-1);
-                int xFrom = 10, xTo = 62;
-                if(mSwitchStatus == SWITCH_OFF)
-                {
-                    xFrom = 62;
-                    xTo = 10;
-                }
-                AnimationTransRunnable runnable = new AnimationTransRunnable(xFrom, xTo, 1);
-                new Thread(runnable).start();
+            upX = (int) event.getX();
+            if(upX > mSwitch_on.getWidth()/2){
+                mSwitchStatus = SWITCH_ON;
+            }else{
+                mSwitchStatus = SWITCH_OFF;
             }
-            else
-            {
-                invalidate();
-                mHasScrolled = false;
-            }
+            invalidate();
             //状态改变的时候 回调事件函数
             if(mOnSwitchChangedListener != null)
             {
@@ -191,51 +189,25 @@ public class SlideSwitch extends View
         //绘图的时候 内部用到了一些数值的硬编码，其实不太好，
         //主要是考虑到图片的原因，图片周围有透明边界，所以要有一定的偏移
         //硬编码的数值只要看懂了代码，其实可以理解其含义，可以做相应改进。
-        mPaint.setTextSize(14);
-        mPaint.setTypeface(Typeface.DEFAULT_BOLD);
-         
         if(mSwitchStatus == SWITCH_OFF)
         {
-            drawBitmap(canvas, null, null, mSwitch_off);
-            drawBitmap(canvas, null, null, mSwitch_thumb);
-            mPaint.setColor(Color.rgb(105, 105, 105));
-            canvas.translate(mSwitch_thumb.getWidth(), 0);
-            canvas.drawText(mOffText, 0, 20, mPaint);
+            drawBitmap(canvas, null, null, mSwitch_off); //画关闭的框
+            drawBitmap(canvas, null, null, mSwitch_thumb); //画关闭的圆
         }
         else if(mSwitchStatus == SWITCH_ON)
         {
             drawBitmap(canvas, null, null, mSwitch_on);
-            int count = canvas.save();
-            canvas.translate(mSwitch_on.getWidth() - mSwitch_thumb.getWidth(), 0);
-            drawBitmap(canvas, null, null, mSwitch_thumb);
-            mPaint.setColor(Color.WHITE);
-            canvas.restoreToCount(count);
-            canvas.drawText(mOnText, 17, 20, mPaint);
+            Rect rect = new Rect(mSwitch_on.getWidth()-mSwitch_thumb.getWidth(),0,mSwitch_on.getWidth(),mSwitch_thumb.getHeight()); //把打开的点移动到后面
+            drawBitmap(canvas, null, rect, mSwitch_thumb);
         }
         else //SWITCH_SCROLING
         {
-            mSwitchStatus = mDstX > 35 ? SWITCH_ON : SWITCH_OFF;
-            drawBitmap(canvas, new Rect(0, 0, mDstX, mBmpHeight), new Rect(0, 0, (int)mDstX, mBmpHeight), mSwitch_on);
-            mPaint.setColor(Color.WHITE);
-            canvas.drawText(mOnText, 17, 20, mPaint);
- 
-            int count = canvas.save();
-            canvas.translate(mDstX, 0);
-            drawBitmap(canvas, new Rect(mDstX, 0, mBmpWidth, mBmpHeight),
-                          new Rect(0, 0, mBmpWidth - mDstX, mBmpHeight), mSwitch_off);
-            canvas.restoreToCount(count);
- 
-            count = canvas.save();
-            canvas.clipRect(mDstX, 0, mBmpWidth, mBmpHeight);
-            canvas.translate(mThumbWidth, 0);
-            mPaint.setColor(Color.rgb(105, 105, 105));
-            canvas.drawText(mOffText, 0, 20, mPaint);
-            canvas.restoreToCount(count);
- 
-            count = canvas.save();
-            canvas.translate(mDstX - mThumbWidth / 2, 0);
-            drawBitmap(canvas, null, null, mSwitch_thumb);
-            canvas.restoreToCount(count);
+            Rect onRect = new Rect(0,0,thumbCenterX,mSwitch_on.getHeight());
+            drawBitmap(canvas,null,onRect,mSwitch_on);
+            Rect closeRect = new Rect(thumbCenterX,0,mSwitch_off.getWidth(),mSwitch_off.getHeight());
+            drawBitmap(canvas,null,closeRect,mSwitch_off);
+            Rect thumbRect = new Rect(thumbCenterX-mSwitch_thumb.getWidth()/2,0,thumbCenterX+mSwitch_thumb.getWidth()/2,mSwitch_thumb.getHeight());
+            drawBitmap(canvas,null,thumbRect,mSwitch_thumb);
         }
  
     }
@@ -245,63 +217,6 @@ public class SlideSwitch extends View
         dst = (dst == null ? new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()) : dst);
         Paint paint = new Paint();
         canvas.drawBitmap(bitmap, src, dst, paint);
-    }
- 
-    /**
-     * AnimationTransRunnable 做滑动动画所使用的线程
-     */
-    private class AnimationTransRunnable implements Runnable
-    {
-        private int srcX, dstX;
-        private int duration;
- 
-        /**
-         * 滑动动画
-         * @param srcX 滑动起始点
-         * @param dstX 滑动终止点
-         * @param duration 是否采用动画，1采用，0不采用
-         */
-        public AnimationTransRunnable(float srcX, float dstX, final int duration)
-        {
-            this.srcX = (int)srcX;
-            this.dstX = (int)dstX;
-            this.duration = duration;
-        }
- 
-        @Override
-        public void run() 
-        {
-            final int patch = (dstX > srcX ? 5 : -5);
-            if(duration == 0)
-            {
-                SlideSwitch.this.mSwitchStatus = SWITCH_SCROLING;
-                SlideSwitch.this.postInvalidate();
-            }
-            else
-            {
-                Log.d(TAG, "start Animation: [ " + srcX + " , " + dstX + " ]");
-                int x = srcX + patch;
-                while (Math.abs(x-dstX) > 5) 
-                {
-                    mDstX = x;
-                    SlideSwitch.this.mSwitchStatus = SWITCH_SCROLING;
-                    SlideSwitch.this.postInvalidate();
-                    x += patch;
-                    try
-                    {
-                        Thread.sleep(10);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                mDstX = dstX;
-                SlideSwitch.this.mSwitchStatus = mDstX > 35 ? SWITCH_ON : SWITCH_OFF;
-                SlideSwitch.this.postInvalidate();
-            }
-        }
- 
     }
  
     public static interface OnSwitchChangedListener
