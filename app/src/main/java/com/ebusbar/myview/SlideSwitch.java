@@ -24,9 +24,18 @@ public class SlideSwitch extends View
     public static final int SWITCH_OFF = 0;//关闭状态
     public static final int SWITCH_ON = 1;//打开状态
     public static final int SWITCH_SCROLING = 2;//滚动状态
- 
+    /**
+     * 开关的状态
+     */
     private int mSwitchStatus = SWITCH_OFF;
-
+    /**
+     * 是否可以点击，如果设置为不可点击，那么也就不可滑
+     */
+    private boolean isClick = true;
+    /**
+     * 是否可以滑动
+     */
+    private boolean isSlide = false;
     /**
      * 按下的x坐标
      */
@@ -44,16 +53,8 @@ public class SlideSwitch extends View
      */
     private int thumbCenterX;
 
-
-
-    private int mBmpWidth = 0;
-    private int mBmpHeight = 0;
-    private int mThumbWidth = 0;
- 
-    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-     
     private OnSwitchChangedListener mOnSwitchChangedListener = null;
- 
+
     //开关状态图
     Bitmap mSwitch_off, mSwitch_on, mSwitch_thumb;
  
@@ -80,10 +81,7 @@ public class SlideSwitch extends View
         Resources res = getResources();
         mSwitch_off = BitmapFactory.decodeResource(res, R.drawable.switch_close);
         mSwitch_on = BitmapFactory.decodeResource(res, R.drawable.switch_on);
-        mSwitch_thumb = BitmapFactory.decodeResource(res,R.drawable.oval);
-        mBmpWidth = mSwitch_on.getWidth();
-        mBmpHeight = mSwitch_on.getHeight();
-        mThumbWidth = mSwitch_thumb.getWidth();
+        mSwitch_thumb = BitmapFactory.decodeResource(res, R.drawable.oval);
     }
 
     /**
@@ -93,8 +91,8 @@ public class SlideSwitch extends View
     @Override
     public void setLayoutParams(ViewGroup.LayoutParams params)
     {
-        params.width = mBmpWidth;
-        params.height = mBmpHeight;
+        params.width = mSwitch_on.getWidth();
+        params.height = mSwitch_on.getHeight();
         super.setLayoutParams(params);
     }
      
@@ -117,6 +115,38 @@ public class SlideSwitch extends View
     }
 
     /**
+     * 设置是否可以点击
+     * @param isClick
+     */
+    public void setClick(boolean isClick) {
+        this.isClick = isClick;
+    }
+
+    /**
+     * 获得是否可以点击状态
+     * @return
+     */
+    public boolean isClick() {
+        return isClick;
+    }
+
+    /**
+     *  设置是否可以滑动
+     * @param isSlide
+     */
+    public void setSlide(boolean isSlide) {
+        this.isSlide = isSlide;
+    }
+
+    /**
+     * 获得是否可以滑动状态
+     * @return
+     */
+    public boolean isSlide() {
+        return isSlide;
+    }
+
+    /**
      * 改变开关状态
      */
     public void changeSwitchStatus(){
@@ -135,9 +165,10 @@ public class SlideSwitch extends View
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-        int action = event.getAction();
-        switch (action) {
+        if(!isClick) return true;//如果不能点击直接返回
+        switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
+            if(!isSlide) return true; // 不可滑动，直接返回
             downX = (int)event.getX();
             if((mSwitchStatus == SWITCH_ON && downX>mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2) || (mSwitchStatus == SWITCH_OFF)&&downX<mSwitch_thumb.getWidth()/2) return true;//如果点击的位置不能滑动直接返回
             mSwitchStatus = SWITCH_SCROLING;
@@ -145,6 +176,7 @@ public class SlideSwitch extends View
             invalidate();
             break;
         case MotionEvent.ACTION_MOVE: //移动
+            if(!isSlide) return true; //不可滑动，返回
             moveX = (int) event.getX();
             if((moveX > 0 &&moveX<mSwitch_thumb.getWidth()/2)||(moveX>(mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2)&&moveX<mSwitch_on.getWidth())) return true;
             mSwitchStatus = SWITCH_SCROLING;
@@ -159,7 +191,7 @@ public class SlideSwitch extends View
             invalidate();
             downX = thumbCenterX;
             break;
-        case MotionEvent.ACTION_UP:
+        case MotionEvent.ACTION_UP: //手指抬起
             upX = (int) event.getX();
             if(upX > mSwitch_on.getWidth()/2){
                 mSwitchStatus = SWITCH_ON;
@@ -173,7 +205,6 @@ public class SlideSwitch extends View
                 mOnSwitchChangedListener.onSwitchChanged(this, mSwitchStatus);
             }
             break;
- 
         default:
             break;
         }
