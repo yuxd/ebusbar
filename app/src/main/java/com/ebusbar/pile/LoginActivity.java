@@ -288,7 +288,7 @@ public class LoginActivity extends BaseActivity {
     public View normalLogin(View view){
         String phone = normal_phone_et.getText().toString();
         String password = normal_password_et.getText().toString();
-//        loginDao.getNetLoginDao(phone, password, null);
+        loginDao.getNetLoginDao(phone, password, null,"1");
         return view;
     }
 
