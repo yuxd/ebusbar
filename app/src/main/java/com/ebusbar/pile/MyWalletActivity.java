@@ -72,8 +72,8 @@ public class MyWalletActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        nickname_text.setText(application.getLoginDao().getNickName());
-        bitmapImpl.getBitmap(application.getLoginDao().getUsericon());
+//        nickname_text.setText(application.getLoginDao().getNickName());
+//        bitmapImpl.getBitmap(application.getLoginDao().getUsericon());
     }
 
     /**

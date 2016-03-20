@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ebusbar.dao.CodeDao;
 import com.ebusbar.utils.JsonUtil;
@@ -16,9 +17,10 @@ import com.jellycai.service.ResponseResultHandler;
 public class CodeDaoImpl extends BaseImpl{
 
     /**
-     * 访问地址
+     * 访问地址,暂时的本地服务器地址
      */
-    private static final String path= NetParam.path+"ebusbar/code";
+    private static final String path= "http://192.168.0.115:8081/ebusbar/sendSms";
+
     /**
      * 操作对象
      */
@@ -26,6 +28,7 @@ public class CodeDaoImpl extends BaseImpl{
 
     public CodeDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
+        execmode = "crm.validation";
     }
 
     public CodeDaoImpl(Context context) {
@@ -35,15 +38,19 @@ public class CodeDaoImpl extends BaseImpl{
     /**
      * 从网络上获得CodeDao
      */
-    public void getNetCodeDao(String oper,String phone){
-        if(TextUtils.isEmpty(oper) || TextUtils.isEmpty(phone)) return;
-        param.put("oper",oper);
-        param.put("phone",phone);
+    public void getNetCodeDao(String codeType,String mobile,String custid){
+        if(TextUtils.isEmpty(codeType) || TextUtils.isEmpty(mobile)) return;
+        timestamp = NetParam.getTime();
+        condition = NetParam.spliceCondition(conditionMap);
+        param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
+        param.put("codeType",codeType);
+        param.put("mobile",mobile);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String json) {
+                Log.v("json",json);
                 if(b || TextUtils.isEmpty(json)) return;
-                codeDao = JsonUtil.objectFromJson(json,CodeDao.class);
+                codeDao = JsonUtil.arrayFormJson(json,CodeDao[].class).get(0);
                 handler.sendEmptyMessage(msg);
             }
 

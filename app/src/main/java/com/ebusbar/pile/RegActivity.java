@@ -178,7 +178,7 @@ public class RegActivity extends BaseActivity {
             Log.v(TAG,"手机号码错误");
             return view;
         }
-        codeDao.getNetCodeDao(DefaultParam.REGCODE,phone);
+//        codeDao.getNetCodeDao(DefaultParam.REGCODE,phone);
         return view;
     }
 
@@ -208,10 +208,6 @@ public class RegActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgCode){
-                if(!TextUtils.equals(codeDao.codeDao.getMessage(),"1") || codeDao.codeDao == null){
-                    Log.v(TAG,"验证码获取失败");
-                }
-                Log.v(TAG,"验证码获取成功,Code="+codeDao.codeDao.getCode());
                 reg_code_btn.setEnabled(false);
                 countDown();
             }else if(msg.what == msgCountDown){

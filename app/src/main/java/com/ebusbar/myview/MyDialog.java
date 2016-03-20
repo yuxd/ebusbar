@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import com.ebusbar.pile.R;
 
 /**
+ * 自定义Dialog
  * Created by Jelly on 2016/3/15.
  */
 public class MyDialog extends Dialog{
@@ -107,7 +107,6 @@ public class MyDialog extends Dialog{
             TextView negativeButton = (TextView) root.findViewById(R.id.negativeButton);
             if(TextUtils.isEmpty(message) || TextUtils.isEmpty(positiveButtonText) || TextUtils.isEmpty(negativeButtonText))
             {
-                Log.v("sss","为空");
                 return dialog;
             }
             pw_hint.setText(message);

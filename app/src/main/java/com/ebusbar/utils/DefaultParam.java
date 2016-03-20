@@ -16,7 +16,7 @@ public class DefaultParam {
     /**
      * 验证码登录
      */
-    public static final String LOGINCODE = "login";
+    public static final String LOGINCODE = "1";
     /**
      * 注册验证码
      */

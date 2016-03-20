@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.LoginDaoImpl;
@@ -287,7 +288,7 @@ public class LoginActivity extends BaseActivity {
     public View normalLogin(View view){
         String phone = normal_phone_et.getText().toString();
         String password = normal_password_et.getText().toString();
-        loginDao.getNetLoginDao(phone, password, null);
+//        loginDao.getNetLoginDao(phone, password, null);
         return view;
     }
 
@@ -304,7 +305,7 @@ public class LoginActivity extends BaseActivity {
             quick_phone_et.setText("");
             return view;
         }
-        codeDao.getNetCodeDao(DefaultParam.LOGINCODE,phone);
+        codeDao.getNetCodeDao(DefaultParam.LOGINCODE,phone,"-1");
         return  view;
     }
 
@@ -317,7 +318,7 @@ public class LoginActivity extends BaseActivity {
         Log.v(TAG,"快速登录");
         String phone = quick_phone_et.getText().toString();
         String code = quick_code_et.getText().toString();
-        loginDao.getNetLoginDao(phone, null, code);
+        loginDao.getNetLoginDao(phone, null, code,"1");
         return view;
     }
 
@@ -336,7 +337,7 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgLogin){
-                if(loginDao.loginDao == null || TextUtils.isEmpty(loginDao.loginDao.getToken())){
+                if(loginDao.loginDao == null || TextUtils.isEmpty(loginDao.loginDao.getCrm_login().getToken())){
                     //用户名和密码错误需要执行的方法
                     Log.v(TAG,"用户名和密码有误，请重新登录");
                     return;
@@ -345,13 +346,14 @@ public class LoginActivity extends BaseActivity {
                 application.setLoginDao(loginDao.loginDao);
                 loginDao.cacheObject();
                 ActivityControl.finishExcept(FragmentTabHostActivity.STAG);
-            }else if(msg.what == msgSmsCode){
-                if(codeDao.codeDao == null || !TextUtils.equals(codeDao.codeDao.getMessage(),"1")){
-                    Log.v(TAG,"验证码发送失败");
-                }
-                Log.v(TAG, "验证码发送成功,Code="+codeDao.codeDao.getCode());
+            }else if(msg.what == msgSmsCode){ //手机验证码登录
                 quick_code_btn.setEnabled(false);
                 countDown();
+                if(TextUtils.equals(codeDao.codeDao.getCrm_validation().getIsSuccess(),"N")){ //保存验证码失败
+                    Log.v(TAG,"发送验证码失败，请60秒后重新获取！");
+                    Toast.makeText(LoginActivity.this,"发送验证码失败，请60秒后重新获取！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }else if(msg.what == msgCountDown){
                 int count = (int) msg.obj;
                 quick_code_btn.setText(count+"");

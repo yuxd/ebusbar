@@ -163,14 +163,14 @@ public class FragmentTabHostActivity extends BaseActivity{
             return;
         }
         LoginDao loginDao = application.getLoginDao();
-        if(TextUtils.isEmpty(loginDao.getNickName())){
-            draw_user_name.setText("昵称");
-        }else{
-            draw_user_name.setText(loginDao.getNickName());
-        }
-        draw_user_phone.setText(loginDao.getPhone());
+//        if(TextUtils.isEmpty(loginDao.getNickName())){
+//            draw_user_name.setText("昵称");
+//        }else{
+//            draw_user_name.setText(loginDao.getNickName());
+//        }
+        draw_user_phone.setText(loginDao.getCrm_login().getMobile());
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
-        bitmapImpl.getBitmap(loginDao.getUsericon());
+//        bitmapImpl.getBitmap(loginDao.getUsericon());
     }
 
     /**

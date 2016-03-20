@@ -186,7 +186,7 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                     return;
                 }
                 Log.v(TAG,"开始预约");
-                appointDao.getNetAppointDao(freeEPDao.freeEPDao.getEPId(),application.getLoginDao().getUid()+"",payAppointDao.payAppointDao.getPayId(),application.getLoginDao().getToken());
+                appointDao.getNetAppointDao(freeEPDao.freeEPDao.getEPId(),application.getLoginDao().getCrm_login().getCustID(),payAppointDao.payAppointDao.getPayId(),application.getLoginDao().getCrm_login().getToken());
             }else if(msg.what == msgAppoint){
                 if(appointDao.appointDao == null || !TextUtils.equals(appointDao.appointDao.getMessage(),"1")){
                     return;

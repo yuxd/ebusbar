@@ -83,7 +83,7 @@ public class FinishOrderFrag extends BaseFrag{
 
     @Override
     public void setFragView() {
-        orderDao.getNetOrderDaos(application.getLoginDao().getToken(),application.getLoginDao().getUid()+"");
+        orderDao.getNetOrderDaos(application.getLoginDao().getCrm_login().getToken(),application.getLoginDao().getCrm_login().getCustID());
     }
 
     private Handler handler = new Handler(){

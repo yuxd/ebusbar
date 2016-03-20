@@ -82,7 +82,7 @@ public class PendingOrderFrag extends BaseFrag{
 
     @Override
     public void setFragView() {
-        pendingOrder.getNetPendingOrderList(application.getLoginDao().getToken(),application.getLoginDao().getUid()+"");
+        pendingOrder.getNetPendingOrderList(application.getLoginDao().getCrm_login().getToken(),application.getLoginDao().getCrm_login().getCustID());
     }
 
 

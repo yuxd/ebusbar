@@ -92,7 +92,7 @@ public class ChargeAppointFrag extends BaseFrag{
 
     @Override
     public void setFragView() {
-        getChargeAppointDao.getNetGetChargeAppointDao(application.getLoginDao().getToken(),application.getLoginDao().getUid()+"");
+        getChargeAppointDao.getNetGetChargeAppointDao(application.getLoginDao().getCrm_login().getToken(),application.getLoginDao().getCrm_login().getCustID());
     }
 
     private Handler handler = new Handler(){

@@ -95,16 +95,16 @@ public class AccountManageActivity extends BaseActivity{
     @Override
     public void setActivityView() {
         LoginDao loginDao = application.getLoginDao();
-        bitmap.getBitmap(loginDao.getUsericon());
-        nickname_text.setText(loginDao.getNickName());
-        sex_text.setText(loginDao.getSex());
-        age_text.setText(loginDao.getAge()+"");
-        phone_text.setText(loginDao.getPhone());
-        if(loginDao.isCard()){
-            certification_text.setText("是");
-        }else{
-            certification_text.setText("否");
-        }
+//        bitmap.getBitmap(loginDao.getUsericon());
+//        nickname_text.setText(loginDao.getNickName());
+//        sex_text.setText(loginDao.getSex());
+//        age_text.setText(loginDao.getAge()+"");
+        phone_text.setText(loginDao.getCrm_login().getMobile());
+//        if(loginDao.isCard()){
+//            certification_text.setText("是");
+//        }else{
+//            certification_text.setText("否");
+//        }
     }
 
     /**

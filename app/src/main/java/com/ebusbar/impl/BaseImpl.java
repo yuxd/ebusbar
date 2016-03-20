@@ -23,6 +23,42 @@ public abstract class BaseImpl {
      */
     protected Map<String,String> param;
     /**
+     * 接口标示
+     */
+    protected String trancode = "APPAPI000";
+    /**
+     * 端口
+     */
+    protected String mode = "4";
+    /**
+     * 时间戳
+     */
+    protected String timestamp;
+    /**
+     * 签名方法
+     */
+    protected String sign_method = "MD5";
+    /**
+     * 签名结果
+     */
+    protected String sign = "sign";
+    /**
+     * 接口名称
+     */
+    protected String execmode;
+    /**
+     * 返回字段
+     */
+    protected String fields = "fields";
+    /**
+     * 请求条件
+     */
+    protected String condition;
+    /**
+     * 拼接条件的Map
+     */
+    protected Map<String,String> conditionMap;
+    /**
      * 沟通消息
      */
     protected int msg;
@@ -40,7 +76,8 @@ public abstract class BaseImpl {
     public BaseImpl(Context context,Handler handler,int msg){
         this.context = context;
         service = new URLService(context);
-        param = new HashMap<String,String>();
+        param = new HashMap<String,String>(); //这里是多余的初始化，以后必须去掉
+        conditionMap = new HashMap<String,String>(); //拼接条件
         this.handler = handler;
         this.msg = msg;
     }

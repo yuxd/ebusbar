@@ -143,7 +143,7 @@ public class ForgetPwdActivity extends BaseActivity{
             Log.v(TAG,"手机号码输入有误");
             return view;
         }
-        codeDao.getNetCodeDao(DefaultParam.FORGETCODE, phone);
+//        codeDao.getNetCodeDao(DefaultParam.FORGETCODE, phone);
         return view;
     }
 
@@ -174,11 +174,6 @@ public class ForgetPwdActivity extends BaseActivity{
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgCode){
-                if(!"1".equals(codeDao.codeDao.getMessage()) || codeDao.codeDao == null){
-                    Log.v(TAG,"获取验证码失败");
-                    return;
-                }
-                Log.v(TAG,"获取验证码成功,Code="+codeDao.codeDao.getCode());
                 forget_pwd_code_btn.setEnabled(false);
                 countDown();
             }else if(msg.what == msgCountDown){

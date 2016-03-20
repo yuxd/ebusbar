@@ -8,89 +8,80 @@ import java.io.Serializable;
  */
 public class LoginDao implements Serializable{
 
+
     /**
-     * uid : 1
-     * token : token1
-     * phone : 18617050557
-     * nickName : AL菜菜
-     * sex : 男
-     * age : 15
-     * card : true
-     * usericon : http://192.168.0.118:8081/ebusbar/usericon/user01.png
+     * returnStatus : 100
+     * isSuccess : Y
+     * CustID : EV_20160319_00000057
+     * Mobile : 18617050557
+     * Token : tk20160319CD1016AE
+     * Verified : 0
      */
 
-    private int uid;
-    private String token;
-    private String phone;
-    private String nickName;
-    private String sex;
-    private int age;
-    private boolean card;
-    private String usericon;
+    private CrmLoginEntity crm_login;
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    public CrmLoginEntity getCrm_login() {
+        return crm_login;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setCrm_login(CrmLoginEntity crm_login) {
+        this.crm_login = crm_login;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    public static class CrmLoginEntity {
+        private String returnStatus;
+        private String isSuccess;
+        private String CustID;
+        private String Mobile;
+        private String Token;
+        private String Verified;
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
+        public String getReturnStatus() {
+            return returnStatus;
+        }
 
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
+        public void setReturnStatus(String returnStatus) {
+            this.returnStatus = returnStatus;
+        }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+        public String getIsSuccess() {
+            return isSuccess;
+        }
 
-    public void setCard(boolean card) {
-        this.card = card;
-    }
+        public void setIsSuccess(String isSuccess) {
+            this.isSuccess = isSuccess;
+        }
 
+        public String getCustID() {
+            return CustID;
+        }
 
+        public void setCustID(String CustID) {
+            this.CustID = CustID;
+        }
 
-    public void setUsericon(String usericon) {
-        this.usericon = usericon;
-    }
+        public String getMobile() {
+            return Mobile;
+        }
 
-    public int getUid() {
-        return uid;
-    }
+        public void setMobile(String Mobile) {
+            this.Mobile = Mobile;
+        }
 
-    public String getToken() {
-        return token;
-    }
+        public String getToken() {
+            return Token;
+        }
 
-    public String getPhone() {
-        return phone;
-    }
+        public void setToken(String Token) {
+            this.Token = Token;
+        }
 
-    public String getNickName() {
-        return nickName;
-    }
+        public String getVerified() {
+            return Verified;
+        }
 
-    public String getSex() {
-        return sex;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public boolean isCard() {
-        return card;
-    }
-
-    public String getUsericon() {
-        return usericon;
+        public void setVerified(String Verified) {
+            this.Verified = Verified;
+        }
     }
 }

@@ -7,7 +7,6 @@ import android.text.TextUtils;
 
 import com.ebusbar.dao.PositionDao;
 import com.ebusbar.utils.JsonUtil;
-import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ public class PositionDaoImpl extends BaseImpl{
     /**
      * 访问地址
      */
-    private static final String path = NetParam.path  + "ebusbar/positionlist";
+    private static final String path ="http://192.168.0.115:8081/ebusbar/positionlist";
     /**
      * 操作数据
      */
