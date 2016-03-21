@@ -79,10 +79,20 @@ public class LoginDaoImpl extends BaseImpl{
             conditionMap.put("Type","1");
             conditionMap.put("Code",code);
             condition = NetParam.spliceCondition(conditionMap);
+            Log.v("trancode",trancode);
+            Log.v("mode",mode);
+            Log.v("timestamp",timestamp);
+            Log.v("custid",custid);
+            Log.v("sign_method",sign_method);
+            Log.v("sign",sign);
+            Log.v("execmode",execmode);
+            Log.v("fields",fields);
+            Log.v("condition",condition);
             param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
             service.doPost(Path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
+                    Log.v("json",json.trim());
                     if (b || TextUtils.isEmpty(json)) return;
                     try {
                         loginDao = JsonUtil.arrayFormJson(json, LoginDao[].class).get(0);

@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -14,11 +17,18 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alipay.sdk.app.PayTask;
+import com.ebusbar.dao.PayResult;
 import com.ebusbar.myview.MyDialog;
 import com.ebusbar.utils.DefaultParam;
+import com.ebusbar.utils.PayUtil;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.ebusbar.utils.ResourceUtil;
 import com.ebusbar.utils.WindowUtil;
+import com.jellycai.service.ThreadManage;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * 支付页面
@@ -172,7 +182,33 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             Toast.makeText(this,R.string.nopayId_hint,Toast.LENGTH_SHORT).show();
             return pay;
         }else if(selectPay.getId() == R.id.alipay_btn){ //支付宝支付
-
+            String orderInfo = PayUtil.getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
+            String sign = PayUtil.sign(orderInfo);
+            try {
+                /**
+                 * 仅需对sign 做URL编码
+                 */
+                sign = URLEncoder.encode(sign, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            /**
+             * 完整的符合支付宝参数规范的订单信息
+             */
+            final String payInfo = orderInfo + "&sign=\"" + sign + "\"&" + PayUtil.getSignType();
+            ThreadManage.start(new Runnable() {
+                @Override
+                public void run() {
+                    // 构造PayTask 对象
+                    PayTask alipay = new PayTask(PayActivity.this);
+                    // 调用支付接口，获取支付结果
+                    String result = alipay.pay(payInfo, true);
+                    Message msg = new Message();
+                    msg.what = PayUtil.SDK_PAY_FLAG;
+                    msg.obj = result;
+                    handler.sendMessage(msg);
+                }
+            });
         }else if(selectPay.getId() == R.id.wchatpay_btn){ //微信支付
             Toast.makeText(this,"对不起，暂不支持微信支付!",Toast.LENGTH_SHORT).show();
         }else if(selectPay.getId() == R.id.tran_btn){ //余额支付
@@ -291,6 +327,42 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             input_ets[i].setImageResource(R.drawable.paypassword_noinput);
         }
     }
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case PayUtil.SDK_PAY_FLAG: {
+                    PayResult payResult = new PayResult((String) msg.obj);
+                    /**
+                     * 同步返回的结果必须放置到服务端进行验证（验证的规则请看https://doc.open.alipay.com/doc2/
+                     * detail.htm?spm=0.0.0.0.xdvAU6&treeId=59&articleId=103665&
+                     * docType=1) 建议商户依赖异步通知
+                     */
+                    String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+
+                    String resultStatus = payResult.getResultStatus();
+                    // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        Toast.makeText(PayActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        // 判断resultStatus 为非"9000"则代表可能支付失败
+                        // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
+                        if (TextUtils.equals(resultStatus, "8000")) {
+                            Toast.makeText(PayActivity.this, "支付结果确认中", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
+                            Toast.makeText(PayActivity.this, "支付失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    };
 
     /**
      * 返回结果
