@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.RegUserDaoImpl;
@@ -58,7 +59,7 @@ public class RegActivity extends BaseActivity {
     /**
      * regUserDaoImpl
      */
-    private RegUserDaoImpl regUserDaoImpl;
+    private RegUserDaoImpl regUserDao;
 
     /**
      * 获取验证码的消息
@@ -84,7 +85,7 @@ public class RegActivity extends BaseActivity {
 
     @Override
     public void loadObjectAttribute() {
-        regUserDaoImpl = new RegUserDaoImpl(this,handler,msgReg);
+        regUserDao = new RegUserDaoImpl(this,handler,msgReg);
         codeDao = new CodeDaoImpl(this,handler,msgCode);
     }
 
@@ -178,21 +179,28 @@ public class RegActivity extends BaseActivity {
             Log.v(TAG,"手机号码错误");
             return view;
         }
-//        codeDao.getNetCodeDao(DefaultParam.REGCODE,phone);
+        codeDao.getNetCodeDao(DefaultParam.REGCODE, phone, "1");
         return view;
     }
 
+    /**
+     * 注册
+     * @param view
+     * @return
+     */
     public View reg(View view){
         String phone = reg_phone_et.getText().toString();
         String password = reg_pwd_et.getText().toString();
         String code = reg_code_et.getText().toString();
         if(!RegExpUtil.RegPhone(phone)){
-            Log.v(TAG,"请输入正确的手机号码");
+            Toast.makeText(this,"手机号码格式错误",Toast.LENGTH_SHORT).show();
+            reg_phone_et.setText("");
+            return view;
         }
         if(TextUtils.isEmpty(phone) || TextUtils.isEmpty(password) || TextUtils.isEmpty(code)) {
             return view;
         }
-        regUserDaoImpl.getNetRegUserDao(phone,password,code);
+        regUserDao.getNetRegUserDao(phone, password, code);
         return view;
     }
 
@@ -207,18 +215,26 @@ public class RegActivity extends BaseActivity {
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgCode){
+            if(msg.what == msgCode){ //获取验证码
                 reg_code_btn.setEnabled(false);
                 countDown();
-            }else if(msg.what == msgCountDown){
+                if(TextUtils.equals(codeDao.codeDao.getCrm_validation().getIsSuccess(),"N")){ //保存验证码失败
+                    Log.v(TAG,"发送验证码失败，请60秒后重新获取！");
+                    Toast.makeText(RegActivity.this,"发送验证码失败，请60秒后重新获取！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }else if(msg.what == msgCountDown){ //验证码倒计时结束
                 int count = (int) msg.obj;
                 reg_code_btn.setText(count+"");
                 if(count == 0){
                     reg_code_btn.setEnabled(true);
                     reg_code_btn.setText("获取验证码");
                 }
-            }else if(msg.what == msgReg){
-                Log.v(TAG,"注册成功");
+            }else if(msg.what == msgReg){ //注册
+                if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getIsSuccess(), "N")){
+                    Toast.makeText(RegActivity.this,"注册失败",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 ActivityControl.finishAct(RegActivity.this);
             }
         }

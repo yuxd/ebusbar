@@ -178,7 +178,9 @@ public class FragmentTabHostActivity extends BaseActivity{
         }
         draw_user_phone.setText(loginDao.getCrm_login().getMobile());
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
-        bitmapImpl.getBitmap(loginDao.getCrm_login().getUsericon());
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getUsericon())) {
+            bitmapImpl.getBitmap(loginDao.getCrm_login().getUsericon());
+        }
     }
 
     /**

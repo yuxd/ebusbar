@@ -6,53 +6,55 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ebusbar.dao.RegUserDao;
+import com.ebusbar.dao.PileListItemDao;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * Created by Jelly on 2016/3/4.
+ * Created by Jelly on 2016/3/21.
  */
-public class RegUserDaoImpl extends BaseImpl{
+public class PileListItemDaoImpl extends BaseImpl{
     /**
-     * 访问地址
+     * 访问路径
      */
     private static final String path = NetParam.path;
-    /**
-     * 操作数据
-     */
-    public RegUserDao regUserDao;
 
-    public RegUserDaoImpl(Context context, Handler handler, int msg) {
+    public List<PileListItemDao> piles = new ArrayList<PileListItemDao>();
+
+    public PileListItemDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "crm.register";
+        execmode = "evc.facilities.get";
     }
 
-    public RegUserDaoImpl(Context context) {
+    public PileListItemDaoImpl(Context context) {
         super(context);
     }
 
     /**
-     * 获取网络数据
+     * 从网络上获取数据集合
+     * @param OrgId
      */
-    public void getNetRegUserDao(String phone,String password,String code){
-        conditionMap.clear();
-        if(TextUtils.isEmpty(phone) && TextUtils.isEmpty(password) && TextUtils.isEmpty(code)){
+    public void getPiles(String OrgId){
+        if(TextUtils.isEmpty(OrgId)){
             return;
-        }
+        };
+        conditionMap.clear();
         timestamp = NetParam.getTime();
-        conditionMap.put("Mobile",phone);
-        conditionMap.put("Password",password);
-        conditionMap.put("Code",code);
+        conditionMap.put("OrgId",OrgId);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode,mode,timestamp,"1",sign_method,sign,execmode,fields,condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
-            public void response(boolean b, String json) {
-                Log.v("json",json.trim());
-                if(b || TextUtils.isEmpty(json)) return;
-                regUserDao = JsonUtil.arrayFormJson(json,RegUserDao[].class).get(0);
+            public void response(boolean b, String s) {
+                Log.v("json",s.trim());
+                if(b || TextUtils.isEmpty(s)){
+                    return;
+                }
+                piles = JsonUtil.arrayFormJson(s,PileListItemDao[].class);
                 handler.sendEmptyMessage(msg);
             }
 
@@ -62,5 +64,5 @@ public class RegUserDaoImpl extends BaseImpl{
             }
         });
     }
-}
 
+}

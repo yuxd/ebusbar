@@ -58,6 +58,10 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      */
     TextView EPid_text;
     /**
+     * 电桩名称
+     */
+    TextView name;
+    /**
      * FreeEPDaoImpl
      */
     private FreeEPDaoImpl freeEPDao;
@@ -105,6 +109,7 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
         appoint_price = (TextView) this.findViewById(R.id.appoint_price);
         position_text = (TextView) this.findViewById(R.id.position_text);
         EPid_text = (TextView) this.findViewById(R.id.EPid_text);
+        name = (TextView) this.findViewById(R.id.name);
     }
 
     @Override
@@ -123,6 +128,9 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void setActivityView() {
+        position_text.setText(intent.getStringExtra("OrgName"));
+        EPid_text.setText(intent.getStringExtra("FacilityID"));
+        name.setText(intent.getStringExtra("FacilityName").replace("号充电桩", ""));
     }
 
 
@@ -200,8 +208,11 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
     /**
      * 启动界面
      */
-    public static void startAppActivity(Context context){
+    public static void startAppActivity(Context context,String OrgName,String FacilityID,String FacilityName){
         Intent intent = new Intent(context,AppointActivity.class);
+        intent.putExtra("OrgName",OrgName);
+        intent.putExtra("FacilityID",FacilityID);
+        intent.putExtra("FacilityName",FacilityName);
         context.startActivity(intent);
     }
 

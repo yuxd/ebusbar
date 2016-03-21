@@ -3,12 +3,17 @@ package com.ebusbar.pile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ebusbar.adpater.SelectPileListAdapter;
+import com.ebusbar.dao.PileListItemDao;
+import com.ebusbar.impl.PileListItemDaoImpl;
 
 /**
  * Created by Jelly on 2016/3/15.
@@ -22,6 +27,18 @@ public class SelectPileActivity extends BaseActivity{
      * ListView
      */
     private ListView pile_list;
+    /**
+     * PileListItemDaoImpl
+     */
+    private PileListItemDaoImpl pileListItemDao;
+    /**
+     * 充电桩详情消息
+     */
+    public static final int msgPiles = 0x001;
+    /**
+     * Intent
+     */
+    private Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,7 +57,8 @@ public class SelectPileActivity extends BaseActivity{
 
     @Override
     public void loadObjectAttribute() {
-
+        intent = getIntent();
+        pileListItemDao = new PileListItemDaoImpl(this,handler,msgPiles);
     }
 
     @Override
@@ -50,7 +68,8 @@ public class SelectPileActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        pile_list.setAdapter(new SelectPileListAdapter(this));
+        Log.v("asda",intent.getStringExtra("OrgId"));
+        pileListItemDao.getPiles(intent.getStringExtra("OrgId"));
     }
 
     /**
@@ -60,16 +79,32 @@ public class SelectPileActivity extends BaseActivity{
         pile_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AppointActivity.startAppActivity(SelectPileActivity.this);
+                PileListItemDao.EvcFacilitiesGetEntity data = pileListItemDao.piles.get(position).getEvc_facilities_get();
+                AppointActivity.startAppActivity(SelectPileActivity.this,data.getOrgName(),data.getFacilityID(),data.getFacilityName());
             }
         });
     }
 
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case msgPiles: //获取充电点中的电桩列表
+                    if(pileListItemDao.piles.size() == 0){
+                        return;
+                    }
+                    pile_list.setAdapter(new SelectPileListAdapter(SelectPileActivity.this,pileListItemDao.piles));
+                    break;
+            }
+        }
+    };
+
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context){
+    public static void startAppActivity(Context context,String OrgId){
         Intent intent = new Intent(context,SelectPileActivity.class);
+        intent.putExtra("OrgId",OrgId);
         context.startActivity(intent);
     }
 

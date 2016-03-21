@@ -207,7 +207,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      * 加载电桩位置
      */
     public void loadPosition(){
-        positionDao.getNetPositionListDao();
+        positionDao.getNetPositionListDao("shenzhen");
     }
 
     /**
@@ -219,10 +219,10 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         Log.v(TAG, positionDaoList.size() + "");
         for(PositionDao positionDao : positionDaoList){
             markerOptions = new MarkerOptions();
-            if(positionDao.isEnabled()) {
-                markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(positionDao.getLatitude(), positionDao.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
+            if(TextUtils.equals(positionDao.getEvc_stations_get().getIsAvailable(),"1")) { //可用
+                markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
             }else{
-                markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(positionDao.getLatitude(), positionDao.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.red_marker));
+                markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.red_marker));
             }
             markers.add(aMap.addMarker(markerOptions));
         }
@@ -254,7 +254,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
            public void onClick(View v) {
                Log.v(TAG, "打开筛选工具");
                //打开PopupWindow,显示操作栏
-               screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout,windowUtil.getScreenWidth(getActivity())/3*2, v.getHeight());
+               screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout,windowUtil.getScreenWidth(getActivity())/4*3, v.getHeight());
                int[] location = windowUtil.getViewLocation(v); //获取筛选按钮的x坐标
                //设置显示的属性，x=筛选按钮在屏幕的x坐标-PopupWindow的宽度+筛选按钮的宽度，y=筛选按钮在屏幕的y坐标
                screenPw.showAtLocation(v, Gravity.NO_GRAVITY, location[0] - screenPw.getWidth() + v.getWidth(), location[1]);
@@ -340,29 +340,29 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         TextView available_text = (TextView) root.findViewById(R.id.available_text);
         TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
         TextView price = (TextView) root.findViewById(R.id.price);
-        dianzhuan_name.setText(positionDao.getName());
-        if(positionDao.isFree()){
-            free_text.setText(R.string.free_text);
-        }
-        if(!positionDao.isOpen()){
+        dianzhuan_name.setText(positionDao.getEvc_stations_get().getOrgName());
+//        if(positionDao.isFree()){
+//            free_text.setText(R.string.free_text);
+//        }
+        if(TextUtils.equals(positionDao.getEvc_stations_get().getIsAvailable(),"0")){
             open_text.setText(R.string.noopen_text);
         }
-        duanzhuan_position.setText(positionDao.getPosition());
-        available_text.setText(positionDao.getSum()+"");
-        spare_text.setText(positionDao.getEnablednum()+"");
-        price.setText(positionDao.getPrice() + resourceUtil.getResourceString(context, R.string.electricity_sign));
+        duanzhuan_position.setText(positionDao.getEvc_stations_get().getAddr());
+//        available_text.setText(positionDao.getEvc_stations_get().);
+//        spare_text.setText(positionDao.getEnablednum()+"");
+//        price.setText(positionDao.getPrice() + resourceUtil.getResourceString(context, R.string.electricity_sign));
         LinearLayout nav_layout = (LinearLayout) root.findViewById(R.id.nav_layout);
         nav_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NaviEmulatorActivity.startAppActivity(context, aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), positionDao.getLatitude(), positionDao.getLongitude());
+                NaviEmulatorActivity.startAppActivity(context, aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()));
             }
         });
         LinearLayout appoint_layout = (LinearLayout) root.findViewById(R.id.appoint_layout);
         appoint_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SelectPileActivity.startAppActivity(context);
+                SelectPileActivity.startAppActivity(context,positionDao.getEvc_stations_get().getOrgId());
 //                AppointActivity.startAppActivity(context, positionDao.getPosition(), positionDao.getPid() + "", aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), positionDao.getLatitude(), positionDao.getLongitude());
             }
         });

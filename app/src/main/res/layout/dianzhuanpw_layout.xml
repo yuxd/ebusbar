@@ -55,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/free"
+                android:visibility="gone"
                 />
 
             <TextView
@@ -64,6 +65,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center_vertical"
                 android:text="@string/nofree_text"
+                android:visibility="gone"
                 />
 
             <ImageView
@@ -71,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="0dp"
                 android:src="@drawable/open"
                 />
 
@@ -169,6 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="1.2元/度"
+            android:visibility="gone"
             />
     </RelativeLayout>
 

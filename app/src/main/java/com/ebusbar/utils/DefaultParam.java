@@ -20,7 +20,7 @@ public class DefaultParam {
     /**
      * 注册验证码
      */
-    public static final String REGCODE = "reg";
+    public static final String REGCODE = "0";
     /**
      * 忘记密码验证码
      */

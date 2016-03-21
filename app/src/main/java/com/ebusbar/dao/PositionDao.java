@@ -6,115 +6,108 @@ package com.ebusbar.dao;
 public class PositionDao {
 
     /**
-     * pid : 1
-     * name : 深圳大学
-     * latitude : 22.540693
-     * longitude : 113.943025
-     * enabled : true
-     * free : false
-     * position : 深圳大学南山校区
-     * open : true
-     * sum : 10
-     * enablednum : 8
-     * price : 1.2
+     * returnStatus : 100
+     * isSuccess : Y
+     * OrgId : C00000001
+     * OrgName : 科兴科学园
+     * Longitude : 113.943025
+     * Latitude : 22.540693
+     * OrgStatus : 1
+     * Addr : 深圳市南山区科园路南山科技园
+     * isAvailable : 0
      */
-    private int pid;
-    private String name;
-    private double latitude;
-    private double longitude;
-    private boolean enabled;
-    private boolean free;
-    private String position;
-    private boolean open;
-    private int sum;
-    private int enablednum;
-    private double price;
 
-    public void setPid(int pid) {
-        this.pid = pid;
+    private EvcStationsGetEntity evc_stations_get;
+
+    public EvcStationsGetEntity getEvc_stations_get() {
+        return evc_stations_get;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEvc_stations_get(EvcStationsGetEntity evc_stations_get) {
+        this.evc_stations_get = evc_stations_get;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
+    public static class EvcStationsGetEntity {
+        private String returnStatus;
+        private String isSuccess;
+        private String OrgId;
+        private String OrgName;
+        private String Longitude;
+        private String Latitude;
+        private String OrgStatus;
+        private String Addr;
+        private String isAvailable;
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
+        public String getReturnStatus() {
+            return returnStatus;
+        }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+        public void setReturnStatus(String returnStatus) {
+            this.returnStatus = returnStatus;
+        }
 
-    public void setFree(boolean free) {
-        this.free = free;
-    }
+        public String getIsSuccess() {
+            return isSuccess;
+        }
 
-    public void setPosition(String position) {
-        this.position = position;
-    }
+        public void setIsSuccess(String isSuccess) {
+            this.isSuccess = isSuccess;
+        }
 
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
+        public String getOrgId() {
+            return OrgId;
+        }
 
-    public void setSum(int sum) {
-        this.sum = sum;
-    }
+        public void setOrgId(String OrgId) {
+            this.OrgId = OrgId;
+        }
 
-    public void setEnablednum(int enablednum) {
-        this.enablednum = enablednum;
-    }
+        public String getOrgName() {
+            return OrgName;
+        }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
+        public void setOrgName(String OrgName) {
+            this.OrgName = OrgName;
+        }
 
-    public int getPid() {
-        return pid;
-    }
+        public String getLongitude() {
+            return Longitude;
+        }
 
-    public String getName() {
-        return name;
-    }
+        public void setLongitude(String Longitude) {
+            this.Longitude = Longitude;
+        }
 
-    public double getLatitude() {
-        return latitude;
-    }
+        public String getLatitude() {
+            return Latitude;
+        }
 
-    public double getLongitude() {
-        return longitude;
-    }
+        public void setLatitude(String Latitude) {
+            this.Latitude = Latitude;
+        }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+        public String getOrgStatus() {
+            return OrgStatus;
+        }
 
-    public boolean isFree() {
-        return free;
-    }
+        public void setOrgStatus(String OrgStatus) {
+            this.OrgStatus = OrgStatus;
+        }
 
-    public String getPosition() {
-        return position;
-    }
+        public String getAddr() {
+            return Addr;
+        }
 
-    public boolean isOpen() {
-        return open;
-    }
+        public void setAddr(String Addr) {
+            this.Addr = Addr;
+        }
 
-    public int getSum() {
-        return sum;
-    }
+        public String getIsAvailable() {
+            return isAvailable;
+        }
 
-    public int getEnablednum() {
-        return enablednum;
-    }
-
-    public double getPrice() {
-        return price;
+        public void setIsAvailable(String isAvailable) {
+            this.isAvailable = isAvailable;
+        }
     }
 }

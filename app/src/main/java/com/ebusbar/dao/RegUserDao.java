@@ -5,17 +5,60 @@ package com.ebusbar.dao;
  */
 public class RegUserDao {
 
+
     /**
-     * message : 1
+     * returnStatus : 100
+     * isSuccess : N
+     * CustID : EV_20160321_00000071
+     * Mobile : 18617050558
      */
 
-    private String message;
+    private CrmRegisterEntity crm_register;
 
-    public void setMessage(String message) {
-        this.message = message;
+    public CrmRegisterEntity getCrm_register() {
+        return crm_register;
     }
 
-    public String getMessage() {
-        return message;
+    public void setCrm_register(CrmRegisterEntity crm_register) {
+        this.crm_register = crm_register;
+    }
+
+    public static class CrmRegisterEntity {
+        private String returnStatus;
+        private String isSuccess;
+        private String CustID;
+        private String Mobile;
+
+        public String getReturnStatus() {
+            return returnStatus;
+        }
+
+        public void setReturnStatus(String returnStatus) {
+            this.returnStatus = returnStatus;
+        }
+
+        public String getIsSuccess() {
+            return isSuccess;
+        }
+
+        public void setIsSuccess(String isSuccess) {
+            this.isSuccess = isSuccess;
+        }
+
+        public String getCustID() {
+            return CustID;
+        }
+
+        public void setCustID(String CustID) {
+            this.CustID = CustID;
+        }
+
+        public String getMobile() {
+            return Mobile;
+        }
+
+        public void setMobile(String Mobile) {
+            this.Mobile = Mobile;
+        }
     }
 }

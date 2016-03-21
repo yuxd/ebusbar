@@ -96,7 +96,9 @@ public class AccountManageActivity extends BaseActivity{
     @Override
     public void setActivityView() {
         LoginDao loginDao = application.getLoginDao();
-        bitmap.getBitmap(loginDao.getCrm_login().getUsericon());
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getUsericon())){
+            bitmap.getBitmap(loginDao.getCrm_login().getUsericon());
+        }
         if(!TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){
             nickname_text.setText(loginDao.getCrm_login().getCustName());
         }

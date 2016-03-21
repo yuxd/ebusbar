@@ -160,7 +160,8 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
         }
         switch (selectPay.getId()){
             case R.id.alipay_btn:
-                String orderInfo = PayUtil.getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
+                String price = selectPrice.getText().toString().replace("元","");
+                String orderInfo = PayUtil.getOrderInfo(price + "元充值卡", "巴斯巴电桩" + price + "元充值卡", price);
                 String sign = PayUtil.sign(orderInfo);
                 try {
                     /**
@@ -189,7 +190,7 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                 });
                 break;
             case R.id.wchatpay_btn:
-
+                Toast.makeText(RechargeActivity.this,"对不起，暂不支持微信支付!",Toast.LENGTH_SHORT).show();
                 break;
         }
         return view;
