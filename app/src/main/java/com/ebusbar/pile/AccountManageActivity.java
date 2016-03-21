@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -95,16 +96,18 @@ public class AccountManageActivity extends BaseActivity{
     @Override
     public void setActivityView() {
         LoginDao loginDao = application.getLoginDao();
-//        bitmap.getBitmap(loginDao.getUsericon());
-//        nickname_text.setText(loginDao.getNickName());
-//        sex_text.setText(loginDao.getSex());
-//        age_text.setText(loginDao.getAge()+"");
+        bitmap.getBitmap(loginDao.getCrm_login().getUsericon());
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){
+            nickname_text.setText(loginDao.getCrm_login().getCustName());
+        }
+        sex_text.setText(loginDao.getCrm_login().getSex());
+        age_text.setText(loginDao.getCrm_login().getAge());
         phone_text.setText(loginDao.getCrm_login().getMobile());
-//        if(loginDao.isCard()){
-//            certification_text.setText("是");
-//        }else{
-//            certification_text.setText("否");
-//        }
+        if(TextUtils.equals(loginDao.getCrm_login().getVerified(),"1")){
+            certification_text.setText("是");
+        }else{
+            certification_text.setText("否");
+        }
     }
 
     /**

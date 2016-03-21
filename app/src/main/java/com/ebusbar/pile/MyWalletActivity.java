@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.utils.RoundBitmapUtil;
 
@@ -35,6 +37,11 @@ public class MyWalletActivity extends BaseActivity{
      */
     private ImageView usericon;
     /**
+     *
+     */
+    private TextView money_text;
+
+    /**
      * bitmapImpl
      */
     private BitmapImpl bitmapImpl;
@@ -57,6 +64,7 @@ public class MyWalletActivity extends BaseActivity{
     public void init() {
         nickname_text = (TextView) this.findViewById(R.id.nickname_text);
         usericon = (ImageView) this.findViewById(R.id.usericon);
+        money_text = (TextView) this.findViewById(R.id.money_text);
     }
 
     @Override
@@ -72,8 +80,16 @@ public class MyWalletActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-//        nickname_text.setText(application.getLoginDao().getNickName());
-//        bitmapImpl.getBitmap(application.getLoginDao().getUsericon());
+        LoginDao loginDao = application.getLoginDao();
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){
+            nickname_text.setText(loginDao.getCrm_login().getCustName());
+        }
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getUsericon())){
+            bitmapImpl.getBitmap(loginDao.getCrm_login().getUsericon());
+        }
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getBalanceAmt())){
+            money_text.setText(loginDao.getCrm_login().getBalanceAmt());
+        }
     }
 
     /**

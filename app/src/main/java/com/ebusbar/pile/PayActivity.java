@@ -38,7 +38,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
     /**
      * TAG
      */
-
     private Intent intent;
     /**
      * 支付种类

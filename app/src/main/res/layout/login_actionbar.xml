@@ -37,7 +37,7 @@
         android:layout_centerVertical="true"
         android:padding="10dp"
         android:text="@string/login_action_right_btn_text"
-        android:visibility="gone"
+        android:textColor="@color/actionbar_title_color"
         />
 
 </RelativeLayout>

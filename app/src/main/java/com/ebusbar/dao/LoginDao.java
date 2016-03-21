@@ -8,14 +8,18 @@ import java.io.Serializable;
  */
 public class LoginDao implements Serializable{
 
-
     /**
      * returnStatus : 100
      * isSuccess : Y
      * CustID : EV_20160319_00000057
+     * CustName : genlex101
      * Mobile : 18617050557
-     * Token : tk20160319CD1016AE
-     * Verified : 0
+     * Token : 0x746b32303136303332313445304530373146
+     * Sex : 男
+     * Age : 116
+     * BalanceAmt : 1000.00
+     * Usericon : https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=560678108,398434082&amp;fm=116&amp;gp=0.jpg
+     * Verified : 1
      */
 
     private CrmLoginEntity crm_login;
@@ -28,12 +32,17 @@ public class LoginDao implements Serializable{
         this.crm_login = crm_login;
     }
 
-    public static class CrmLoginEntity {
+    public static class CrmLoginEntity implements  Serializable{
         private String returnStatus;
         private String isSuccess;
         private String CustID;
+        private String CustName;
         private String Mobile;
         private String Token;
+        private String Sex;
+        private String Age;
+        private String BalanceAmt;
+        private String Usericon;
         private String Verified;
 
         public String getReturnStatus() {
@@ -60,6 +69,14 @@ public class LoginDao implements Serializable{
             this.CustID = CustID;
         }
 
+        public String getCustName() {
+            return CustName;
+        }
+
+        public void setCustName(String CustName) {
+            this.CustName = CustName;
+        }
+
         public String getMobile() {
             return Mobile;
         }
@@ -74,6 +91,38 @@ public class LoginDao implements Serializable{
 
         public void setToken(String Token) {
             this.Token = Token;
+        }
+
+        public String getSex() {
+            return Sex;
+        }
+
+        public void setSex(String Sex) {
+            this.Sex = Sex;
+        }
+
+        public String getAge() {
+            return Age;
+        }
+
+        public void setAge(String Age) {
+            this.Age = Age;
+        }
+
+        public String getBalanceAmt() {
+            return BalanceAmt;
+        }
+
+        public void setBalanceAmt(String BalanceAmt) {
+            this.BalanceAmt = BalanceAmt;
+        }
+
+        public String getUsericon() {
+            return Usericon;
+        }
+
+        public void setUsericon(String Usericon) {
+            this.Usericon = Usericon;
         }
 
         public String getVerified() {

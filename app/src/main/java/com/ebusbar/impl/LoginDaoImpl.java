@@ -70,7 +70,7 @@ public class LoginDaoImpl extends BaseImpl{
                 }
                 @Override
                 public void responseBitmap(boolean b, Bitmap bitmap) {
-
+                    
                 }
             });
         }else if(TextUtils.isEmpty(password)){ //验证码登录
@@ -113,6 +113,7 @@ public class LoginDaoImpl extends BaseImpl{
      * 缓存对象
      */
     public void cacheObject(){
+        Log.v("impl","保存验证码");
         SharedPreferencesUtil.saveObject(context, loginDao);
     }
 

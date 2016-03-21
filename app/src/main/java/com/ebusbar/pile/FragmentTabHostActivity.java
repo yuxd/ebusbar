@@ -92,6 +92,10 @@ public class FragmentTabHostActivity extends BaseActivity{
      */
     private ImageView draw_user_icon;
     /**
+     * 侧滑栏余额
+     */
+    private TextView money;
+    /**
      * bitmapImpl
      */
     private  BitmapImpl bitmapImpl;
@@ -120,6 +124,7 @@ public class FragmentTabHostActivity extends BaseActivity{
 
     @Override
     public void init(){
+        money = (TextView) this.findViewById(R.id.money);
         order_layout = (LinearLayout) this.findViewById(R.id.order_layout);
         appoint_layout = (LinearLayout) this.findViewById(R.id.appoint_layout);
         draw_user_icon = (ImageView) this.findViewById(R.id.user_icon);
@@ -163,14 +168,17 @@ public class FragmentTabHostActivity extends BaseActivity{
             return;
         }
         LoginDao loginDao = application.getLoginDao();
-//        if(TextUtils.isEmpty(loginDao.getNickName())){
-//            draw_user_name.setText("昵称");
-//        }else{
-//            draw_user_name.setText(loginDao.getNickName());
-//        }
+        if(TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){ //昵称
+            draw_user_name.setText("昵称");
+        }else{
+            draw_user_name.setText(loginDao.getCrm_login().getCustName());
+        }
+        if(!TextUtils.isEmpty(loginDao.getCrm_login().getBalanceAmt())){ //余额
+            money.setText("¥"+loginDao.getCrm_login().getBalanceAmt());
+        }
         draw_user_phone.setText(loginDao.getCrm_login().getMobile());
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
-//        bitmapImpl.getBitmap(loginDao.getUsericon());
+        bitmapImpl.getBitmap(loginDao.getCrm_login().getUsericon());
     }
 
     /**
