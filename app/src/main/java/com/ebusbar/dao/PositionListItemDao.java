@@ -3,7 +3,7 @@ package com.ebusbar.dao;
 /**
  * Created by Jelly on 2016/3/7.
  */
-public class PositionDao {
+public class PositionListItemDao {
 
     /**
      * returnStatus : 100

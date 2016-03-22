@@ -3,6 +3,7 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.os.Handler;
 
+import com.ebusbar.utils.NetParam;
 import com.jellycai.service.URLService;
 
 import java.util.HashMap;
@@ -22,6 +23,10 @@ public abstract class BaseImpl {
      * 网络访问参数
      */
     protected Map<String,String> param;
+    /**
+     * 访问路径
+     */
+    protected String path = NetParam.path;
     /**
      * 接口标示
      */

@@ -12,6 +12,7 @@ import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
+ * 获取验证码
  * Created by Jelly on 2016/3/5.
  */
 public class CodeDaoImpl extends BaseImpl{
@@ -38,11 +39,11 @@ public class CodeDaoImpl extends BaseImpl{
     /**
      * 从网络上获得CodeDao
      */
-    public void getNetCodeDao(String codeType,String mobile,String custid){
+    public void getNetCodeDao(String codeType,String mobile){
         if(TextUtils.isEmpty(codeType) || TextUtils.isEmpty(mobile)) return;
         timestamp = NetParam.getTime();
         condition = NetParam.spliceCondition(conditionMap);
-        param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
+        param = NetParam.getParamMap(trancode,mode,timestamp,"1",sign_method,sign,execmode,fields,condition);
         param.put("codeType",codeType);
         param.put("mobile",mobile);
         service.doPost(path, param, new ResponseResultHandler() {

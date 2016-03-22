@@ -30,7 +30,7 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.ebusbar.dao.PositionDao;
+import com.ebusbar.dao.PositionListItemDao;
 import com.ebusbar.impl.PositionDaoImpl;
 import com.ebusbar.myview.SlideSwitch;
 import com.ebusbar.pile.FragmentTabHostActivity;
@@ -213,11 +213,11 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     /**
      * 设置地图上设置电桩位置
      */
-    public void setPositionOnMap(List<PositionDao> positionDaoList){
+    public void setPositionOnMap(List<PositionListItemDao> positionDaoList){
         markers.clear();
         MarkerOptions markerOptions = null;
         Log.v(TAG, positionDaoList.size() + "");
-        for(PositionDao positionDao : positionDaoList){
+        for(PositionListItemDao positionDao : positionDaoList){
             markerOptions = new MarkerOptions();
             if(TextUtils.equals(positionDao.getEvc_stations_get().getIsAvailable(),"1")) { //可用
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
@@ -331,7 +331,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     /**
      * 显示电桩PW
      */
-    public void showDianZhuanPw(View v, final PositionDao positionDao){
+    public void showDianZhuanPw(View v, final PositionListItemDao positionDao){
         View root = getActivity().getLayoutInflater().inflate(R.layout.dianzhuanpw_layout,null);
         TextView dianzhuan_name = (TextView) root.findViewById(R.id.dianzhuan_name);
         TextView free_text = (TextView) root.findViewById(R.id.free_text);

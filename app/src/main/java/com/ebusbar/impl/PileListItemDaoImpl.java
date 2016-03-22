@@ -18,10 +18,6 @@ import java.util.List;
  * Created by Jelly on 2016/3/21.
  */
 public class PileListItemDaoImpl extends BaseImpl{
-    /**
-     * 访问路径
-     */
-    private static final String path = NetParam.path;
 
     public List<PileListItemDao> piles = new ArrayList<PileListItemDao>();
 

@@ -216,6 +216,7 @@
                     android:layout_toLeftOf="@+id/quick_code_btn"
                     android:layout_centerVertical="true"
                     android:background="@drawable/login_et_bg"
+                    android:inputType="phone"
                     android:hint="@string/login_account_hint" />
 
             </RelativeLayout>
@@ -255,6 +256,7 @@
                     android:layout_toRightOf="@id/quick_code_icon"
                     android:layout_toLeftOf="@id/quick_code_clear"
                     android:background="@drawable/login_et_bg"
+                    android:inputType="number"
                     android:hint="@string/quick_login_code_et_hint" />
 
             </RelativeLayout>

@@ -4,9 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.ebusbar.dao.PositionDao;
+import com.ebusbar.dao.PositionListItemDao;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -19,13 +18,9 @@ import java.util.List;
  */
 public class PositionDaoImpl extends BaseImpl{
     /**
-     * 访问地址
-     */
-    private static final String path = NetParam.path;
-    /**
      * 操作数据
      */
-    public List<PositionDao> positionDaoList = new ArrayList<PositionDao>();
+    public List<PositionListItemDao> positionDaoList = new ArrayList<PositionListItemDao>();
 
     public PositionDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -45,9 +40,8 @@ public class PositionDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String json) {
-                Log.v("json",json.trim());
                 if(b || TextUtils.isEmpty(json)) return;
-                positionDaoList = JsonUtil.arrayFormJson(json,PositionDao[].class);
+                positionDaoList = JsonUtil.arrayFormJson(json,PositionListItemDao[].class);
                 handler.sendEmptyMessage(msg);
             }
             @Override

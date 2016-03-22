@@ -60,7 +60,6 @@ public class RegActivity extends BaseActivity {
      * regUserDaoImpl
      */
     private RegUserDaoImpl regUserDao;
-
     /**
      * 获取验证码的消息
      */
@@ -177,9 +176,10 @@ public class RegActivity extends BaseActivity {
         String phone = reg_phone_et.getText().toString();
         if(!RegExpUtil.RegPhone(phone)){
             Log.v(TAG,"手机号码错误");
+            Toast.makeText(this,"手机号码格式错误",Toast.LENGTH_SHORT).show();
             return view;
         }
-        codeDao.getNetCodeDao(DefaultParam.REGCODE, phone, "1");
+        codeDao.getNetCodeDao(DefaultParam.REGCODE, phone);
         return view;
     }
 

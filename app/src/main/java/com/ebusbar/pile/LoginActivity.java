@@ -293,7 +293,7 @@ public class LoginActivity extends BaseActivity {
             normal_phone_et.setText("");
             return view;
         }
-        loginDao.getNetLoginDao(phone, password, null, "1");
+        loginDao.getNetLoginDao(phone, password, null);
         return view;
     }
 
@@ -310,7 +310,7 @@ public class LoginActivity extends BaseActivity {
             quick_phone_et.setText("");
             return view;
         }
-        codeDao.getNetCodeDao(DefaultParam.LOGINCODE,phone,"-1");
+        codeDao.getNetCodeDao(DefaultParam.LOGINCODE,phone);
         return  view;
     }
 
@@ -328,7 +328,7 @@ public class LoginActivity extends BaseActivity {
             quick_phone_et.setText("");
             return view;
         }
-        loginDao.getNetLoginDao(phone, null, code,"1");
+        loginDao.getNetLoginDao(phone, null, code);
         return view;
     }
 

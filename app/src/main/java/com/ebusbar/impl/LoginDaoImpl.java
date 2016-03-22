@@ -18,10 +18,6 @@ import com.jellycai.service.ResponseResultHandler;
  */
 public class LoginDaoImpl extends BaseImpl{
     /**
-     * 正常登录的访问接口
-     */
-    private static final String Path = NetParam.path;
-    /**
      * LoginDao
      */
     public  LoginDao loginDao;
@@ -46,7 +42,7 @@ public class LoginDaoImpl extends BaseImpl{
      * @param password
      * @param code
      */
-    public void getNetLoginDao(String mobile,String password,String code,String custid){
+    public void getNetLoginDao(String mobile,String password,String code){
         if(TextUtils.isEmpty(mobile)) return ;
         conditionMap.clear(); //清空condition集合里面的数据，避免出现验证码登录失败后，账户和密码登录出现参数过多的情况
         if(TextUtils.isEmpty(code)){ //正常登录
@@ -55,8 +51,8 @@ public class LoginDaoImpl extends BaseImpl{
             conditionMap.put("Type","0");
             conditionMap.put("Password",password);
             condition = NetParam.spliceCondition(conditionMap);
-            param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
-            service.doPost(Path, param, new ResponseResultHandler() {
+            param = NetParam.getParamMap(trancode,mode,timestamp,"1",sign_method,sign,execmode,fields,condition);
+            service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
                     if (b || TextUtils.isEmpty(json)) return;
@@ -78,17 +74,8 @@ public class LoginDaoImpl extends BaseImpl{
             conditionMap.put("Type","1");
             conditionMap.put("Code",code);
             condition = NetParam.spliceCondition(conditionMap);
-            Log.v("trancode",trancode);
-            Log.v("mode",mode);
-            Log.v("timestamp",timestamp);
-            Log.v("custid",custid);
-            Log.v("sign_method",sign_method);
-            Log.v("sign",sign);
-            Log.v("execmode",execmode);
-            Log.v("fields",fields);
-            Log.v("condition",condition);
-            param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
-            service.doPost(Path, param, new ResponseResultHandler() {
+            param = NetParam.getParamMap(trancode, mode, timestamp, "1", sign_method, sign, execmode, fields, condition);
+            service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
                     Log.v("json",json.trim());
@@ -112,7 +99,6 @@ public class LoginDaoImpl extends BaseImpl{
      * 缓存对象
      */
     public void cacheObject(){
-        Log.v("impl","保存验证码");
         SharedPreferencesUtil.saveObject(context, loginDao);
     }
 
