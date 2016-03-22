@@ -24,11 +24,11 @@ public class DefaultParam {
     /**
      * 忘记密码验证码
      */
-    public static final String FORGETCODE = "forget";
+    public static final String FORGETCODE = "3";
     /**
-     * 校验忘记密码验证码
+     * 忘记支付密码
      */
-    public static final String FORGETCHECKCODE = "forget";
+    public static final String FORGETPAYPASSWORD = "2";
     /**
      * 支付密码位数
      */
