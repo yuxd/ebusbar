@@ -6,66 +6,128 @@ package com.ebusbar.dao;
 public class PendingOrderDao {
 
     /**
-     * id : 1
-     * type : 电桩充电
-     * state : 充电中
-     * position : 深圳大学
-     * EDId : 101657
-     * time : 2016-3-10 16:11:48
+     * returnStatus : 100
+     * isSuccess : Y
+     * OrderNo : EV_20160322_00000120
+     * OrderStatus : 2
+     * OrderType : 2
+     * CompanyID : C01
+     * CustID : EV_20160321_00000077
+     * OrgID : C00000001
+     * OrgName : 科兴科学园
+     * FacilityID : F000001
+     * RealBeginDateTime : 2016-03-22 14:23:58
      */
 
-    private String id;
-    private String type;
-    private String state;
-    private String position;
-    private String EDId;
-    private String time;
+    private EvcOrdersGetEntity evc_orders_get;
 
-    public void setId(String id) {
-        this.id = id;
+    public EvcOrdersGetEntity getEvc_orders_get() {
+        return evc_orders_get;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
+        this.evc_orders_get = evc_orders_get;
     }
 
-    public void setState(String state) {
-        this.state = state;
-    }
+    public static class EvcOrdersGetEntity {
+        private String returnStatus;
+        private String isSuccess;
+        private String OrderNo;
+        private String OrderStatus;
+        private String OrderType;
+        private String CompanyID;
+        private String CustID;
+        private String OrgID;
+        private String OrgName;
+        private String FacilityID;
+        private String RealBeginDateTime;
 
-    public void setPosition(String position) {
-        this.position = position;
-    }
+        public String getReturnStatus() {
+            return returnStatus;
+        }
 
-    public void setEDId(String EDId) {
-        this.EDId = EDId;
-    }
+        public void setReturnStatus(String returnStatus) {
+            this.returnStatus = returnStatus;
+        }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
+        public String getIsSuccess() {
+            return isSuccess;
+        }
 
-    public String getId() {
-        return id;
-    }
+        public void setIsSuccess(String isSuccess) {
+            this.isSuccess = isSuccess;
+        }
 
-    public String getType() {
-        return type;
-    }
+        public String getOrderNo() {
+            return OrderNo;
+        }
 
-    public String getState() {
-        return state;
-    }
+        public void setOrderNo(String OrderNo) {
+            this.OrderNo = OrderNo;
+        }
 
-    public String getPosition() {
-        return position;
-    }
+        public String getOrderStatus() {
+            return OrderStatus;
+        }
 
-    public String getEDId() {
-        return EDId;
-    }
+        public void setOrderStatus(String OrderStatus) {
+            this.OrderStatus = OrderStatus;
+        }
 
-    public String getTime() {
-        return time;
+        public String getOrderType() {
+            return OrderType;
+        }
+
+        public void setOrderType(String OrderType) {
+            this.OrderType = OrderType;
+        }
+
+        public String getCompanyID() {
+            return CompanyID;
+        }
+
+        public void setCompanyID(String CompanyID) {
+            this.CompanyID = CompanyID;
+        }
+
+        public String getCustID() {
+            return CustID;
+        }
+
+        public void setCustID(String CustID) {
+            this.CustID = CustID;
+        }
+
+        public String getOrgID() {
+            return OrgID;
+        }
+
+        public void setOrgID(String OrgID) {
+            this.OrgID = OrgID;
+        }
+
+        public String getOrgName() {
+            return OrgName;
+        }
+
+        public void setOrgName(String OrgName) {
+            this.OrgName = OrgName;
+        }
+
+        public String getFacilityID() {
+            return FacilityID;
+        }
+
+        public void setFacilityID(String FacilityID) {
+            this.FacilityID = FacilityID;
+        }
+
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
+        }
+
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
+        }
     }
 }

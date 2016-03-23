@@ -500,10 +500,12 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     @Override
     public void onPause() {
         super.onPause();
-        mapView.onPause();
+        mapView.onPause(); //必须调用高德地图的这个方法
         if(locationClient != null) {
-            locationClient.stopLocation();
+            locationClient.stopLocation(); //停止定位
         }
+        FragmentTabHostActivity activity = (FragmentTabHostActivity) getActivity();
+        activity.drawerLayout.closeDrawer(Gravity.LEFT); //关闭左边的侧滑栏
         isFirst = true; //把isFirst设为true，切换模块的时候就不会在调整距离了
     }
 

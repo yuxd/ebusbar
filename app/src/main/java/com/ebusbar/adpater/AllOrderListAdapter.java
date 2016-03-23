@@ -1,13 +1,14 @@
 package com.ebusbar.adpater;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.ebusbar.dao.OrderDao;
+import com.ebusbar.dao.CompleteOrderDao;
 import com.ebusbar.pile.R;
 
 import java.util.List;
@@ -17,11 +18,11 @@ import java.util.List;
  */
 public class AllOrderListAdapter extends BaseAdapter{
 
-    private List<OrderDao> list;
+    private List<CompleteOrderDao> list;
 
     private Context context;
 
-    public AllOrderListAdapter(Context context,List<OrderDao> list) {
+    public AllOrderListAdapter(Context context,List<CompleteOrderDao> list) {
         this.context = context;
         this.list = list;
     }
@@ -49,12 +50,18 @@ public class AllOrderListAdapter extends BaseAdapter{
         TextView position_text = (TextView) item.findViewById(R.id.position_text);
         TextView order_time = (TextView) item.findViewById(R.id.order_time);
         TextView EPId_text = (TextView) item.findViewById(R.id.EPId_text);
-        OrderDao orderDao = (OrderDao) getItem(position);
-        type_text.setText(orderDao.getType());
-        state_text.setText(orderDao.getType());
-        position_text.setText(orderDao.getPosition());
-        order_time.setText(orderDao.getTime());
-        EPId_text.setText(orderDao.getEDId());
+        CompleteOrderDao.EvcOrdersGetEntity data = ((CompleteOrderDao)getItem(position)).getEvc_orders_get();
+        if(TextUtils.equals(data.getOrderType(),"2")){
+            type_text.setText("电桩充电");
+        }
+        if(TextUtils.equals(data.getOrderStatus(),"8")){
+            state_text.setText("充电完成");
+        }else{
+            state_text.setText("已取消");
+        }
+        position_text.setText(data.getOrgName());
+        order_time.setText(data.getPlanEndDateTime());
+        EPId_text.setText(data.getOrgID());
         return item;
     }
 }

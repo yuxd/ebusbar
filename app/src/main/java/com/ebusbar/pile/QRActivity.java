@@ -9,15 +9,15 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.ebusbar.dao.EPInfoDao;
-import com.ebusbar.utils.JsonUtil;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.zxing.camera.CameraManager;
@@ -52,6 +52,11 @@ public class QRActivity extends BaseActivity implements SurfaceHolder.Callback{
      */
     private boolean isOpen = false;
 
+    /**
+     * 输入框
+     */
+    private EditText input_et;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,11 +68,12 @@ public class QRActivity extends BaseActivity implements SurfaceHolder.Callback{
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
         setListener();
+        init();
     }
 
     @Override
     public void init() {
-
+        input_et = (EditText) this.findViewById(R.id.input_et);
     }
 
     @Override
@@ -147,10 +153,24 @@ public class QRActivity extends BaseActivity implements SurfaceHolder.Callback{
 //            this.setResult(RESULT_OK, resultIntent);
             Log.v(TAG,resultString);
             //Toast.makeText(this,resultString,Toast.LENGTH_LONG).show();
-            EPInfoDao epInfoDao = JsonUtil.objectFromJson(resultString,EPInfoDao.class);
-            ChargeActivity.startAppActivity(this, epInfoDao.getPosition(), epInfoDao.getEPId());
+            String QRId = (String) resultString.subSequence(resultString.length()-12,resultString.length());
+            ChargeActivity.startAppActivity(this,QRId);
         }
         //QRActivity.this.finish();
+    }
+
+    /**
+     * 输入二维码编号
+     * @return
+     */
+    public View inputCode(View view){
+        String QRId = input_et.getText().toString();
+        if(TextUtils.isEmpty(QRId)){
+            Toast.makeText(this,"请输入二维码编号",Toast.LENGTH_SHORT).show();
+        }
+        Log.v("json",QRId);
+        ChargeActivity.startAppActivity(this,QRId);
+        return view;
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {

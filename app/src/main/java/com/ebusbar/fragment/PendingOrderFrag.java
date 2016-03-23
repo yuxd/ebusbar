@@ -8,14 +8,19 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ebusbar.adpater.PendingOrderListAdapter;
+import com.ebusbar.dao.LoginDao;
+import com.ebusbar.dao.PendingOrderDao;
+import com.ebusbar.pile.ChargeActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
 import com.ebusbar.impl.PendingOrderImpl;
 
 /**
+ * 未完成订单
  * Created by Jelly on 2016/3/10.
  */
 public class PendingOrderFrag extends BaseFrag{
@@ -77,14 +82,27 @@ public class PendingOrderFrag extends BaseFrag{
 
     @Override
     public void setListener() {
-
+        setListItemClickListener();
     }
 
     @Override
     public void setFragView() {
-        pendingOrder.getNetPendingOrderList(application.getLoginDao().getCrm_login().getToken(),application.getLoginDao().getCrm_login().getCustID());
+        LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
+        pendingOrder.getNetPendingOrderList(data.getToken(),data.getCustID());
     }
 
+    /**
+     * 设置列表的点击事件
+     */
+    public void setListItemClickListener(){
+        pending_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PendingOrderDao.EvcOrdersGetEntity data = pendingOrder.pendingOrderDaos.get(position).getEvc_orders_get();
+                ChargeActivity.startAppActivity(context,data.getOrgName(),data.getFacilityID(),data.getOrderStatus(),data.getOrderNo());
+            }
+        });
+    }
 
     private Handler handler = new Handler(){
         @Override

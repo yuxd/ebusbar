@@ -91,6 +91,7 @@ public class AccountManageActivity extends BaseActivity{
 
     @Override
     public void setListener() {
+
     }
 
     @Override

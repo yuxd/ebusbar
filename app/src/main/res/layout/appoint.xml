@@ -141,7 +141,7 @@
             android:gravity="center"
             android:text="15分钟"
             android:textColor="#FFFFFF"
-            android:background="#009b4c"
+            android:background="@color/time_noselect_color"
             />
 
         <TextView
@@ -154,7 +154,7 @@
             android:gravity="center"
             android:text="30分钟"
             android:textColor="#FFFFFF"
-            android:background="#d6d6d6"
+            android:background="@color/time_noselect_color"
             />
         <TextView
             android:id="@+id/time45"
@@ -166,7 +166,7 @@
             android:gravity="center"
             android:text="45分钟"
             android:textColor="#FFFFFF"
-            android:background="#d6d6d6"
+            android:background="@color/time_noselect_color"
             />
         <TextView
             android:id="@+id/time60"
@@ -178,7 +178,7 @@
             android:gravity="center"
             android:text="60分钟"
             android:textColor="#FFFFFF"
-            android:background="#d6d6d6"
+            android:background="@color/time_noselect_color"
             />
     </LinearLayout>
 

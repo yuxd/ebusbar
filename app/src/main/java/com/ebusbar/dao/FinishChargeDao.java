@@ -1,52 +1,154 @@
 package com.ebusbar.dao;
 
 /**
+ * 结束充电
  * Created by Jelly on 2016/3/11.
  */
 public class FinishChargeDao {
 
-
     /**
-     * pid : 1
-     * message : 1
-     * payType : 电桩充电
-     * payPrice : 12.5
+     * returnStatus : 100
+     * isSuccess : Y
+     * OrderNo : EV_20160322_00000144
+     * OrderStatus : 4
+     * OrderType : EVR
+     * CompanyID : C01
+     * CustID : EV_20160319_00000057
+     * OrgID : C00000002
+     * OrgName : 深大站
+     * FacilityID : F000004
+     * PlanBeginDateTime : 2016-03-22 19:40:46
+     * PlanEndDateTime : 2016-03-22 19:55:46
+     * RealBeginDateTime : 2016-03-22 19:40:55
      */
 
-    private String pid;
-    private String message;
-    private String payType;
-    private String payPrice;
+    private EvcOrderChangeEntity evc_order_change;
 
-    public void setPid(String pid) {
-        this.pid = pid;
+    public EvcOrderChangeEntity getEvc_order_change() {
+        return evc_order_change;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setEvc_order_change(EvcOrderChangeEntity evc_order_change) {
+        this.evc_order_change = evc_order_change;
     }
 
-    public void setPayType(String payType) {
-        this.payType = payType;
-    }
+    public static class EvcOrderChangeEntity {
+        private String returnStatus;
+        private String isSuccess;
+        private String OrderNo;
+        private String OrderStatus;
+        private String OrderType;
+        private String CompanyID;
+        private String CustID;
+        private String OrgID;
+        private String OrgName;
+        private String FacilityID;
+        private String PlanBeginDateTime;
+        private String PlanEndDateTime;
+        private String RealBeginDateTime;
 
-    public void setPayPrice(String payPrice) {
-        this.payPrice = payPrice;
-    }
+        public String getReturnStatus() {
+            return returnStatus;
+        }
 
-    public String getPid() {
-        return pid;
-    }
+        public void setReturnStatus(String returnStatus) {
+            this.returnStatus = returnStatus;
+        }
 
-    public String getMessage() {
-        return message;
-    }
+        public String getIsSuccess() {
+            return isSuccess;
+        }
 
-    public String getPayType() {
-        return payType;
-    }
+        public void setIsSuccess(String isSuccess) {
+            this.isSuccess = isSuccess;
+        }
 
-    public String getPayPrice() {
-        return payPrice;
+        public String getOrderNo() {
+            return OrderNo;
+        }
+
+        public void setOrderNo(String OrderNo) {
+            this.OrderNo = OrderNo;
+        }
+
+        public String getOrderStatus() {
+            return OrderStatus;
+        }
+
+        public void setOrderStatus(String OrderStatus) {
+            this.OrderStatus = OrderStatus;
+        }
+
+        public String getOrderType() {
+            return OrderType;
+        }
+
+        public void setOrderType(String OrderType) {
+            this.OrderType = OrderType;
+        }
+
+        public String getCompanyID() {
+            return CompanyID;
+        }
+
+        public void setCompanyID(String CompanyID) {
+            this.CompanyID = CompanyID;
+        }
+
+        public String getCustID() {
+            return CustID;
+        }
+
+        public void setCustID(String CustID) {
+            this.CustID = CustID;
+        }
+
+        public String getOrgID() {
+            return OrgID;
+        }
+
+        public void setOrgID(String OrgID) {
+            this.OrgID = OrgID;
+        }
+
+        public String getOrgName() {
+            return OrgName;
+        }
+
+        public void setOrgName(String OrgName) {
+            this.OrgName = OrgName;
+        }
+
+        public String getFacilityID() {
+            return FacilityID;
+        }
+
+        public void setFacilityID(String FacilityID) {
+            this.FacilityID = FacilityID;
+        }
+
+        public String getPlanBeginDateTime() {
+            return PlanBeginDateTime;
+        }
+
+        public void setPlanBeginDateTime(String PlanBeginDateTime) {
+            this.PlanBeginDateTime = PlanBeginDateTime;
+        }
+
+        public String getPlanEndDateTime() {
+            return PlanEndDateTime;
+        }
+
+        public void setPlanEndDateTime(String PlanEndDateTime) {
+            this.PlanEndDateTime = PlanEndDateTime;
+        }
+
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
+        }
+
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
+        }
     }
 }

@@ -1,36 +1,37 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * 开始充电
+ * Created by Jelly on 2016/3/22.
  */
-public class GetChargeAppointDao {
+public class StartChargeDao {
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
-     * OrderStatus : 1
-     * OrderType : 1
+     * OrderNo : EV_20160322_00000133
+     * OrderStatus : 2
+     * OrderType : EVR
      * CompanyID : C01
-     * CustID : EV_20160321_00000077
-     * OrgID : C00000001
-     * OrgName : 科兴科学园
-     * FacilityID : F000001
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * CustID : EV_20160319_00000057
+     * OrgID : C00000002
+     * OrgName : 深大站
+     * FacilityID : F000004
+     * PlanBeginDateTime : 2016-03-22 17:16:52
+     * PlanEndDateTime : 2016-03-22 17:46:52
      */
 
-    private EvcOrdersGetEntity evc_orders_get;
+    private EvcOrderChangeEntity evc_order_change;
 
-    public EvcOrdersGetEntity getEvc_orders_get() {
-        return evc_orders_get;
+    public EvcOrderChangeEntity getEvc_order_change() {
+        return evc_order_change;
     }
 
-    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
-        this.evc_orders_get = evc_orders_get;
+    public void setEvc_order_change(EvcOrderChangeEntity evc_order_change) {
+        this.evc_order_change = evc_order_change;
     }
 
-    public static class EvcOrdersGetEntity {
+    public static class EvcOrderChangeEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;

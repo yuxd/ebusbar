@@ -1,5 +1,7 @@
 package com.ebusbar.utils;
 
+import android.text.TextUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,4 +64,33 @@ public class NetParam {
         }
         return condition;
     }
+
+    /**
+     * 判断一堆字符串是否为空
+     * @param ss
+     * @return
+     */
+    public static boolean isEmpty(String... ss){
+        for(String s : ss){
+            if(TextUtils.isEmpty(s)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * 请求JSON是否成功
+     * @param isTime
+     * @param json
+     * @return
+     */
+    public static boolean isSuccess(Boolean isTime,String json){
+        if(isTime || TextUtils.isEmpty(json) || TextUtils.equals(json.trim(),"[]")){
+            return false;
+        }
+        return true;
+    }
+
 }

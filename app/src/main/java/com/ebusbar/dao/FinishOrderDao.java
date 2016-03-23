@@ -1,36 +1,36 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * 结束订单
+ * Created by Jelly on 2016/3/22.
  */
-public class GetChargeAppointDao {
+public class FinishOrderDao {
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
-     * OrderStatus : 1
+     * OrderNo : EV_20160322_00000123
+     * OrderStatus : 16
      * OrderType : 1
      * CompanyID : C01
      * CustID : EV_20160321_00000077
      * OrgID : C00000001
-     * OrgName : 科兴科学园
      * FacilityID : F000001
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * PlanBeginDateTime : 2016-03-22 14:26:33
+     * PlanEndDateTime : 2016-03-22 14:56:33
      */
 
-    private EvcOrdersGetEntity evc_orders_get;
+    private EvcOrderCancelEntity evc_order_cancel;
 
-    public EvcOrdersGetEntity getEvc_orders_get() {
-        return evc_orders_get;
+    public EvcOrderCancelEntity getEvc_order_cancel() {
+        return evc_order_cancel;
     }
 
-    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
-        this.evc_orders_get = evc_orders_get;
+    public void setEvc_order_cancel(EvcOrderCancelEntity evc_order_cancel) {
+        this.evc_order_cancel = evc_order_cancel;
     }
 
-    public static class EvcOrdersGetEntity {
+    public static class EvcOrderCancelEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;
@@ -39,7 +39,6 @@ public class GetChargeAppointDao {
         private String CompanyID;
         private String CustID;
         private String OrgID;
-        private String OrgName;
         private String FacilityID;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
@@ -106,14 +105,6 @@ public class GetChargeAppointDao {
 
         public void setOrgID(String OrgID) {
             this.OrgID = OrgID;
-        }
-
-        public String getOrgName() {
-            return OrgName;
-        }
-
-        public void setOrgName(String OrgName) {
-            this.OrgName = OrgName;
         }
 
         public String getFacilityID() {

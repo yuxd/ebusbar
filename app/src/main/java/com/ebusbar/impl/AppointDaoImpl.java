@@ -11,13 +11,10 @@ import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
+ * 预约订单
  * Created by Jelly on 2016/3/9.
  */
 public class AppointDaoImpl extends BaseImpl{
-    /**
-     * 访问地址
-     */
-    private static final String path = NetParam.path+"ebusbar/appoint";
     /**
      * 操作对象
      */
@@ -25,6 +22,7 @@ public class AppointDaoImpl extends BaseImpl{
 
     public AppointDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
+        execmode = "evc.order.set";
     }
 
     public AppointDaoImpl(Context context) {
@@ -32,19 +30,23 @@ public class AppointDaoImpl extends BaseImpl{
     }
 
 
-    public void getNetAppointDao(String EPId,String uid,String payId,String token){
-        if(TextUtils.isEmpty(EPId) || TextUtils.isEmpty(uid) || TextUtils.isEmpty(payId) || TextUtils.isEmpty(token)){
+    public void getAppointDao(String FacilityID,String Token,String Time,String custid){
+        if(TextUtils.isEmpty(FacilityID) || TextUtils.isEmpty(Token) || TextUtils.isEmpty(Time)||TextUtils.isEmpty(custid)){
             return;
         }
-        param.put("EPId",EPId);
-        param.put("uid",uid);
-        param.put("payId",payId);
-        param.put("token",token);
+        conditionMap.clear();
+        timestamp = NetParam.getTime();
+        conditionMap.put("Token",Token);
+        conditionMap.put("FacilityID",FacilityID);
+        conditionMap.put("OrderType","1");
+        conditionMap.put("Time",Time);
+        condition = NetParam.spliceCondition(conditionMap);
+        param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
                 if(b || TextUtils.isEmpty(s)) return;
-                appointDao = JsonUtil.objectFromJson(s,AppointDao.class);
+                appointDao = JsonUtil.arrayFormJson(s,AppointDao[].class).get(0);
                 handler.sendEmptyMessage(msg);
             }
 

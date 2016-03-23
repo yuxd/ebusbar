@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ebusbar.dao.GetChargeAppointDao;
 import com.ebusbar.utils.JsonUtil;
@@ -15,33 +16,37 @@ import com.jellycai.service.ResponseResultHandler;
  */
 public class GetChargeAppointDaoImpl extends BaseImpl{
     /**
-     * 访问地址
-     */
-    private static final String path = NetParam.path + "ebusbar/getchargeappoint";
-    /**
      * 操作对象
      */
     public GetChargeAppointDao getChargeAppointDao;
 
     public GetChargeAppointDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
+        execmode = "evc.orders.get";
     }
 
     public GetChargeAppointDaoImpl(Context context) {
         super(context);
     }
 
-    public void getNetGetChargeAppointDao(String token,String uid){
-        if(TextUtils.isEmpty(token) || TextUtils.isEmpty(uid)){
+    public void getNetGetChargeAppointDao(String Token,String custid){
+        if(TextUtils.isEmpty(Token) || TextUtils.isEmpty(custid)){
             return;
         }
-        param.put("token",token);
-        param.put("uid",uid);
+        conditionMap.clear();
+        timestamp = NetParam.getTime();
+        conditionMap.put("Token",Token);
+        conditionMap.put("OrderStatus1","1");
+        condition = NetParam.spliceCondition(conditionMap);
+        param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                if(b || TextUtils.isEmpty(s)) return;
-                getChargeAppointDao = JsonUtil.objectFromJson(s,GetChargeAppointDao.class);
+                if(!NetParam.isSuccess(b,s)) {
+                    Log.v("json",s.trim());
+                    return;
+                };
+                getChargeAppointDao = JsonUtil.arrayFormJson(s,GetChargeAppointDao[].class).get(0);
                 handler.sendEmptyMessage(msg);
             }
 

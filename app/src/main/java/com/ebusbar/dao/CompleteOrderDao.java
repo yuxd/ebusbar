@@ -1,23 +1,23 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * Created by Jelly on 2016/3/22.
  */
-public class GetChargeAppointDao {
+public class CompleteOrderDao {
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
-     * OrderStatus : 1
+     * OrderNo : EV_20160322_00000118
+     * OrderStatus : 16
      * OrderType : 1
      * CompanyID : C01
      * CustID : EV_20160321_00000077
      * OrgID : C00000001
      * OrgName : 科兴科学园
      * FacilityID : F000001
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * PlanBeginDateTime : 2016-03-22 14:12:35
+     * PlanEndDateTime : 2016-03-22 14:42:35
      */
 
     private EvcOrdersGetEntity evc_orders_get;

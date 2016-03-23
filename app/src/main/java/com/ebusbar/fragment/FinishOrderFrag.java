@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.ebusbar.adpater.AllOrderListAdapter;
+import com.ebusbar.dao.LoginDao;
+import com.ebusbar.impl.CompleteOrderDaoImpl;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
-import com.ebusbar.impl.OrderDaoImpl;
 
 /**
  * 已完成订单
@@ -37,9 +38,9 @@ public class FinishOrderFrag extends BaseFrag{
      */
     private AllOrderListAdapter adapter;
     /**
-     * OrderDaoImpl
+     * CompleteOrderDao
      */
-    private OrderDaoImpl orderDao;
+    private CompleteOrderDaoImpl completeOrderDao;
     /**
      * 获取所有订单消息
      */
@@ -73,7 +74,7 @@ public class FinishOrderFrag extends BaseFrag{
     public void loadObjectAttribute() {
         context = getActivity();
         application = (MyApplication) getActivity().getApplication();
-        orderDao = new OrderDaoImpl(context,handler,msgOrder);
+        completeOrderDao = new CompleteOrderDaoImpl(context,handler,msgOrder);
     }
 
     @Override
@@ -83,17 +84,18 @@ public class FinishOrderFrag extends BaseFrag{
 
     @Override
     public void setFragView() {
-        orderDao.getNetOrderDaos(application.getLoginDao().getCrm_login().getToken(),application.getLoginDao().getCrm_login().getCustID());
+        LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
+        completeOrderDao.getCompleteOrderDaos(data.getToken(),data.getCustID());
     }
 
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgOrder){
-                if(orderDao.orderDaos.size() == 0){
+                if(completeOrderDao.completeOrderDaos.size() == 0){
                     return;
                 }
-                adapter = new AllOrderListAdapter(context,orderDao.orderDaos);
+                adapter = new AllOrderListAdapter(context,completeOrderDao.completeOrderDaos);
                 finish_list.setAdapter(adapter);
             }
         }

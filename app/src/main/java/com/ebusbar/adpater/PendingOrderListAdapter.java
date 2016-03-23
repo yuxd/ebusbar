@@ -1,6 +1,7 @@
 package com.ebusbar.adpater;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,12 +51,18 @@ public class PendingOrderListAdapter extends BaseAdapter{
         TextView position_text = (TextView) root.findViewById(R.id.position_text);
         TextView order_time = (TextView) root.findViewById(R.id.order_time);
         TextView EPId_text = (TextView) root.findViewById(R.id.EPId_text);
-        PendingOrderDao pendingOrderDao = (PendingOrderDao) getItem(position);
-        type_text.setText(pendingOrderDao.getType());
-        state_text.setText(pendingOrderDao.getState());
-        position_text.setText(pendingOrderDao.getPosition());
-        order_time.setText(pendingOrderDao.getTime());
-        EPId_text.setText(pendingOrderDao.getEDId());
+        PendingOrderDao.EvcOrdersGetEntity data = ((PendingOrderDao) getItem(position)).getEvc_orders_get();
+        if(TextUtils.equals(data.getOrderType(),"2")){
+            type_text.setText("充电预约");
+        }
+        if(TextUtils.equals(data.getOrderStatus(),"2")){
+            state_text.setText("充电中");
+        }else {
+            state_text.setText("待支付");
+        }
+        position_text.setText(data.getOrgName());
+        order_time.setText(data.getRealBeginDateTime());
+        EPId_text.setText(data.getOrgID());
         return root;
     }
 }

@@ -158,7 +158,7 @@ public class ForgetPwdActivity extends BaseActivity{
             Log.v(TAG,"手机号码输入错误");
             return view;
         }
-        checkCodeDao.getNetCheckCodeDao(DefaultParam.FORGETCHECKCODE, phone, code);
+//        checkCodeDao.getNetCheckCodeDao(DefaultParam.FORGETCHECKCODE, phone, code);
         return view;
     }
 

@@ -7,13 +7,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.AppointDaoImpl;
-import com.ebusbar.impl.FreeEPDaoImpl;
-import com.ebusbar.impl.PayAppointDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 
 /**
@@ -46,6 +45,10 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      */
     TextView time60;
     /**
+     * 当前选择的时间
+     */
+    TextView selectTime;
+    /**
      * 预约价格
      */
     TextView appoint_price;
@@ -62,29 +65,13 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      */
     TextView name;
     /**
-     * FreeEPDaoImpl
-     */
-    private FreeEPDaoImpl freeEPDao;
-    /**
-     * 请求空闲电桩的访问消息
-     */
-    private int msgFreeEP = 0x001;
-    /**
-     *
-     */
-    private PayAppointDaoImpl payAppointDao;
-    /**
-     *
-     */
-    private int msgPay = 0x002;
-    /**
      * AppointDaoImpl
      */
     private AppointDaoImpl appointDao;
     /**
      * 预约消息
      */
-    private int msgAppoint = 0x003;
+    private int msgAppoint = 0x001;
     /**
      *
      */
@@ -115,8 +102,6 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void loadObjectAttribute() {
         intent = getIntent();
-        freeEPDao = new FreeEPDaoImpl(this,handler,msgFreeEP);
-        payAppointDao = new PayAppointDaoImpl(this,handler,msgPay);
         application = (MyApplication) getApplication();
         appointDao = new AppointDaoImpl(this,handler,msgAppoint);
     }
@@ -146,61 +131,58 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
         TextView time = (TextView) v;
         //暂时不设定预约金额
         if(time == time15){
-            time15.setBackgroundResource(R.color.time_select_color);
-            time30.setBackgroundResource(R.color.time_noselect_color);
-            time45.setBackgroundResource(R.color.time_noselect_color);
-            time60.setBackgroundResource(R.color.time_noselect_color);
+            selectTime(time);
             //appoint_price.setText("¥0.8");
         }else if(time == time30){
-            time15.setBackgroundResource(R.color.time_noselect_color);
-            time30.setBackgroundResource(R.color.time_select_color);
-            time45.setBackgroundResource(R.color.time_noselect_color);
-            time60.setBackgroundResource(R.color.time_noselect_color);
+            selectTime(time);
             //appoint_price.setText("¥1.2");
         }else if(time == time45){
-            time15.setBackgroundResource(R.color.time_noselect_color);
-            time30.setBackgroundResource(R.color.time_noselect_color);
-            time45.setBackgroundResource(R.color.time_select_color);
-            time60.setBackgroundResource(R.color.time_noselect_color);
+            selectTime(time);
             //appoint_price.setText("¥1.5");
         }else if(time == time60){
-            time15.setBackgroundResource(R.color.time_noselect_color);
-            time30.setBackgroundResource(R.color.time_noselect_color);
-            time45.setBackgroundResource(R.color.time_noselect_color);
-            time60.setBackgroundResource(R.color.time_select_color);
+            selectTime(time);
             //appoint_price.setText("¥2.0");
         }
+    }
+
+
+    /**
+     * 选择时间
+     * @param time
+     */
+    public void selectTime(TextView time){
+        time.setBackgroundResource(R.color.time_select_color);
+        if(selectTime != null) {
+            selectTime.setBackgroundResource(R.color.time_noselect_color);
+        }
+        selectTime = time;
     }
 
     /**
      * 点击预约
      */
     public View appoint(View view){
-        //payAppointDao.getNetPayAppointDao(application.getLoginDao().getUid()+"",application.getLoginDao().getToken(),appoint_price.getText().toString());
-        finish();
+        if(selectTime == null){
+            Toast.makeText(this,"请选择预约时间",Toast.LENGTH_SHORT).show();
+            return view;
+        }
+        LoginDao.CrmLoginEntity data= application.getLoginDao().getCrm_login();
+        appointDao.getAppointDao(intent.getStringExtra("FacilityID"), data.getToken(), selectTime.getText().toString().replace("分钟", ""), data.getCustID());
         return view;
     }
 
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgFreeEP){
-                if(freeEPDao.freeEPDao == null || !TextUtils.equals(freeEPDao.freeEPDao.getMessage(), "1")){
+            if(msg.what == msgAppoint){
+                if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
+                    Toast.makeText(AppointActivity.this,"预约失败，请重新预约",Toast.LENGTH_SHORT).show();
+                    ActivityControl.finishAct(AppointActivity.this);
                     return;
                 }
-                EPid_text.setText(freeEPDao.freeEPDao.getEPId());
-            }else if(msg.what == msgPay){
-                if(payAppointDao.payAppointDao == null || !TextUtils.equals(payAppointDao.payAppointDao.getMessage(),"1")){
-                    return;
-                }
-                Log.v(TAG,"开始预约");
-                appointDao.getNetAppointDao(freeEPDao.freeEPDao.getEPId(),application.getLoginDao().getCrm_login().getCustID(),payAppointDao.payAppointDao.getPayId(),application.getLoginDao().getCrm_login().getToken());
-            }else if(msg.what == msgAppoint){
-                if(appointDao.appointDao == null || !TextUtils.equals(appointDao.appointDao.getMessage(),"1")){
-                    return;
-                }
+                Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
                 ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
-                NaviEmulatorActivity.startAppActivity(AppointActivity.this,intent.getDoubleExtra("startlat",0),intent.getDoubleExtra("startlong",0),intent.getDoubleExtra("endlat",0),intent.getDoubleExtra("endlong",0));
+//                NaviEmulatorActivity.startAppActivity(AppointActivity.this,intent.getDoubleExtra("startlat",0),intent.getDoubleExtra("startlong",0),intent.getDoubleExtra("endlat",0),intent.getDoubleExtra("endlong",0));
             }
         }
     };

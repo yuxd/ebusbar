@@ -1,36 +1,35 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * Created by Jelly on 2016/3/22.
  */
-public class GetChargeAppointDao {
+public class ChargeOrderDao {
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
+     * OrderNo : EV_20160322_00000084
      * OrderStatus : 1
-     * OrderType : 1
+     * OrderType : 2
      * CompanyID : C01
      * CustID : EV_20160321_00000077
      * OrgID : C00000001
-     * OrgName : 科兴科学园
-     * FacilityID : F000001
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * FacitityID : F000001
+     * PlanBeginDateTime : 2016-03-22 10:32:50
+     * PlanEndDateTime : 2016-03-22 11:02:50
      */
 
-    private EvcOrdersGetEntity evc_orders_get;
+    private EvcOrderSetEntity evc_order_set;
 
-    public EvcOrdersGetEntity getEvc_orders_get() {
-        return evc_orders_get;
+    public EvcOrderSetEntity getEvc_order_set() {
+        return evc_order_set;
     }
 
-    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
-        this.evc_orders_get = evc_orders_get;
+    public void setEvc_order_set(EvcOrderSetEntity evc_order_set) {
+        this.evc_order_set = evc_order_set;
     }
 
-    public static class EvcOrdersGetEntity {
+    public static class EvcOrderSetEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;
@@ -39,8 +38,7 @@ public class GetChargeAppointDao {
         private String CompanyID;
         private String CustID;
         private String OrgID;
-        private String OrgName;
-        private String FacilityID;
+        private String FacitityID;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
 
@@ -108,20 +106,12 @@ public class GetChargeAppointDao {
             this.OrgID = OrgID;
         }
 
-        public String getOrgName() {
-            return OrgName;
+        public String getFacitityID() {
+            return FacitityID;
         }
 
-        public void setOrgName(String OrgName) {
-            this.OrgName = OrgName;
-        }
-
-        public String getFacilityID() {
-            return FacilityID;
-        }
-
-        public void setFacilityID(String FacilityID) {
-            this.FacilityID = FacilityID;
+        public void setFacitityID(String FacitityID) {
+            this.FacitityID = FacitityID;
         }
 
         public String getPlanBeginDateTime() {
@@ -140,4 +130,5 @@ public class GetChargeAppointDao {
             this.PlanEndDateTime = PlanEndDateTime;
         }
     }
+
 }

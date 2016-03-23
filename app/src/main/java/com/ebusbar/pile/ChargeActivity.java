@@ -12,10 +12,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.ebusbar.dao.LoginDao;
+import com.ebusbar.dao.PileInfoDao;
+import com.ebusbar.impl.ChargeOrderDaoImpl;
 import com.ebusbar.impl.FinishChargeDaoImpl;
-import com.ebusbar.impl.QRChargeDaoImpl;
+import com.ebusbar.impl.PileInfoDaoImpl;
 import com.ebusbar.myview.MyDialog;
+import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.ebusbar.utils.WindowUtil;
 
@@ -58,21 +63,13 @@ public class ChargeActivity extends BaseActivity{
      */
     private Intent intent;
     /**
-     * QRChargeDaoImpl
-     */
-    private QRChargeDaoImpl qrChargeDao;
-    /**
-     * 二维码充电消息
-     */
-    private int msgQRCharge = 0x001;
-    /**
      * FinishChargeDaoImpl
      */
     private FinishChargeDaoImpl finishChargeDao;
     /**
      * 完成充电的消息
      */
-    private int msgFinishCharge = 0x002;
+    private final int msgFinishCharge = 0x002;
     /**
      * 准备充电，点击开始充电
      */
@@ -108,7 +105,35 @@ public class ChargeActivity extends BaseActivity{
     /**
      * 请求码，支付
      */
-    private int payResquest = 0x001;
+    private final int payResquest = 0x001;
+    /**
+     * PileInfoDaoImpl
+     */
+    private PileInfoDaoImpl pileInfoDao;
+    /**
+     * 二维码获取电桩详情消息
+     */
+    private final int msgPileInfo = 0x003;
+    /**
+     * ChargeOrderDaoImpl
+     */
+    private ChargeOrderDaoImpl chargeOrderDao;
+    /**
+     * 充电消息
+     */
+    private final int msgCharge = 0x004;
+    /**
+     * 订单号
+     */
+    private String OrderNo;
+    /**
+     * 电桩号
+     */
+    private String FacilityID;
+    /**
+     * Application
+     */
+    private MyApplication application;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -133,10 +158,13 @@ public class ChargeActivity extends BaseActivity{
     @Override
     public void loadObjectAttribute() {
         intent = getIntent();
-        qrChargeDao = new QRChargeDaoImpl(this,handler,msgQRCharge);
         finishChargeDao = new FinishChargeDaoImpl(this,handler,msgFinishCharge);
+        chargeOrderDao = new ChargeOrderDaoImpl(this,handler,msgCharge);
+        pileInfoDao = new PileInfoDaoImpl(this,handler,msgPileInfo);
         popupWindowUtil = PopupWindowUtil.getInstance();
         windowUtil = WindowUtil.getInstance();
+        application = (MyApplication) getApplication();
+        OrderNo = intent.getStringExtra("OrderNo");
     }
 
     @Override
@@ -145,8 +173,19 @@ public class ChargeActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        position_text.setText(intent.getStringExtra("position"));
-        EPid_text.setText(intent.getIntExtra("EPId", 0) + "");
+        if(!TextUtils.isEmpty(intent.getStringExtra("QRId"))){ //读取二维码数据
+            pileInfoDao.getPileInfoDao(intent.getStringExtra("QRId"));
+            return;
+        }
+        position_text.setText(intent.getStringExtra("OrgName"));
+        EPid_text.setText(intent.getStringExtra("FacilityID"));
+        if(TextUtils.equals(intent.getStringExtra("OrderStatus"), "2")){
+            chargeState = CHARGEING;
+            charge_btn.setImageResource(R.drawable.click_finish);
+        }else if(TextUtils.equals(intent.getStringExtra("OrderStatus"),"4")){
+            chargeState = FINISHCHARGE;
+            charge_btn.setImageResource(R.drawable.click_pay);
+        }
     }
 
     /**
@@ -156,12 +195,16 @@ public class ChargeActivity extends BaseActivity{
      */
     public View charge(View view){
         if (TextUtils.equals(chargeState, NOCHARGE)) { //如果电桩还没有还是充电，点击开始充电
-            qrChargeDao.getNetQRChargeDao(intent.getIntExtra("EPId", 0) + "");
+            if(TextUtils.isEmpty(FacilityID)){
+                return view;
+            }
+            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            chargeOrderDao.getChargeOrderDao(FacilityID,entity.getToken(),entity.getCustID());
         } else if (TextUtils.equals(chargeState, CHARGEING)) { //充电桩正在充电，结束充电
 //                    showSureFinishPw(v, "电桩正在充电,确定结束本轮充电吗？");
             showSureFinishDialog("电桩正在充电,确定结束本轮充电吗？");
         } else if (TextUtils.equals(chargeState, FINISHCHARGE)) { //已经完成充电等待支付
-            PayActivity.startPayActivity(ChargeActivity.this, finishChargeDao.finishChargeDao.getPayType(), finishChargeDao.finishChargeDao.getPayPrice());
+//            PayActivity.startPayActivity(ChargeActivity.this, finishChargeDao.finishChargeDao.getPayType(), finishChargeDao.finishChargeDao.getPayPrice());
         }
         return view;
     }
@@ -171,7 +214,10 @@ public class ChargeActivity extends BaseActivity{
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finishChargeDao.getNetFinishChargeDao(intent.getIntExtra("EPId", 0) + "");
+                LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
+                if(!TextUtils.isEmpty(OrderNo)){
+                    finishChargeDao.getFinishChargeDao(data.getToken(),OrderNo,data.getCustID());
+                }
                 dialog.dismiss();
             }
         });
@@ -188,24 +234,39 @@ public class ChargeActivity extends BaseActivity{
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgQRCharge){
-                if(qrChargeDao.qrChargeDao == null || !TextUtils.equals(qrChargeDao.qrChargeDao.getMessage(),"1")){
-                    Log.v(TAG,"充电桩启动充电错误");
-                    return;
-                }
-                if(TextUtils.equals(chargeState,NOCHARGE)) {
-                    chargeState = CHARGEING;
-                    charge_btn.setImageResource(R.drawable.click_finish);
-                }
-            }else if(msg.what == msgFinishCharge){
-                if(finishChargeDao.finishChargeDao == null || !TextUtils.equals(finishChargeDao.finishChargeDao.getMessage(),"1")){
-                    return;
-                }
-                sureDialog.dismiss();
-                chargeState = FINISHCHARGE;
-                charge_btn.setImageResource(R.drawable.click_pay);
-                //充电完成后跳到支付界面
-                PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getPayType(),finishChargeDao.finishChargeDao.getPayPrice());
+            switch (msg.what){
+                case msgCharge:
+                    if(chargeOrderDao.chargeOrderDao == null || TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getIsSuccess(), "N")){
+                        return;
+                    }
+                    if(TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderStatus(),"2")) {
+                        chargeState = CHARGEING;
+                        charge_btn.setImageResource(R.drawable.click_finish);
+                        OrderNo = chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderNo();
+                    }
+                    break;
+                case msgFinishCharge:
+                    if(finishChargeDao.finishChargeDao == null || TextUtils.equals(finishChargeDao.finishChargeDao.getEvc_order_change().getIsSuccess(),"N")){
+                        Toast.makeText(ChargeActivity.this, "充电桩充电结束错误", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    sureDialog.dismiss();
+                    chargeState = FINISHCHARGE;
+                    charge_btn.setImageResource(R.drawable.click_pay);
+                    //充电完成后跳到支付界面
+//                PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getPayType(),finishChargeDao.finishChargeDao.getPayPrice());
+                    break;
+                case msgPileInfo:
+                    if(pileInfoDao.pileInfoDao == null || TextUtils.equals(pileInfoDao.pileInfoDao.getEvc_facility_get().getIsSuccess(), "N")){
+                        Toast.makeText(ChargeActivity.this,"二维码编号无法识别,请重新输入或者扫码",Toast.LENGTH_SHORT).show();
+                        ActivityControl.finishAct(ChargeActivity.this);
+                        return;
+                    }
+                    PileInfoDao.EvcFacilityGetEntity entity = pileInfoDao.pileInfoDao.getEvc_facility_get();
+                    position_text.setText(entity.getOrgName());
+                    EPid_text.setText(entity.getFacilityID());
+                    FacilityID = entity.getFacilityID();
+                    break;
             }
         }
     };
@@ -226,13 +287,25 @@ public class ChargeActivity extends BaseActivity{
     /**
      * 开启充电界面
      * @param context
-     * @param position 充电点
-     * @param EPId 电桩号
+     * @param OrgName 充电点
+     * @param FacilityID 电桩号
      */
-    public static void startAppActivity(Context context,String position,int EPId){
+    public static void startAppActivity(Context context,String OrgName,String FacilityID,String OrderStatus,String OrderNo){
         Intent intent = new Intent(context,ChargeActivity.class);
-        intent.putExtra("position",position);
-        intent.putExtra("EPId",EPId);
+        intent.putExtra("OrgName",OrgName);
+        intent.putExtra("FacilityID", FacilityID);
+        intent.putExtra("OrderStatus",OrderStatus);
+        intent.putExtra("OrderNo",OrderNo);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 开启充电界面
+     * @param context
+     */
+    public static void startAppActivity(Context context,String QRId){
+        Intent intent = new Intent(context,ChargeActivity.class);
+        intent.putExtra("QRId", QRId);
         context.startActivity(intent);
     }
 
