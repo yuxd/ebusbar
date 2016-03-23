@@ -22,6 +22,10 @@ public class MyApplication extends Application{
      * 登录Dao
      */
     private LoginDao loginDao;
+    /**
+     * LoginDaoImpl
+     */
+    private LoginDaoImpl loginDaoImpl;
 
     @Override
     public void onCreate() {
@@ -45,12 +49,13 @@ public class MyApplication extends Application{
      * 加载缓存登录,如果缓存中存在登录缓存，不需要重新登录
      */
     public void loadCacheLogin(){
-        LoginDaoImpl loginDaoImpl = new LoginDaoImpl(this);
+        loginDaoImpl = new LoginDaoImpl(this);
         loginDao = loginDaoImpl.getCacheObject();
         if(loginDao != null){ //如果LoginDao不为空，说明在缓存中已经有登录缓存，不需要重新登录
             isLogin = true;
         }
     }
+
 
     /**
      * 注销登录

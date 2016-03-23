@@ -8,16 +8,20 @@ public class GetChargeAppointDao {
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
+     * OrderNo : 86201603230000000165
      * OrderStatus : 1
-     * OrderType : 1
+     * OrderType : EVCP
      * CompanyID : C01
-     * CustID : EV_20160321_00000077
-     * OrgID : C00000001
-     * OrgName : 科兴科学园
-     * FacilityID : F000001
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * CustID : EV_20160319_00000057
+     * OrgID : C00000002
+     * OrgName : 深大站
+     * FacilityID : F000004
+     * ChargingAmt : 0.00
+     * ServiceAmt : 0.00
+     * ChargingQty : 0.00
+     * PlanBeginDateTime : 2016-03-23 13:55:47
+     * PlanEndDateTime : 2016-03-23 14:10:47
+     * Tel : 0755-82891087
      */
 
     private EvcOrdersGetEntity evc_orders_get;
@@ -41,8 +45,12 @@ public class GetChargeAppointDao {
         private String OrgID;
         private String OrgName;
         private String FacilityID;
+        private String ChargingAmt;
+        private String ServiceAmt;
+        private String ChargingQty;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
+        private String Tel;
 
         public String getReturnStatus() {
             return returnStatus;
@@ -124,6 +132,30 @@ public class GetChargeAppointDao {
             this.FacilityID = FacilityID;
         }
 
+        public String getChargingAmt() {
+            return ChargingAmt;
+        }
+
+        public void setChargingAmt(String ChargingAmt) {
+            this.ChargingAmt = ChargingAmt;
+        }
+
+        public String getServiceAmt() {
+            return ServiceAmt;
+        }
+
+        public void setServiceAmt(String ServiceAmt) {
+            this.ServiceAmt = ServiceAmt;
+        }
+
+        public String getChargingQty() {
+            return ChargingQty;
+        }
+
+        public void setChargingQty(String ChargingQty) {
+            this.ChargingQty = ChargingQty;
+        }
+
         public String getPlanBeginDateTime() {
             return PlanBeginDateTime;
         }
@@ -138,6 +170,14 @@ public class GetChargeAppointDao {
 
         public void setPlanEndDateTime(String PlanEndDateTime) {
             this.PlanEndDateTime = PlanEndDateTime;
+        }
+
+        public String getTel() {
+            return Tel;
+        }
+
+        public void setTel(String Tel) {
+            this.Tel = Tel;
         }
     }
 }

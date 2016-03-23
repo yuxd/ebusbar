@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,6 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.dao.LoginDao;
+import com.ebusbar.impl.LoginDaoImpl;
+import com.ebusbar.impl.SetPayPasswordDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.DefaultParam;
 
@@ -97,6 +102,23 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
      * 结果码，设置支付密码失败
      */
     public static int getSetPayPwdFail = 0x002;
+    /**
+     * SetPayPasswordDaoImpl
+     */
+    private SetPayPasswordDaoImpl setPayPasswordDao;
+    /**
+     * 设置密码消息
+     */
+    private final int msgSet = 0x003;
+
+    /**
+     * Application
+     */
+    private MyApplication application;
+    /**
+     * LoginDaoImpl
+     */
+    private LoginDaoImpl loginDao;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -134,7 +156,9 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
 
     @Override
     public void loadObjectAttribute() {
-
+        setPayPasswordDao = new SetPayPasswordDaoImpl(this,handler,msgSet);
+        application = (MyApplication) getApplication();
+        loginDao = new LoginDaoImpl(this);
     }
 
     @Override
@@ -212,20 +236,37 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
         }else if(!TextUtils.equals(payPassword1,payPassword1)){ //第二次输入和第一次输入的密码不同
             Toast.makeText(this,"请和第一次输入的密码相同或点击取消按钮重新输入!",Toast.LENGTH_SHORT).show();
         }else{ //确认支付密码
-            Log.v(TAG, payPassword);
-            setResult(setPayPwdSuccess); //模拟成功
-            ActivityControl.finishAct(this);
+            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            setPayPasswordDao.getSetPasswordDao(entity.getToken(),payPassword,entity.getCustID());
         }
         return view;
     }
+
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case msgSet:
+                    if(setPayPasswordDao.setPayPasswordDao == null || TextUtils.equals(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getIsSuccess(),"N")){
+                        return;
+                    }
+                    application.getLoginDao().getCrm_login().setExistsPayPassword("1");
+                    loginDao.loginDao = application.getLoginDao();
+                    loginDao.cacheObject();
+                    setResult(setPayPwdSuccess);
+                    Toast.makeText(SetPayPwdActivity.this,"支付密码设置成功",Toast.LENGTH_SHORT).show();
+                    ActivityControl.finishAct(SetPayPwdActivity.this);
+                    break;
+            }
+        }
+    };
 
     /**
      * 更改密码框状态
      */
     public void reInputEt(){
         int index = payPassword.length();
-        Log.v(TAG, index + "");
-        Log.v(TAG,payPassword);
         for(int i=0;i<index;i++){
             input_ets[i].setImageResource(R.drawable.paypassword_input_white);
         }

@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.ebusbar.impl.CheckCodeDaoImpl;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.utils.CountDownUtil;
 import com.ebusbar.utils.DefaultParam;
@@ -50,10 +49,6 @@ public class ForgetPwdActivity extends BaseActivity{
      */
     private CodeDaoImpl codeDao;
     /**
-     * CodeDaoImpl
-     */
-    private CheckCodeDaoImpl checkCodeDao;
-    /**
      * 获取验证码消息
      */
     private int msgCode = 0x001;
@@ -61,10 +56,6 @@ public class ForgetPwdActivity extends BaseActivity{
      * 倒计时消息
      */
     private int msgCountDown = 0x002;
-    /**
-     * 校验验证码消息
-     */
-    private int msgCheckCode = 0x003;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +69,6 @@ public class ForgetPwdActivity extends BaseActivity{
     @Override
     public void loadObjectAttribute() {
         codeDao = new CodeDaoImpl(this,handler,msgCode);
-        checkCodeDao = new CheckCodeDaoImpl(this,handler,msgCheckCode);
     }
 
     @Override
@@ -183,11 +173,6 @@ public class ForgetPwdActivity extends BaseActivity{
                     forget_pwd_code_btn.setEnabled(true);
                     forget_pwd_code_btn.setText("获取验证码");
                 }
-            }else if(msg.what == msgCheckCode){
-                if(checkCodeDao.checkCodeDao != null || !"1".equals(checkCodeDao.checkCodeDao.getMessage())){
-                    Log.v(TAG,"验证码或者手机号码输入错误");
-                }
-                SetPwdActivity.startSetPwdActivity(ForgetPwdActivity.this,forget_pwd_phone_et.getText().toString());
             }
         }
     };

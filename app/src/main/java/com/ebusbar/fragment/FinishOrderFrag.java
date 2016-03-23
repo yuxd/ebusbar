@@ -11,10 +11,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.ebusbar.adpater.AllOrderListAdapter;
+import com.ebusbar.dao.CompleteOrderDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.CompleteOrderDaoImpl;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+
+import java.util.ArrayList;
 
 /**
  * 已完成订单
@@ -95,7 +98,9 @@ public class FinishOrderFrag extends BaseFrag{
                 if(completeOrderDao.completeOrderDaos.size() == 0){
                     return;
                 }
-                adapter = new AllOrderListAdapter(context,completeOrderDao.completeOrderDaos);
+                ArrayList<CompleteOrderDao> arrayList = new ArrayList<>();
+                arrayList.addAll(completeOrderDao.completeOrderDaos);
+                adapter = new AllOrderListAdapter(context,arrayList,application.getLoginDao(),FinishOrderFrag.this);
                 finish_list.setAdapter(adapter);
             }
         }

@@ -30,6 +30,8 @@ public class GetChargeAppointDaoImpl extends BaseImpl{
     }
 
     public void getNetGetChargeAppointDao(String Token,String custid){
+        Log.v("Token",Token);
+        Log.v("custid",custid);
         if(TextUtils.isEmpty(Token) || TextUtils.isEmpty(custid)){
             return;
         }

@@ -1,40 +1,42 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * 余额支付
+ * Created by Jelly on 2016/3/23.
  */
-public class PendingOrderDao {
+public class BalancePayDao{
+
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000118
-     * OrderStatus : 16
-     * OrderType : 1
+     * OrderNo : 86201603230000000166
+     * OrderStatus : 8
+     * OrderType : EVCR
      * CompanyID : C01
-     * CustID : EV_20160321_00000077
-     * OrgID : C00000001
-     * OrgName : 科兴科学园
-     * FacilityID : F000001
+     * CustID : EV_20160319_00000057
+     * OrgID : C00000002
+     * OrgName : 深大站
+     * FacilityID : F000004
      * ChargingAmt : 0.00
      * ServiceAmt : 0.00
      * ChargingQty : 0.00
-     * PlanBeginDateTime : 2016-03-22 14:12:35
-     * PlanEndDateTime : 2016-03-22 14:42:35
+     * RealBeginDateTime : 2016-03-23 14:04:06
+     * RealEndDateTime : 2016-03-23 16:36:04
      * Tel : 0755-82891087
      */
 
-    private EvcOrdersGetEntity evc_orders_get;
+    private EvcOrderPayEntity evc_order_pay;
 
-    public EvcOrdersGetEntity getEvc_orders_get() {
-        return evc_orders_get;
+    public EvcOrderPayEntity getEvc_order_pay() {
+        return evc_order_pay;
     }
 
-    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
-        this.evc_orders_get = evc_orders_get;
+    public void setEvc_order_pay(EvcOrderPayEntity evc_order_pay) {
+        this.evc_order_pay = evc_order_pay;
     }
 
-    public static class EvcOrdersGetEntity {
+    public static class EvcOrderPayEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;
@@ -48,8 +50,8 @@ public class PendingOrderDao {
         private String ChargingAmt;
         private String ServiceAmt;
         private String ChargingQty;
-        private String PlanBeginDateTime;
-        private String PlanEndDateTime;
+        private String RealBeginDateTime;
+        private String RealEndDateTime;
         private String Tel;
 
         public String getReturnStatus() {
@@ -156,20 +158,20 @@ public class PendingOrderDao {
             this.ChargingQty = ChargingQty;
         }
 
-        public String getPlanBeginDateTime() {
-            return PlanBeginDateTime;
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
         }
 
-        public void setPlanBeginDateTime(String PlanBeginDateTime) {
-            this.PlanBeginDateTime = PlanBeginDateTime;
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
         }
 
-        public String getPlanEndDateTime() {
-            return PlanEndDateTime;
+        public String getRealEndDateTime() {
+            return RealEndDateTime;
         }
 
-        public void setPlanEndDateTime(String PlanEndDateTime) {
-            this.PlanEndDateTime = PlanEndDateTime;
+        public void setRealEndDateTime(String RealEndDateTime) {
+            this.RealEndDateTime = RealEndDateTime;
         }
 
         public String getTel() {

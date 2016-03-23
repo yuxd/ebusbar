@@ -3,55 +3,50 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.util.Log;
 
-import com.ebusbar.dao.StartChargeDao;
+import com.ebusbar.dao.SetPayPasswordDao;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
- * 开始充电
- * Created by Jelly on 2016/3/22.
+ * 设置支付密码
+ * Created by Jelly on 2016/3/23.
  */
-public class StartChargeDaoImpl extends BaseImpl{
+public class SetPayPasswordDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public StartChargeDao startChargeDao;
+    public SetPayPasswordDao setPayPasswordDao;
 
-    public StartChargeDaoImpl(Context context, Handler handler, int msg) {
+    public SetPayPasswordDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "evc.order.change";
+        execmode = "crm.paypassword.set";
     }
 
-    public StartChargeDaoImpl(Context context) {
+    public SetPayPasswordDaoImpl(Context context) {
         super(context);
     }
 
     /**
      * 获得数据
      */
-    public void getStartChargeDao(String Token,String OrderNo,String custid){
-        if(NetParam.isEmpty(Token,OrderNo,custid)){
+    public void getSetPasswordDao(String Token,String PayPassword,String custid){
+        if(NetParam.isEmpty(Token,PayPassword,custid)){
             return;
         }
         conditionMap.clear();
         timestamp = NetParam.getTime();
-        conditionMap.put("Token", Token);
-        conditionMap.put("OrderNo",OrderNo);
-        conditionMap.put("ChangeType","1");
+        conditionMap.put("Token",Token);
+        conditionMap.put("PayPassword",PayPassword);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("json",s.trim());
-                Log.v("json",s.trim());
-                if(!NetParam.isSuccess(b,s)){
-                    return;
+                if(NetParam.isSuccess(b,s)){
+                    setPayPasswordDao = JsonUtil.arrayFormJson(s,SetPayPasswordDao[].class).get(0);
                 }
-                startChargeDao = JsonUtil.arrayFormJson(s,StartChargeDao[].class).get(0);
                 handler.sendEmptyMessage(msg);
             }
 
@@ -61,4 +56,5 @@ public class StartChargeDaoImpl extends BaseImpl{
             }
         });
     }
+
 }

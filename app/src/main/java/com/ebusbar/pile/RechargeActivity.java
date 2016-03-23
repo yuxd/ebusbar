@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
+import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.PayResult;
+import com.ebusbar.impl.ReChargeDaoImpl;
 import com.ebusbar.utils.PayUtil;
 import com.jellycai.service.ThreadManage;
 
@@ -64,6 +66,30 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
      * 选择的支付方式
      */
     private ImageView selectPay;
+    /**
+     * 是否为支付测试
+     */
+    private Boolean isTest = true;
+    /**
+     * 支付订单ID
+     */
+    private String tradeNo;
+    /**
+     * ReChargeDaoImpl
+     */
+    private ReChargeDaoImpl reChargeDao;
+    /**
+     * 充值消息
+     */
+    private final int msgReCharge = 0x002;
+    /**
+     * Application
+     */
+    private MyApplication application;
+    /**
+     * 支付价格
+     */
+    private String price;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,7 +113,8 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
 
     @Override
     public void loadObjectAttribute() {
-
+        reChargeDao = new ReChargeDaoImpl(this,handler,msgReCharge);
+        application = (MyApplication) getApplication();
     }
 
     @Override
@@ -160,8 +187,14 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
         }
         switch (selectPay.getId()){
             case R.id.alipay_btn:
-                String price = selectPrice.getText().toString().replace("元","");
-                String orderInfo = PayUtil.getOrderInfo(price + "元充值卡", "巴斯巴电桩" + price + "元充值卡", price);
+                price = selectPrice.getText().toString().replace("元","");
+                String orderInfo = "";
+                tradeNo = PayUtil.getOutTradeNo();
+                if(isTest){
+                    orderInfo = PayUtil.getOrderInfo("测试支付","测试支付详情","0.01",tradeNo);
+                }else{
+                    orderInfo = PayUtil.getOrderInfo(price + "元充值卡", "巴斯巴电桩" + price + "元充值卡", price,tradeNo);
+                }
                 String sign = PayUtil.sign(orderInfo);
                 try {
                     /**
@@ -239,8 +272,8 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                     String resultStatus = payResult.getResultStatus();
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        Toast.makeText(RechargeActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
-
+                        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                        reChargeDao.getReChargeDao(entity.getToken(),price,tradeNo,"1",entity.getCustID());
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -253,6 +286,13 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                     }
                     break;
                 }
+                case msgReCharge:
+                    if(reChargeDao.reChargeDao == null || TextUtils.equals(reChargeDao.reChargeDao.getCrm_recharge().getIsSuccess(),"N")){
+                        Toast.makeText(RechargeActivity.this,"充值失败，请联系客服退款!",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Toast.makeText(RechargeActivity.this,"充值成功！",Toast.LENGTH_SHORT).show();
+                    break;
                 default:
                     break;
             }

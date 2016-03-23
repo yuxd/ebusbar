@@ -201,10 +201,9 @@ public class ChargeActivity extends BaseActivity{
             LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
             chargeOrderDao.getChargeOrderDao(FacilityID,entity.getToken(),entity.getCustID());
         } else if (TextUtils.equals(chargeState, CHARGEING)) { //充电桩正在充电，结束充电
-//                    showSureFinishPw(v, "电桩正在充电,确定结束本轮充电吗？");
             showSureFinishDialog("电桩正在充电,确定结束本轮充电吗？");
         } else if (TextUtils.equals(chargeState, FINISHCHARGE)) { //已经完成充电等待支付
-//            PayActivity.startPayActivity(ChargeActivity.this, finishChargeDao.finishChargeDao.getPayType(), finishChargeDao.finishChargeDao.getPayPrice());
+            PayActivity.startPayActivity(ChargeActivity.this,intent.getStringExtra("OrderNo"));
         }
         return view;
     }
@@ -235,7 +234,7 @@ public class ChargeActivity extends BaseActivity{
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case msgCharge:
+                case msgCharge: //点击充电
                     if(chargeOrderDao.chargeOrderDao == null || TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getIsSuccess(), "N")){
                         return;
                     }
@@ -245,7 +244,7 @@ public class ChargeActivity extends BaseActivity{
                         OrderNo = chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderNo();
                     }
                     break;
-                case msgFinishCharge:
+                case msgFinishCharge: //完成充电
                     if(finishChargeDao.finishChargeDao == null || TextUtils.equals(finishChargeDao.finishChargeDao.getEvc_order_change().getIsSuccess(),"N")){
                         Toast.makeText(ChargeActivity.this, "充电桩充电结束错误", Toast.LENGTH_SHORT).show();
                         return;
@@ -254,7 +253,7 @@ public class ChargeActivity extends BaseActivity{
                     chargeState = FINISHCHARGE;
                     charge_btn.setImageResource(R.drawable.click_pay);
                     //充电完成后跳到支付界面
-//                PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getPayType(),finishChargeDao.finishChargeDao.getPayPrice());
+                    PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
                     break;
                 case msgPileInfo:
                     if(pileInfoDao.pileInfoDao == null || TextUtils.equals(pileInfoDao.pileInfoDao.getEvc_facility_get().getIsSuccess(), "N")){

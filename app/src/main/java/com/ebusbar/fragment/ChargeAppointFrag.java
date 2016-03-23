@@ -63,7 +63,10 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
      * 结束预约
      */
     private TextView cancel;
-
+    /**
+     * 联系电话
+     */
+    private TextView phone_text;
     /**
      * GetChargeAppointDaoImpl
      */
@@ -117,6 +120,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         appoint_time = (TextView) root.findViewById(R.id.appoint_time);
         start = (TextView) root.findViewById(R.id.start);
         cancel = (TextView) root.findViewById(R.id.cancel);
+        phone_text = (TextView) root.findViewById(R.id.phone_text);
     }
 
     @Override
@@ -182,6 +186,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
                     EPId_text.setText(data.getFacilityID());
                     appointcode_text.setText(data.getOrderNo());
                     appoint_time.setText(data.getPlanBeginDateTime());
+                    phone_text.setText(data.getTel());
                     appoint_price_text.setText("¥0.00");
                     break;
                 case msgFinish:
@@ -193,11 +198,11 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
                     getActivity().finish();
                     break;
                 case msgStart:
-                    if(startChargeDao.startChargeDao == null || TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_change().getOrderStatus(), "N")){
+                    if(startChargeDao.startChargeDao == null || TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_set().getIsSuccess(), "N")){
                         return;
                     }
-                    StartChargeDao.EvcOrderChangeEntity entity =  startChargeDao.startChargeDao.getEvc_order_change();
-                    ChargeActivity.startAppActivity(context,entity.getOrgName(),entity.getFacilityID(),entity.getOrderStatus(),entity.getOrderNo());
+                    StartChargeDao.EvcOrderSetEntity entity =  startChargeDao.startChargeDao.getEvc_order_set();
+                    ChargeActivity.startAppActivity(context, entity.getOrgName(), entity.getFacilityID(), entity.getOrderStatus(), entity.getOrderNo());
                     break;
             }
         }

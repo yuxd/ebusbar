@@ -61,7 +61,7 @@ public class PendingOrderListAdapter extends BaseAdapter{
             state_text.setText("待支付");
         }
         position_text.setText(data.getOrgName());
-        order_time.setText(data.getRealBeginDateTime());
+        order_time.setText(data.getPlanBeginDateTime());
         EPId_text.setText(data.getOrgID());
         return root;
     }

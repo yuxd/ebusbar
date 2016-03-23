@@ -1,16 +1,18 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * 获取订单详情
+ * Created by Jelly on 2016/3/23.
  */
-public class PendingOrderDao {
+public class OrderInfoDao {
+
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000118
-     * OrderStatus : 16
-     * OrderType : 1
+     * OrderNo : EV_20160322_00000125
+     * OrderStatus : 8
+     * OrderType : EVR
      * CompanyID : C01
      * CustID : EV_20160321_00000077
      * OrgID : C00000001
@@ -19,22 +21,22 @@ public class PendingOrderDao {
      * ChargingAmt : 0.00
      * ServiceAmt : 0.00
      * ChargingQty : 0.00
-     * PlanBeginDateTime : 2016-03-22 14:12:35
-     * PlanEndDateTime : 2016-03-22 14:42:35
+     * PlanBeginDateTime : 2016-03-22 14:38:22
+     * PlanEndDateTime : 2016-03-22 15:08:22
      * Tel : 0755-82891087
      */
 
-    private EvcOrdersGetEntity evc_orders_get;
+    private EvcOrderGetEntity evc_order_get;
 
-    public EvcOrdersGetEntity getEvc_orders_get() {
-        return evc_orders_get;
+    public EvcOrderGetEntity getEvc_order_get() {
+        return evc_order_get;
     }
 
-    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
-        this.evc_orders_get = evc_orders_get;
+    public void setEvc_order_get(EvcOrderGetEntity evc_order_get) {
+        this.evc_order_get = evc_order_get;
     }
 
-    public static class EvcOrdersGetEntity {
+    public static class EvcOrderGetEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;

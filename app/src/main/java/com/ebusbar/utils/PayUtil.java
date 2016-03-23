@@ -23,8 +23,7 @@ public class PayUtil {
      * create the order info. 创建订单信息
      *
      */
-    public static String getOrderInfo(String subject, String body, String price) {
-
+    public static String getOrderInfo(String subject, String body, String price , String tradeNo) {
         // 签约合作者身份ID
         String orderInfo = "partner=" + "\"" + PARTNER + "\"";
 
@@ -32,7 +31,7 @@ public class PayUtil {
         orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
 
         // 商户网站唯一订单号
-        orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+        orderInfo += "&out_trade_no=" + "\"" + tradeNo + "\"";
 
         // 商品名称
         orderInfo += "&subject=" + "\"" + subject + "\"";
@@ -78,7 +77,7 @@ public class PayUtil {
      * get the out_trade_no for an order. 生成商户订单号，该值在商户端应保持唯一（可自定义格式规范）
      *
      */
-    private static String getOutTradeNo() {
+    public static String getOutTradeNo() {
         SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss", Locale.getDefault());
         Date date = new Date();
         String key = format.format(date);

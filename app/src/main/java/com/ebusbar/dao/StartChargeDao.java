@@ -5,33 +5,32 @@ package com.ebusbar.dao;
  * Created by Jelly on 2016/3/22.
  */
 public class StartChargeDao {
-
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000133
+     * OrderNo : 86201603230000000167
      * OrderStatus : 2
-     * OrderType : EVR
+     * OrderType : EVCR
      * CompanyID : C01
      * CustID : EV_20160319_00000057
      * OrgID : C00000002
      * OrgName : 深大站
      * FacilityID : F000004
-     * PlanBeginDateTime : 2016-03-22 17:16:52
-     * PlanEndDateTime : 2016-03-22 17:46:52
+     * RealBeginDateTime : 2016-03-23 14:10:09
+     * Tel : 0755-82891087
      */
 
-    private EvcOrderChangeEntity evc_order_change;
+    private EvcOrderSetEntity evc_order_set;
 
-    public EvcOrderChangeEntity getEvc_order_change() {
-        return evc_order_change;
+    public EvcOrderSetEntity getEvc_order_set() {
+        return evc_order_set;
     }
 
-    public void setEvc_order_change(EvcOrderChangeEntity evc_order_change) {
-        this.evc_order_change = evc_order_change;
+    public void setEvc_order_set(EvcOrderSetEntity evc_order_set) {
+        this.evc_order_set = evc_order_set;
     }
 
-    public static class EvcOrderChangeEntity {
+    public static class EvcOrderSetEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;
@@ -42,8 +41,8 @@ public class StartChargeDao {
         private String OrgID;
         private String OrgName;
         private String FacilityID;
-        private String PlanBeginDateTime;
-        private String PlanEndDateTime;
+        private String RealBeginDateTime;
+        private String Tel;
 
         public String getReturnStatus() {
             return returnStatus;
@@ -125,20 +124,20 @@ public class StartChargeDao {
             this.FacilityID = FacilityID;
         }
 
-        public String getPlanBeginDateTime() {
-            return PlanBeginDateTime;
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
         }
 
-        public void setPlanBeginDateTime(String PlanBeginDateTime) {
-            this.PlanBeginDateTime = PlanBeginDateTime;
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
         }
 
-        public String getPlanEndDateTime() {
-            return PlanEndDateTime;
+        public String getTel() {
+            return Tel;
         }
 
-        public void setPlanEndDateTime(String PlanEndDateTime) {
-            this.PlanEndDateTime = PlanEndDateTime;
+        public void setTel(String Tel) {
+            this.Tel = Tel;
         }
     }
 }

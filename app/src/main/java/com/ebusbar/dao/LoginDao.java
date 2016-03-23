@@ -44,6 +44,8 @@ public class LoginDao implements Serializable{
         private String BalanceAmt;
         private String Usericon;
         private String Verified;
+        private String ExistsPayPassword;
+
 
         public String getReturnStatus() {
             return returnStatus;
@@ -131,6 +133,14 @@ public class LoginDao implements Serializable{
 
         public void setVerified(String Verified) {
             this.Verified = Verified;
+        }
+
+        public String getExistsPayPassword() {
+            return ExistsPayPassword;
+        }
+
+        public void setExistsPayPassword(String existsPayPassword) {
+            ExistsPayPassword = existsPayPassword;
         }
     }
 }

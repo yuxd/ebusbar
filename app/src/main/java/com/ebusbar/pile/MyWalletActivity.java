@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.impl.BalanceDaoImpl;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.utils.RoundBitmapUtil;
 
@@ -48,7 +49,15 @@ public class MyWalletActivity extends BaseActivity{
     /**
      * 获取头像的消息
      */
-    private int msgIcon = 0x001;
+    private final int msgIcon = 0x001;
+    /**
+     * BalanceDaoImpl
+     */
+    private BalanceDaoImpl balanceDao;
+    /**
+     * 余额消息
+     */
+    private final int msgBalance = 0x002;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +80,7 @@ public class MyWalletActivity extends BaseActivity{
     public void loadObjectAttribute() {
         application = (MyApplication) getApplication();
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
+        balanceDao = new BalanceDaoImpl(this,handler,msgBalance);
     }
 
     @Override
@@ -80,16 +90,14 @@ public class MyWalletActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        LoginDao loginDao = application.getLoginDao();
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){
-            nickname_text.setText(loginDao.getCrm_login().getCustName());
+        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+        if(!TextUtils.isEmpty(entity.getCustName())){
+            nickname_text.setText(entity.getCustName());
         }
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getUsericon())){
-            bitmapImpl.getBitmap(loginDao.getCrm_login().getUsericon());
+        if(!TextUtils.isEmpty(entity.getUsericon())){
+            bitmapImpl.getBitmap(entity.getUsericon());
         }
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getBalanceAmt())){
-            money_text.setText(loginDao.getCrm_login().getBalanceAmt());
-        }
+        balanceDao.getBalanceDao(entity.getToken(), entity.getCustID());
     }
 
     /**
@@ -105,8 +113,16 @@ public class MyWalletActivity extends BaseActivity{
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgIcon){
-                usericon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmapImpl.img));
+            switch (msg.what){
+                case msgIcon:
+                    usericon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmapImpl.img));
+                    break;
+                case msgBalance:
+                    if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getIsSuccess(),"N")){
+                        return;
+                    }
+                    money_text.setText(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
+                    break;
             }
         }
     };
