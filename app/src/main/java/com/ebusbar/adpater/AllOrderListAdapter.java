@@ -109,7 +109,7 @@ public class AllOrderListAdapter extends BaseAdapter{
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgDelete:
-                    if(deleteOrderDao.deleteOrderDao == null|| TextUtils.equals(deleteOrderDao.deleteOrderDao.getEvc_order_change().getIsSuccess(),"N")){
+                    if(deleteOrderDao.deleteOrderDao == null|| TextUtils.equals(deleteOrderDao.deleteOrderDao.getEvc_order_delete().getIsSuccess(),"N")){
                         return;
                     }
                     list.remove(deletePosition);

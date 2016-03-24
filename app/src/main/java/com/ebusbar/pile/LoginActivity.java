@@ -311,7 +311,7 @@ public class LoginActivity extends BaseActivity {
             return view;
         }
         codeDao.getNetCodeDao(DefaultParam.LOGINCODE,phone);
-        return  view;
+        return view;
     }
 
     /**

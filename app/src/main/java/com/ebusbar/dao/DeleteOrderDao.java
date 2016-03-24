@@ -5,33 +5,31 @@ package com.ebusbar.dao;
  */
 public class DeleteOrderDao{
 
-
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
-     * OrderStatus : 8
-     * OrderType : EVR
+     * OrderNo : 86201603230000000167
+     * OrderStatus : 32
+     * OrderType : EVCR
      * CompanyID : C01
-     * CustID : EV_20160321_00000077
-     * OrgID : C00000001
-     * OrgName : 科兴科学园
-     * FacilityID : F000001
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * CustID : EV_20160319_00000057
+     * OrgID : C00000002
+     * OrgName : 深大站
+     * FacilityID : F000004
+     * RealBeginDateTime : 2016-03-23 14:10:09
      */
 
-    private EvcOrderChangeEntity evc_order_change;
+    private EvcOrderDeleteEntity evc_order_delete;
 
-    public EvcOrderChangeEntity getEvc_order_change() {
-        return evc_order_change;
+    public EvcOrderDeleteEntity getEvc_order_delete() {
+        return evc_order_delete;
     }
 
-    public void setEvc_order_change(EvcOrderChangeEntity evc_order_change) {
-        this.evc_order_change = evc_order_change;
+    public void setEvc_order_delete(EvcOrderDeleteEntity evc_order_delete) {
+        this.evc_order_delete = evc_order_delete;
     }
 
-    public static class EvcOrderChangeEntity {
+    public static class EvcOrderDeleteEntity {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;
@@ -42,8 +40,7 @@ public class DeleteOrderDao{
         private String OrgID;
         private String OrgName;
         private String FacilityID;
-        private String PlanBeginDateTime;
-        private String PlanEndDateTime;
+        private String RealBeginDateTime;
 
         public String getReturnStatus() {
             return returnStatus;
@@ -125,20 +122,12 @@ public class DeleteOrderDao{
             this.FacilityID = FacilityID;
         }
 
-        public String getPlanBeginDateTime() {
-            return PlanBeginDateTime;
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
         }
 
-        public void setPlanBeginDateTime(String PlanBeginDateTime) {
-            this.PlanBeginDateTime = PlanBeginDateTime;
-        }
-
-        public String getPlanEndDateTime() {
-            return PlanEndDateTime;
-        }
-
-        public void setPlanEndDateTime(String PlanEndDateTime) {
-            this.PlanEndDateTime = PlanEndDateTime;
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
         }
     }
 }

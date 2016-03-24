@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.ebusbar.dao.PositionListItemDao;
 import com.ebusbar.utils.JsonUtil;
@@ -40,8 +41,10 @@ public class PositionDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String json) {
-                if(b || TextUtils.isEmpty(json)) return;
-                positionDaoList = JsonUtil.arrayFormJson(json,PositionListItemDao[].class);
+                Log.v("jsonPostion",json.trim());
+                if(NetParam.isSuccess(b,json)){
+                    positionDaoList = JsonUtil.arrayFormJson(json, PositionListItemDao[].class);
+                };
                 handler.sendEmptyMessage(msg);
             }
             @Override

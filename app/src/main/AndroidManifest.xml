@@ -106,21 +106,37 @@
             android:name=".MyWalletActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity android:name=".BalanceActivity"
+        <activity
+            android:name=".BalanceActivity"
+            android:launchMode="singleTask"></activity>
+
+        <activity
+            android:name=".RechargeActivity"
+            android:launchMode="singleTask"></activity>
+
+        <activity
+            android:name=".ChargeCardActivity"
+            android:launchMode="singleTask"></activity>
+
+        <activity
+            android:name=".AddChargeCardActivity"
+            android:launchMode="singleTask"></activity>
+
+        <activity android:name=".BillActivity"
             android:launchMode="singleTask"
             ></activity>
 
-        <activity android:name=".RechargeActivity"
+        <activity android:name=".DeleteChargeCardActivity"
             android:launchMode="singleTask"
             ></activity>
+
         <!-- alipay sdk begin -->
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
             android:exported="false"
             android:screenOrientation="behind"
-            android:windowSoftInputMode="adjustResize|stateHidden" >
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
         <!-- 定位需要的服务 使用2.0的定位需要加上这个 -->
         <service android:name="com.amap.api.location.APSService"></service>
         <!-- ATTENTION: This was auto-generated to add Google Play services to your project for

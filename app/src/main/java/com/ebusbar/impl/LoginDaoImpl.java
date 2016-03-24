@@ -55,6 +55,7 @@ public class LoginDaoImpl extends BaseImpl{
             service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
+                    Log.v("jsonLogin",json.trim());
                     if (b || TextUtils.isEmpty(json)) return;
                     try {
                         loginDao = JsonUtil.arrayFormJson(json,LoginDao[].class).get(0);

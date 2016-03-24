@@ -98,6 +98,7 @@
             android:layout_marginLeft="1dp"
             android:padding="10dp"
             android:background="#FFFFFF"
+            android:onClick="chargeCard"
             >
             <ImageView
                 android:id="@+id/card_icon"
@@ -152,6 +153,7 @@
             android:layout_weight="1"
             android:padding="10dp"
             android:background="#FFFFFF"
+            android:onClick="bill"
             >
 
             <ImageView

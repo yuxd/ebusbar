@@ -98,7 +98,7 @@ public class FinishOrderFrag extends BaseFrag{
                 if(completeOrderDao.completeOrderDaos.size() == 0){
                     return;
                 }
-                ArrayList<CompleteOrderDao> arrayList = new ArrayList<>();
+                ArrayList<CompleteOrderDao> arrayList = new ArrayList<CompleteOrderDao>();
                 arrayList.addAll(completeOrderDao.completeOrderDaos);
                 adapter = new AllOrderListAdapter(context,arrayList,application.getLoginDao(),FinishOrderFrag.this);
                 finish_list.setAdapter(adapter);

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BalanceDaoImpl;
 import com.ebusbar.impl.BitmapImpl;
+import com.ebusbar.impl.ChargeCardItemDaoImpl;
 import com.ebusbar.utils.RoundBitmapUtil;
 
 /**
@@ -41,7 +42,10 @@ public class MyWalletActivity extends BaseActivity{
      *
      */
     private TextView money_text;
-
+    /**
+     * 充电卡数
+     */
+    private TextView card_text;
     /**
      * bitmapImpl
      */
@@ -58,6 +62,14 @@ public class MyWalletActivity extends BaseActivity{
      * 余额消息
      */
     private final int msgBalance = 0x002;
+    /**
+     * ChargeCardItemDaoImpl
+     */
+    private ChargeCardItemDaoImpl chargeCardItemDao;
+    /**
+     * 充电卡消息
+     */
+    private final int msgChargeCard = 0x003;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +86,7 @@ public class MyWalletActivity extends BaseActivity{
         nickname_text = (TextView) this.findViewById(R.id.nickname_text);
         usericon = (ImageView) this.findViewById(R.id.usericon);
         money_text = (TextView) this.findViewById(R.id.money_text);
+        card_text = (TextView) this.findViewById(R.id.card_text);
     }
 
     @Override
@@ -81,6 +94,7 @@ public class MyWalletActivity extends BaseActivity{
         application = (MyApplication) getApplication();
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
         balanceDao = new BalanceDaoImpl(this,handler,msgBalance);
+        chargeCardItemDao = new ChargeCardItemDaoImpl(this,handler,msgChargeCard);
     }
 
     @Override
@@ -98,6 +112,7 @@ public class MyWalletActivity extends BaseActivity{
             bitmapImpl.getBitmap(entity.getUsericon());
         }
         balanceDao.getBalanceDao(entity.getToken(), entity.getCustID());
+        chargeCardItemDao.getChargeCardItemDao(entity.getToken(),entity.getCustID());
     }
 
     /**
@@ -107,6 +122,27 @@ public class MyWalletActivity extends BaseActivity{
      */
     public View balance(View view){
         BalanceActivity.startAppActivity(this);
+        return view;
+    }
+
+    /**
+     * 进入充电卡界面
+     * @param view
+     * @return
+     */
+    public View chargeCard(View view){
+        ChargeCardActivity.startAppActivity(this);
+        return view;
+    }
+
+
+    /**
+     * 打开订单界面
+     * @param view
+     * @return
+     */
+    public View bill(View view){
+        BillActivity.startAppActivity(this);
         return view;
     }
 
@@ -122,6 +158,12 @@ public class MyWalletActivity extends BaseActivity{
                         return;
                     }
                     money_text.setText(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
+                    break;
+                case msgChargeCard:
+                    if(chargeCardItemDao.chargeCardItemDaos.size() == 0){
+                        return;
+                    }
+                    card_text.setText(chargeCardItemDao.chargeCardItemDaos.size()+"");
                     break;
             }
         }

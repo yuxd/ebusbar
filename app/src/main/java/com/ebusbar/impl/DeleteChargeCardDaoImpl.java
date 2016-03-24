@@ -5,48 +5,50 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.DeleteOrderDao;
+import com.ebusbar.dao.DeleteChargeCardDao;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
- * Created by Jelly on 2016/3/23.
+ * Created by Jelly on 2016/3/24.
  */
-public class DeleteOrderDaoImpl extends BaseImpl{
+public class DeleteChargeCardDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public DeleteOrderDao deleteOrderDao;
+    public DeleteChargeCardDao deleteChargeCardDao;
 
-    public DeleteOrderDaoImpl(Context context, Handler handler, int msg) {
+    public DeleteChargeCardDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "evc.order.delete";
+        execmode = "crm.accounts.delete";
     }
 
-    public DeleteOrderDaoImpl(Context context) {
+    public DeleteChargeCardDaoImpl(Context context) {
         super(context);
     }
 
     /**
      * 获得数据
      */
-    public void getDeleteOrderDao(String Token,String OrderNo,String custid){
-        if(NetParam.isEmpty(Token,OrderNo)){
+    public void getDeleteChargeCardDao(String Token,String AccountId,String AccountPwd,String custid){
+        if(NetParam.isEmpty(Token,AccountId,AccountPwd,custid)){
             return;
         }
         conditionMap.clear();
+        Log.v("Token",Token);
+        Log.v("custid",custid);
         timestamp = NetParam.getTime();
         conditionMap.put("Token",Token);
-        conditionMap.put("OrderNo",OrderNo);
+        conditionMap.put("AccountId",AccountId);
+        conditionMap.put("AccountPwd",AccountPwd);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("json",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    deleteOrderDao = JsonUtil.arrayFormJson(s,DeleteOrderDao[].class).get(0);
+                    deleteChargeCardDao = JsonUtil.arrayFormJson(s,DeleteChargeCardDao[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }
@@ -57,5 +59,4 @@ public class DeleteOrderDaoImpl extends BaseImpl{
             }
         });
     }
-
 }
