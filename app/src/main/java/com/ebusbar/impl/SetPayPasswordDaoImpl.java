@@ -3,6 +3,7 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 
 import com.ebusbar.dao.SetPayPasswordDao;
 import com.ebusbar.utils.JsonUtil;
@@ -44,6 +45,7 @@ public class SetPayPasswordDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
+                Log.v("jsonsss",s.trim());
                 if(NetParam.isSuccess(b,s)){
                     setPayPasswordDao = JsonUtil.arrayFormJson(s,SetPayPasswordDao[].class).get(0);
                 }

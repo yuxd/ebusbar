@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="@string/open_text"
+                android:text="@string/noopen_text"
                 />
         </LinearLayout>
     </RelativeLayout>
@@ -135,15 +135,15 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="可用："
+            android:text="共有："
             />
 
         <TextView
-            android:id="@+id/available_text"
+            android:id="@+id/sum_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/available_label"
-            android:text="15"
+            android:text="0"
             android:textColor="#A5D8EE"
             />
 
@@ -152,7 +152,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@id/available_text"
+            android:layout_toRightOf="@id/sum_text"
             android:text="空闲："
             />
 
@@ -161,7 +161,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/spare_label"
-            android:text="10"
+            android:text="0"
             android:textColor="#FF0000"
             />
 

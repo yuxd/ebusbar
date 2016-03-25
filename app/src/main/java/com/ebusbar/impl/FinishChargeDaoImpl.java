@@ -50,7 +50,7 @@ public class FinishChargeDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("json",s.trim());
+                Log.v("jsonFinish",s.trim());
                 if(NetParam.isSuccess(b,s)){
                     finishChargeDao = JsonUtil.arrayFormJson(s, FinishChargeDao[].class).get(0);
                 }

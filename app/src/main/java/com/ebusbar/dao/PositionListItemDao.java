@@ -5,16 +5,19 @@ package com.ebusbar.dao;
  */
 public class PositionListItemDao {
 
+
     /**
      * returnStatus : 100
      * isSuccess : Y
      * OrgId : C00000001
      * OrgName : 科兴科学园
-     * Longitude : 113.943025
+     * Longitude : 113.930250
      * Latitude : 22.540693
      * OrgStatus : 1
      * Addr : 深圳市南山区科园路南山科技园
-     * isAvailable : 0
+     * isAvailable : 1
+     * availableNum : 2
+     * unavailableNum : 0
      */
 
     private EvcStationsGetEntity evc_stations_get;
@@ -37,6 +40,8 @@ public class PositionListItemDao {
         private String OrgStatus;
         private String Addr;
         private String isAvailable;
+        private String availableNum;
+        private String unavailableNum;
 
         public String getReturnStatus() {
             return returnStatus;
@@ -108,6 +113,22 @@ public class PositionListItemDao {
 
         public void setIsAvailable(String isAvailable) {
             this.isAvailable = isAvailable;
+        }
+
+        public String getAvailableNum() {
+            return availableNum;
+        }
+
+        public void setAvailableNum(String availableNum) {
+            this.availableNum = availableNum;
+        }
+
+        public String getUnavailableNum() {
+            return unavailableNum;
+        }
+
+        public void setUnavailableNum(String unavailableNum) {
+            this.unavailableNum = unavailableNum;
         }
     }
 }

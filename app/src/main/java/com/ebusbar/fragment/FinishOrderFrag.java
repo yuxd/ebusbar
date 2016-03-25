@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.ebusbar.adpater.AllOrderListAdapter;
@@ -36,6 +37,10 @@ public class FinishOrderFrag extends BaseFrag{
      * 列表
      */
     private ListView finish_list;
+    /**
+     * 没有数据时显示
+     */
+    private LinearLayout nodata_show;
     /**
      *
      */
@@ -71,6 +76,7 @@ public class FinishOrderFrag extends BaseFrag{
     public void init(LayoutInflater inflater, ViewGroup container) {
         root = inflater.inflate(R.layout.finishorder,container,false);
         finish_list = (ListView) root.findViewById(R.id.finish_list);
+        nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
     }
 
     @Override
@@ -96,6 +102,7 @@ public class FinishOrderFrag extends BaseFrag{
         public void handleMessage(Message msg) {
             if(msg.what == msgOrder){
                 if(completeOrderDao.completeOrderDaos.size() == 0){
+                    nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }
                 ArrayList<CompleteOrderDao> arrayList = new ArrayList<CompleteOrderDao>();

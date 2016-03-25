@@ -98,7 +98,18 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      * 加载进度条
      */
     private final int msgLoading = 0x003;
-
+    /**
+     * 是否失去焦点,用于用户在退出界面之后的，PopupWindow不能正确结束
+     */
+    private boolean isPause = false;
+    /**
+     * 是否已经成功获取结束充电的信息
+     */
+    private boolean isFinish = false;
+    /**
+     * 是否是第二次请求
+     */
+    private boolean isSecond = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,7 +153,15 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
         name.setText(intent.getStringExtra("FacilityName").replace("号充电桩", ""));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPause = true;
+    }
 
+    /**
+     * 设置时间选择
+     */
     public void setTimeBtnListener(){
         time15.setOnClickListener(this);
         time30.setOnClickListener(this);
@@ -210,11 +229,14 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                         @Override
                         public void run() {
                             try {
-                                Thread.sleep(15000);
+                                Thread.sleep(5000);
+                                handler.sendEmptyMessage(msgLoading);
+                                Thread.sleep(5000);
+                                isSecond = true; //第二次请求
+                                handler.sendEmptyMessage(msgLoading);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            handler.sendEmptyMessage(msgLoading);
                         }
                     });
 //                Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
@@ -226,18 +248,34 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                     orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), appointDao.appointDao.getEvc_order_set().getOrderNo(), entity.getCustID());
                     break;
                 case msgInfo:
+                    if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
+                        Toast.makeText(AppointActivity.this,"获取服务器数据错误，App将会再次请求数据！",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if(TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getOrderStatus(), "1")){
                         Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
+                        appointSuccess();
                     }else{
-                        Toast.makeText(AppointActivity.this,"预约失败！",Toast.LENGTH_SHORT).show();
+                        if(isSecond){
+                            isSecond = false;
+                            Toast.makeText(AppointActivity.this,"预约失败！",Toast.LENGTH_SHORT).show();
+                            appointSuccess();
+                        }
                     }
-                    ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
-                    loading.dismiss();
                     break;
             }
         }
     };
 
+    /**
+     * 预约充电成功，结束进度条和当前界面
+     */
+    public void appointSuccess(){
+        ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
+        if(loading.isShowing() && !isPause){
+            loading.dismiss();
+        }
+    }
 
     /**
      * 开始进度条

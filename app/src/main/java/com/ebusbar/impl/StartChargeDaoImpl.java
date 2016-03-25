@@ -46,7 +46,7 @@ public class StartChargeDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("json",s.trim());
+                Log.v("jsonStart",s.trim());
                 if(NetParam.isSuccess(b,s)){
                     startChargeDao = JsonUtil.arrayFormJson(s,StartChargeDao[].class).get(0);
                 }

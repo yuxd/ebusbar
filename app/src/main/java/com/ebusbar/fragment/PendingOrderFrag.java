@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.ebusbar.adpater.PendingOrderListAdapter;
@@ -36,6 +37,11 @@ public class PendingOrderFrag extends BaseFrag{
      * 待处理的List
      */
     private ListView pending_list;
+    /**
+     * 没有数据的显示
+     */
+    private LinearLayout nodata_show;
+
     /**
      * Adapter
      */
@@ -71,6 +77,7 @@ public class PendingOrderFrag extends BaseFrag{
     public void init(LayoutInflater inflater, ViewGroup container) {
         root = inflater.inflate(R.layout.pendingorder,container,false);
         pending_list = (ListView) root.findViewById(R.id.pending_list);
+        nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
     }
 
     @Override
@@ -109,6 +116,7 @@ public class PendingOrderFrag extends BaseFrag{
         public void handleMessage(Message msg) {
             if(msg.what == msgPenging){
                 if(pendingOrder.pendingOrderDaos.size() == 0){
+                    nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }
                 adapter = new PendingOrderListAdapter(context,pendingOrder.pendingOrderDaos);

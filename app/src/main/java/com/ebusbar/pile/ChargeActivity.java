@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.dao.OrderInfoDao;
 import com.ebusbar.dao.PileInfoDao;
 import com.ebusbar.impl.ChargeOrderDaoImpl;
 import com.ebusbar.impl.FinishChargeDaoImpl;
@@ -154,6 +155,14 @@ public class ChargeActivity extends BaseActivity{
      * 获取详情消息
      */
     private final int msgInfo = 0x006;
+    /**
+     * 界面是否处于失去焦点状态
+     */
+    private boolean isPause = false;
+    /**
+     * 是否处于第二次
+     */
+    private boolean isSecond = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -207,6 +216,12 @@ public class ChargeActivity extends BaseActivity{
             chargeState = FINISHCHARGE;
             charge_btn.setImageResource(R.drawable.click_pay);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPause = true;
     }
 
     /**
@@ -272,15 +287,19 @@ public class ChargeActivity extends BaseActivity{
                     }
 
                     sureDialog.dismiss();
+                    startLoading(); //开启进度条
                     ThreadManage.start(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                Thread.sleep(15000);
+                                Thread.sleep(5000);
+                                handler.sendEmptyMessage(msgLoading);
+                                Thread.sleep(5000);
+                                isSecond = true;
+                                handler.sendEmptyMessage(msgLoading);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            handler.sendEmptyMessage(msgLoading);
                         }
                     });
 //                    chargeState = FINISHCHARGE;
@@ -304,10 +323,26 @@ public class ChargeActivity extends BaseActivity{
                     orderInfoDao.getOrderInfoDaoImpl(loginEntity.getToken(),finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),loginEntity.getCustID());
                     break;
                 case msgInfo:
-                    if(orderInfoDao.orderInfoDao == null || !TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getOrderStatus(),"4")){
+                    if(orderInfoDao.orderInfoDao == null || !TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
+                        Toast.makeText(ChargeActivity.this,"获取服务器数据错误，App将会再次请求数据！",Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    loading.dismiss();
+                    OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
+                    if(orderInfoDao.orderInfoDao == null || !TextUtils.equals(evcOrderGetEntity.getOrderStatus(), "4")){
+                        if(!isSecond){ //如果是第一次获取，不会出现提示信息
+                            return;
+                        }
+                        if(TextUtils.equals(evcOrderGetEntity.getOrderStatus(),"8")){
+                            Toast.makeText(ChargeActivity.this,"您的充电时间过短，系统暂未产生金额!",Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(ChargeActivity.this, "系统正在处理，请进入订单界面完成支付!", Toast.LENGTH_SHORT).show();
+                        }
+                        finisSuccess();
+                        return;
+                    }
+                    if(!isPause || loading.isShowing()){ //结束进度条
+                        loading.dismiss();
+                    }
                     chargeState = FINISHCHARGE;
                     charge_btn.setImageResource(R.drawable.click_pay);
 //                    充电完成后跳到支付界面
@@ -319,13 +354,23 @@ public class ChargeActivity extends BaseActivity{
 
 
     /**
+     * 完成充电，结束进度条
+     */
+    public void finisSuccess(){
+        ActivityControl.finishAct(ChargeActivity.this);
+        if(!isPause && loading.isShowing()){
+            loading.dismiss();
+        }
+    }
+
+    /**
      * 开始进度条
      */
     public void startLoading(){
         PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
         WindowUtil windowUtil = WindowUtil.getInstance();
         View pw_layout = getLayoutInflater().inflate(R.layout.loading, null);
-        TextView text = (TextView) this.findViewById(R.id.text);
+        TextView text = (TextView) pw_layout.findViewById(R.id.text);
         text.setText("系统正在处理中...");
         loading = popupWindowUtil.getPopopWindow(this, pw_layout, windowUtil.getScreenWidth(this), windowUtil.getScreenHeight(this));
         loading.showAtLocation(charge_btn, Gravity.CENTER, 0, 0);

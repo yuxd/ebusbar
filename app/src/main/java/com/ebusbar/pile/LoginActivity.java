@@ -349,7 +349,7 @@ public class LoginActivity extends BaseActivity {
             if(msg.what == msgLogin){
                 if(loginDao.loginDao == null || TextUtils.isEmpty(loginDao.loginDao.getCrm_login().getToken())){
                     //用户名和密码错误需要执行的方法
-                    Toast.makeText(LoginActivity.this,"用户名和密码有误，请重新登录",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"密码或验证码有误，请重新登录",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Log.v(TAG,"登录成功");

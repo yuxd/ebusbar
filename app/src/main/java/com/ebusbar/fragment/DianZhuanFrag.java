@@ -358,20 +358,23 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         TextView free_text = (TextView) root.findViewById(R.id.free_text);
         TextView open_text = (TextView) root.findViewById(R.id.open_text);
         TextView duanzhuan_position = (TextView) root.findViewById(R.id.duanzhuan_position);
-        TextView available_text = (TextView) root.findViewById(R.id.available_text);
+        TextView sum_text = (TextView) root.findViewById(R.id.sum_text);
         TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
         TextView price = (TextView) root.findViewById(R.id.price);
-        dianzhuan_name.setText(positionDao.getEvc_stations_get().getOrgName());
-//        if(positionDao.isFree()){
-//            free_text.setText(R.string.free_text);
-//        }
-        if(TextUtils.equals(positionDao.getEvc_stations_get().getIsAvailable(),"0")){
-            open_text.setText(R.string.noopen_text);
+        PositionListItemDao.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
+        dianzhuan_name.setText(entity.getOrgName());
+        if(TextUtils.equals(entity.getIsAvailable(),"1")){
+            open_text.setText(R.string.open_text);
         }
-        duanzhuan_position.setText(positionDao.getEvc_stations_get().getAddr());
-//        available_text.setText(positionDao.getEvc_stations_get().);
-//        spare_text.setText(positionDao.getEnablednum()+"");
-//        price.setText(positionDao.getPrice() + resourceUtil.getResourceString(context, R.string.electricity_sign));
+        duanzhuan_position.setText(entity.getAddr());
+        String sum = "0";
+        if(!TextUtils.isEmpty(entity.getAvailableNum()) || !TextUtils.isEmpty(entity.getUnavailableNum())){
+            sum = Integer.parseInt(entity.getAvailableNum()) + Integer.parseInt(entity.getUnavailableNum())+"";
+        }
+        sum_text.setText(sum);
+        if(!TextUtils.equals(sum,"0")){
+            spare_text.setText(entity.getAvailableNum());
+        }
         LinearLayout nav_layout = (LinearLayout) root.findViewById(R.id.nav_layout);
         nav_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -384,7 +387,6 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
             @Override
             public void onClick(View v) {
                 SelectPileActivity.startAppActivity(context,positionDao.getEvc_stations_get().getOrgId());
-//                AppointActivity.startAppActivity(context, positionDao.getPosition(), positionDao.getPid() + "", aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), positionDao.getLatitude(), positionDao.getLongitude());
             }
         });
         markerPw = popupWindowUtil.getPopopWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) / 3);

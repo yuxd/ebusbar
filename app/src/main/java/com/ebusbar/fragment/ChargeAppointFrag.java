@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +69,11 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
      */
     private TextView phone_text;
     /**
+     * 没有数据时的显示
+     */
+    private LinearLayout nodata_show;
+
+    /**
      * GetChargeAppointDaoImpl
      */
     private GetChargeAppointDaoImpl getChargeAppointDao;
@@ -121,6 +127,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         start = (TextView) root.findViewById(R.id.start);
         cancel = (TextView) root.findViewById(R.id.cancel);
         phone_text = (TextView) root.findViewById(R.id.phone_text);
+        nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
     }
 
     @Override
@@ -178,7 +185,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
             switch (msg.what){
                 case msgGetAppoint:
                     if(getChargeAppointDao.getChargeAppointDao == null || TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
-                        Toast.makeText(context,"获取数据失败！",Toast.LENGTH_SHORT).show();
+                        nodata_show.setVisibility(View.VISIBLE);
                         return;
                     }
                     GetChargeAppointDao.EvcOrdersGetEntity data = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
@@ -198,10 +205,11 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
                     getActivity().finish();
                     break;
                 case msgStart:
-                    if(startChargeDao.startChargeDao == null || TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_set().getIsSuccess(), "N")){
+                    if(startChargeDao.startChargeDao == null || TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_change().getIsSuccess(), "N")){
+                        Toast.makeText(context,"请插好充电头！",Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    StartChargeDao.EvcOrderSetEntity entity =  startChargeDao.startChargeDao.getEvc_order_set();
+                    StartChargeDao.EvcOrderChangeEntity entity =  startChargeDao.startChargeDao.getEvc_order_change();
                     ChargeActivity.startAppActivity(context, entity.getOrgName(), entity.getFacilityID(), entity.getOrderStatus(), entity.getOrderNo());
                     break;
             }
