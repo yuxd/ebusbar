@@ -3,7 +3,6 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.util.Log;
 
 import com.ebusbar.dao.ReChargeDao;
 import com.ebusbar.utils.JsonUtil;
@@ -32,15 +31,15 @@ public class ReChargeDaoImpl extends BaseImpl{
     /**
      * 获得充电数据
      */
-    public void getReChargeDao(String Token,String Amount,String OrderNo,String Type,String custid){
-        if(NetParam.isEmpty(Token,Amount,OrderNo,Type)){
+    public void getReChargeDao(String Token,String Amount,String PayOrderNo,String Type,String custid){
+        if(NetParam.isEmpty(Token,Amount,PayOrderNo,Type)){
             return;
         }
         conditionMap.clear();
         timestamp = NetParam.getTime();
         conditionMap.put("Token",Token);
         conditionMap.put("Amount",Amount);
-        conditionMap.put("OrderNo",OrderNo);
+        conditionMap.put("PayOrderNo",PayOrderNo);
         conditionMap.put("Type",Type);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);

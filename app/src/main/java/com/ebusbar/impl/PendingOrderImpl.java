@@ -52,10 +52,9 @@ public class PendingOrderImpl extends BaseImpl{
             @Override
             public void response(boolean b, String s) {
                 Log.v("json",s.trim());
-                if (!NetParam.isSuccess(b,s)) {
-                    return;
+                if (NetParam.isSuccess(b,s)) {
+                    pendingOrderDaos = JsonUtil.arrayFormJson(s, PendingOrderDao[].class);
                 }
-                pendingOrderDaos = JsonUtil.arrayFormJson(s, PendingOrderDao[].class);
                 handler.sendEmptyMessage(msg);
             }
 

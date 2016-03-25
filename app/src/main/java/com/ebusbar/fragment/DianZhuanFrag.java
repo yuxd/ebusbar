@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -106,6 +107,10 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      */
     private ImageView qrcode;
     /**
+     * 附近
+     */
+    private TextView nearby;
+    /**
      * 筛选菜单
      */
     private PopupWindow screenPw;
@@ -177,6 +182,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         member = (ImageView)root.findViewById(R.id.member);
         location = (ImageView)root.findViewById(R.id.location);
         screen = (ImageView) root.findViewById(R.id.screen);
+        nearby = (TextView) root.findViewById(R.id.nearby);
     }
 
     @Override
@@ -196,6 +202,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         setQRListener();
         setToLocationListener(); //设置定位按钮的监听事件
         setToScreenListener(); //设置筛选PopupWindow的监听事件
+        setNearbyListener();
     }
 
     @Override
@@ -228,6 +235,20 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         }
     }
 
+    /**
+     * 设置附近电桩
+     */
+    public void setNearbyListener(){
+        nearby.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction fm = DianZhuanFrag.this.getFragmentManager().beginTransaction();
+                fm.remove(DianZhuanFrag.this);
+                fm.add(R.id.content, new NearbyFrag());
+                fm.commit();
+            }
+        });
+    }
 
 
     /**

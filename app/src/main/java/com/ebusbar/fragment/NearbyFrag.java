@@ -5,16 +5,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.ebusbar.adpater.NearbyListItemAdapter;
 import com.ebusbar.impl.PositionDaoImpl;
+import com.ebusbar.pile.FragmentTabHostActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
 
 /**
+ * 附近电桩
  * Created by Jelly on 2016/3/24.
  */
 public class NearbyFrag extends BaseFrag{
@@ -35,6 +42,14 @@ public class NearbyFrag extends BaseFrag{
      */
     private ListView list;
     /**
+     * 地图切换
+     */
+    private TextView map;
+    /**
+     * 会员头像
+     */
+    private ImageView member;
+    /**
      * PositionDaoImpl
      */
     private PositionDaoImpl positionDao;
@@ -46,6 +61,10 @@ public class NearbyFrag extends BaseFrag{
      * Application
      */
     private MyApplication application;
+    /**
+     * Adapter
+     */
+    private NearbyListItemAdapter adapter;
 
     @Nullable
     @Override
@@ -61,6 +80,8 @@ public class NearbyFrag extends BaseFrag{
     public void init(LayoutInflater inflater,ViewGroup container) {
         root = inflater.inflate(R.layout.nearby,container,false);
         list = (ListView) root.findViewById(R.id.list);
+        map = (TextView) root.findViewById(R.id.map);
+        member = (ImageView) root.findViewById(R.id.member);
     }
 
     @Override
@@ -72,12 +93,41 @@ public class NearbyFrag extends BaseFrag{
 
     @Override
     public void setListener() {
-
+        setMapListener();
+        setOpenDrawerListener();
     }
 
     @Override
     public void setFragView() {
         positionDao.getNetPositionListDao("shenzhen");
+    }
+
+    /**
+     * 当点击会员头像的时候,打开抽屉
+     */
+    public void setOpenDrawerListener(){
+        member.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTabHostActivity activity = (FragmentTabHostActivity) getActivity();
+                activity.drawerLayout.openDrawer(Gravity.LEFT); //打开左边抽屉
+            }
+        });
+    }
+
+    /**
+     * 设置切换Map的点击事件
+     */
+    public void setMapListener(){
+        map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.remove(NearbyFrag.this);
+                ft.add(R.id.content, new DianZhuanFrag());
+                ft.commit();
+            }
+        });
     }
 
     private Handler handler = new Handler(){
@@ -88,7 +138,8 @@ public class NearbyFrag extends BaseFrag{
                     if(positionDao.positionDaoList.size() == 0){
                         return;
                     }
-
+                    adapter = new NearbyListItemAdapter(context,positionDao.positionDaoList);
+                    list.setAdapter(adapter);
                     break;
             }
         }

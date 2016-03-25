@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F5F5F5"
+    android:padding="5dp"
     >
 
     <RelativeLayout
@@ -19,6 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:text="科兴科学院"
+            android:textSize="18sp"
             />
 
     </RelativeLayout>
@@ -27,11 +29,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
         android:background="#FFFFFF"
         >
 
         <TextView
+            android:id="@+id/position_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="深圳市南山区清华区充电站"
@@ -88,9 +93,13 @@
             />
 
         <TextView
+            android:id="@+id/appoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:layout_alignParentRight="true"
             android:text="预约"
             android:textColor="#FFFFFF"

@@ -7,13 +7,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.AppointDaoImpl;
+import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.PopupWindowUtil;
+import com.ebusbar.utils.WindowUtil;
+import com.jellycai.service.ThreadManage;
 
 /**
  * 预约界面
@@ -71,11 +77,28 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
     /**
      * 预约消息
      */
-    private int msgAppoint = 0x001;
+    private final int msgAppoint = 0x001;
     /**
-     *
+     * Application
      */
     private MyApplication application;
+    /**
+     * 预约进度条
+     */
+    private PopupWindow loading;
+    /**
+     * OrderInfoDaoImpl
+     */
+    private OrderInfoDaoImpl orderInfoDao;
+    /**
+     * 获取详情消息
+     */
+    private final int msgInfo = 0x002;
+    /**
+     * 加载进度条
+     */
+    private final int msgLoading = 0x003;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -104,6 +127,7 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
         intent = getIntent();
         application = (MyApplication) getApplication();
         appointDao = new AppointDaoImpl(this,handler,msgAppoint);
+        orderInfoDao = new OrderInfoDaoImpl(this,handler,msgInfo);
     }
 
     @Override
@@ -174,18 +198,57 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgAppoint){
-                if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
-                    Toast.makeText(AppointActivity.this,"预约失败，请重新预约",Toast.LENGTH_SHORT).show();
-                    ActivityControl.finishAct(AppointActivity.this);
-                    return;
-                }
-                Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
-                ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
+            switch (msg.what){
+                case msgAppoint:
+                    if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
+                        Toast.makeText(AppointActivity.this,"预约失败，请重新预约",Toast.LENGTH_SHORT).show();
+                        ActivityControl.finishAct(AppointActivity.this);
+                        return;
+                    }
+                    startLoading();
+                    ThreadManage.start(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(15000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            handler.sendEmptyMessage(msgLoading);
+                        }
+                    });
+//                Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
+//                ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
 //                NaviEmulatorActivity.startAppActivity(AppointActivity.this,intent.getDoubleExtra("startlat",0),intent.getDoubleExtra("startlong",0),intent.getDoubleExtra("endlat",0),intent.getDoubleExtra("endlong",0));
+                    break;
+                case msgLoading:
+                    LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                    orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), appointDao.appointDao.getEvc_order_set().getOrderNo(), entity.getCustID());
+                    break;
+                case msgInfo:
+                    if(TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getOrderStatus(), "1")){
+                        Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(AppointActivity.this,"预约失败！",Toast.LENGTH_SHORT).show();
+                    }
+                    ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
+                    loading.dismiss();
+                    break;
             }
         }
     };
+
+
+    /**
+     * 开始进度条
+     */
+    public void startLoading(){
+        PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
+        WindowUtil windowUtil = WindowUtil.getInstance();
+        loading = popupWindowUtil.getPopupWindow(this, R.layout.loading, windowUtil.getScreenWidth(this), windowUtil.getScreenHeight(this));
+        loading.showAtLocation(time15, Gravity.CENTER,0,0);
+    }
+
 
     /**
      * 启动界面

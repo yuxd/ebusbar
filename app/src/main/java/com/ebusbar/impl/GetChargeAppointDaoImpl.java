@@ -44,11 +44,9 @@ public class GetChargeAppointDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                if(!NetParam.isSuccess(b,s)) {
-                    Log.v("json",s.trim());
-                    return;
-                };
-                getChargeAppointDao = JsonUtil.arrayFormJson(s,GetChargeAppointDao[].class).get(0);
+                if(NetParam.isSuccess(b,s)) {
+                    getChargeAppointDao = JsonUtil.arrayFormJson(s,GetChargeAppointDao[].class).get(0);
+                }
                 handler.sendEmptyMessage(msg);
             }
 

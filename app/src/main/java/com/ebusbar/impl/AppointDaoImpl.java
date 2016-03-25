@@ -45,8 +45,9 @@ public class AppointDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                if(b || TextUtils.isEmpty(s)) return;
-                appointDao = JsonUtil.arrayFormJson(s,AppointDao[].class).get(0);
+                if(NetParam.isSuccess(b,s)){
+                    appointDao = JsonUtil.arrayFormJson(s, AppointDao[].class).get(0);
+                }
                 handler.sendEmptyMessage(msg);
             }
 

@@ -3,7 +3,6 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.text.TextUtils;
 
 import com.ebusbar.dao.FinishOrderDao;
 import com.ebusbar.utils.JsonUtil;
@@ -41,10 +40,9 @@ public class FinishOrderDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                if(b || TextUtils.isEmpty(s) || TextUtils.equals(s,"[]")){
-                    return;
+                if(NetParam.isSuccess(b,s)){
+                    finishOrderDao = JsonUtil.arrayFormJson(s, FinishOrderDao[].class).get(0);
                 }
-                finishOrderDao = JsonUtil.arrayFormJson(s,FinishOrderDao[].class).get(0);
                 handler.sendEmptyMessage(msg);
             }
 

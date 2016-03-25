@@ -56,6 +56,13 @@ public class MyApplication extends Application{
         }
     }
 
+    /**
+     * 缓存对象
+     */
+    public void cacheLogin(){
+        loginDaoImpl.cacheObject();
+    }
+
 
     /**
      * 注销登录

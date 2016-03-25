@@ -20,9 +20,9 @@ import android.widget.TextView;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.fragment.CarFrag;
-import com.ebusbar.fragment.DianZhuanFrag;
 import com.ebusbar.fragment.FixFrag;
 import com.ebusbar.fragment.ShopFrag;
+import com.ebusbar.fragment.Tab1Fragment;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.utils.RoundBitmapUtil;
 
@@ -62,7 +62,7 @@ public class FragmentTabHostActivity extends BaseActivity{
     /**
      * 内容区
      */
-    private Fragment[] contents = new Fragment[]{new DianZhuanFrag(),new CarFrag(),new FixFrag(),new ShopFrag()};
+    private Fragment[] contents = new Fragment[]{new Tab1Fragment(),new CarFrag(),new FixFrag(),new ShopFrag()};
     /**
      * 侧滑栏,设为public是为了在Fragment中能够直接调用
      */

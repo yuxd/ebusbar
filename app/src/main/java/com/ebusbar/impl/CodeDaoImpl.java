@@ -50,8 +50,9 @@ public class CodeDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b, String json) {
                 Log.v("json",json);
-                if(b || TextUtils.isEmpty(json)) return;
-                codeDao = JsonUtil.arrayFormJson(json,CodeDao[].class).get(0);
+                if(NetParam.isSuccess(b,json)){
+                    codeDao = JsonUtil.arrayFormJson(json, CodeDao[].class).get(0);
+                }
                 handler.sendEmptyMessage(msg);
             }
 

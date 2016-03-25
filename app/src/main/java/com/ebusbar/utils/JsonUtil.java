@@ -38,7 +38,8 @@ public class JsonUtil {
      */
     public static <T> List<T> arrayFormJson(String json,Class<T[]> tClass){
         T[] list = new Gson().fromJson(json,tClass);
-        return Arrays.asList(list);
+        ArrayList<T> arrayList = new ArrayList<>(Arrays.asList(list));
+        return arrayList;
     }
 
     /**

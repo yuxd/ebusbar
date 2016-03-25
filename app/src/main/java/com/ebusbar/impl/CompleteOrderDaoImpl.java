@@ -47,10 +47,9 @@ public class CompleteOrderDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                if(!NetParam.isSuccess(b,s)){
-                    return;
+                if(NetParam.isSuccess(b,s)){
+                    completeOrderDaos = JsonUtil.arrayFormJson(s,CompleteOrderDao[].class);
                 }
-                completeOrderDaos = JsonUtil.arrayFormJson(s,CompleteOrderDao[].class);
                 handler.sendEmptyMessage(msg);
             }
 

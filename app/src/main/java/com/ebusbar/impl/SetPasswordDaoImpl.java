@@ -41,8 +41,9 @@ public class SetPasswordDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b,String json) {
-                if (b || TextUtils.isEmpty(json)) return;
-                setPasswordDao = JsonUtil.objectFromJson(json,SetPasswordDao.class);
+                if(NetParam.isSuccess(b,json)){
+                    setPasswordDao = JsonUtil.objectFromJson(json, SetPasswordDao.class);
+                }
                 handler.sendEmptyMessage(msg);
             }
 

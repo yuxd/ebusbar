@@ -112,7 +112,7 @@
 
         <activity
             android:name=".RechargeActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name=".ChargeCardActivity"

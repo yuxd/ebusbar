@@ -1,5 +1,6 @@
 package com.ebusbar.pile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import com.alipay.sdk.app.PayTask;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.PayResult;
 import com.ebusbar.impl.ReChargeDaoImpl;
+import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.PayUtil;
 import com.jellycai.service.ThreadManage;
 
@@ -90,6 +92,14 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
      * 支付价格
      */
     private String price;
+    /**
+     * 充值成功
+     */
+    public static final int SUCCESS = 0x003;
+    /**
+     * 充值失败
+     */
+    public static final int FAILURE = 0X004;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -288,10 +298,18 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                 }
                 case msgReCharge:
                     if(reChargeDao.reChargeDao == null || TextUtils.equals(reChargeDao.reChargeDao.getCrm_recharge().getIsSuccess(),"N")){
-                        Toast.makeText(RechargeActivity.this,"充值失败，请联系客服退款!",Toast.LENGTH_SHORT).show();
+                        RechargeActivity.this.setResult(FAILURE);
+                        ActivityControl.finishAct(RechargeActivity.this);
                         return;
                     }
-                    Toast.makeText(RechargeActivity.this,"充值成功！",Toast.LENGTH_SHORT).show();
+                    //重置缓存
+                    application.getLoginDao().getCrm_login().setBalanceAmt(reChargeDao.reChargeDao.getCrm_recharge().getBalanceAmt());
+                    application.cacheLogin();
+                    //设置返回消息
+                    Intent intent = getIntent();
+                    intent.putExtra("ReChargePrice", price);
+                    RechargeActivity.this.setResult(SUCCESS);
+                    ActivityControl.finishAct(RechargeActivity.this);
                     break;
                 default:
                     break;
@@ -303,9 +321,10 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
      * 开启界面
      * @param context
      */
-    public static void startAppActivity(Context context){
+    public static void startAppActivity(Context context,int request){
         Intent intent = new Intent(context,RechargeActivity.class);
-        context.startActivity(intent);
+        Activity activity = (Activity) context;
+        activity.startActivityForResult(intent,request);
     }
 
     @Override

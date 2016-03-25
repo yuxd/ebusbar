@@ -17,10 +17,10 @@ import com.ebusbar.impl.AddChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 
 /**
+ * 绑定充电卡
  * Created by Jelly on 2016/3/23.
  */
 public class AddChargeCardActivity extends BaseActivity{
-
     /**
      * TAG
      */

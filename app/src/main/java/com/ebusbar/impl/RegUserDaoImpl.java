@@ -52,7 +52,9 @@ public class RegUserDaoImpl extends BaseImpl{
             public void response(boolean b, String json) {
                 Log.v("json",json.trim());
                 if(b || TextUtils.isEmpty(json)) return;
-                regUserDao = JsonUtil.arrayFormJson(json,RegUserDao[].class).get(0);
+                if(NetParam.isSuccess(b,json)){
+                    regUserDao = JsonUtil.arrayFormJson(json, RegUserDao[].class).get(0);
+                }
                 handler.sendEmptyMessage(msg);
             }
 

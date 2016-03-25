@@ -47,11 +47,9 @@ public class StartChargeDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b, String s) {
                 Log.v("json",s.trim());
-                Log.v("json",s.trim());
-                if(!NetParam.isSuccess(b,s)){
-                    return;
+                if(NetParam.isSuccess(b,s)){
+                    startChargeDao = JsonUtil.arrayFormJson(s,StartChargeDao[].class).get(0);
                 }
-                startChargeDao = JsonUtil.arrayFormJson(s,StartChargeDao[].class).get(0);
                 handler.sendEmptyMessage(msg);
             }
 

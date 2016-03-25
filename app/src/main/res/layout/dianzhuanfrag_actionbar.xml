@@ -9,12 +9,11 @@
 
     <ImageView
         android:id="@+id/member"
-        android:layout_width="40dp"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
+        android:padding="10dp"
         android:scaleType="centerInside"
         android:src="@drawable/head" />
 
@@ -24,8 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:padding="10dp"
         android:text="附近"
         android:textColor="@color/actionbar_title_color"
         />

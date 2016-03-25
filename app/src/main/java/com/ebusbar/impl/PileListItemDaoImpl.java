@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ebusbar.dao.PileListItemDao;
 import com.ebusbar.utils.JsonUtil;
@@ -46,11 +45,9 @@ public class PileListItemDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("json",s.trim());
-                if(b || TextUtils.isEmpty(s)){
-                    return;
+                if(NetParam.isSuccess(b,s)){
+                    piles = JsonUtil.arrayFormJson(s, PileListItemDao[].class);
                 }
-                piles = JsonUtil.arrayFormJson(s,PileListItemDao[].class);
                 handler.sendEmptyMessage(msg);
             }
 

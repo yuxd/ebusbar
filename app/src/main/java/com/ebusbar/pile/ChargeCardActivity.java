@@ -3,8 +3,6 @@ package com.ebusbar.pile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,8 +10,6 @@ import android.widget.ListView;
 
 import com.ebusbar.adpater.ChargeCardListAdapter;
 import com.ebusbar.dao.ChargeCardItemDao;
-import com.ebusbar.dao.LoginDao;
-import com.ebusbar.impl.ChargeCardItemDaoImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +26,9 @@ public class ChargeCardActivity extends BaseActivity{
      */
     private ListView list;
     /**
-     * ChargeCardItemDaoImpl
+     * 充电卡数据集合
      */
-    private ChargeCardItemDaoImpl chargeCardItemDao;
-    /**
-     * 获取充电卡消息
-     */
-    private final int msgCharge = 0x001;
+    private List<ChargeCardItemDao> daos;
     /**
      * Application
      */
@@ -45,6 +37,14 @@ public class ChargeCardActivity extends BaseActivity{
      * 适配器
      */
     private ChargeCardListAdapter adapter;
+    /**
+     * 添加充电卡
+     */
+    public static final int ADD = 0x001;
+    /**
+     * 删除充电卡
+     */
+    public static final int DELETE = 0x002;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +64,8 @@ public class ChargeCardActivity extends BaseActivity{
     @Override
     public void loadObjectAttribute() {
         application = (MyApplication) getApplication();
-        chargeCardItemDao = new ChargeCardItemDaoImpl(this,handler,msgCharge);
+        daos = getIntent().getParcelableArrayListExtra("daos");
+        adapter = new ChargeCardListAdapter(this,daos);
     }
 
     @Override
@@ -74,8 +75,7 @@ public class ChargeCardActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-        chargeCardItemDao.getChargeCardItemDao(entity.getToken(),entity.getCustID());
+        list.setAdapter(adapter);
     }
 
     /**
@@ -85,15 +85,18 @@ public class ChargeCardActivity extends BaseActivity{
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DeleteChargeCardActivity.startAppActivity(ChargeCardActivity.this,chargeCardItemDao.chargeCardItemDaos.get(position));
+                DeleteChargeCardActivity.startAppActivity(ChargeCardActivity.this,daos.get(position));
             }
         });
     }
 
+    /**
+     * 在每次获取焦点的时候更新列表
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        setActivityView();
+        adapter.notifyDataSetChanged(); //更新列表
     }
 
     /**
@@ -106,27 +109,13 @@ public class ChargeCardActivity extends BaseActivity{
         return view;
     }
 
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case msgCharge:
-                    if(chargeCardItemDao.chargeCardItemDaos.size() == 0){
-                        return;
-                    }
-                    List<ChargeCardItemDao> daos = new ArrayList<>(chargeCardItemDao.chargeCardItemDaos);
-                    adapter = new ChargeCardListAdapter(ChargeCardActivity.this,daos);
-                    list.setAdapter(adapter);
-                    break;
-            }
-        }
-    };
 
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context){
+    public static void startAppActivity(Context context,ArrayList<ChargeCardItemDao> daos){
         Intent intent = new Intent(context,ChargeCardActivity.class);
+        intent.putParcelableArrayListExtra("daos",daos);
         context.startActivity(intent);
     }
 

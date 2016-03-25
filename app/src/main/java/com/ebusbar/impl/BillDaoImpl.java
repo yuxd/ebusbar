@@ -3,52 +3,51 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 
-import com.ebusbar.dao.ChargeOrderDao;
+import com.ebusbar.dao.BillDao;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
+import java.util.List;
+
 /**
- * Created by Jelly on 2016/3/22.
+ * Created by Jelly on 2016/3/24.
  */
-public class ChargeOrderDaoImpl extends BaseImpl{
+public class BillDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public ChargeOrderDao chargeOrderDao;
+    public List<BillDao> billDaos;
 
-    public ChargeOrderDaoImpl(Context context, Handler handler, int msg) {
+    public BillDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "evc.order.set";
+        execmode = "crm.balancelog.get";
     }
 
-    public ChargeOrderDaoImpl(Context context) {
+    public BillDaoImpl(Context context) {
         super(context);
     }
 
     /**
-     * 获取数据
+     * 获得消费账单
      */
-    public void getChargeOrderDao(String FacilityID,String Token,String custid){
-        if(TextUtils.isEmpty(FacilityID) || TextUtils.isEmpty(Token)||TextUtils.isEmpty(custid)){
+    public void getBillDaos(String Token,String custid){
+        if(NetParam.isEmpty(Token,custid)){
             return;
         }
         conditionMap.clear();
         timestamp = NetParam.getTime();
         conditionMap.put("Token",Token);
-        conditionMap.put("FacilityID",FacilityID);
-        conditionMap.put("OrderType","2");
         condition = NetParam.spliceCondition(conditionMap);
-        param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
+        param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("json", s.trim());
+                Log.v("jsonBills",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    chargeOrderDao = JsonUtil.arrayFormJson(s, ChargeOrderDao[].class).get(0);
+                    billDaos = JsonUtil.arrayFormJson(s,BillDao[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }
@@ -59,5 +58,6 @@ public class ChargeOrderDaoImpl extends BaseImpl{
             }
         });
     }
+
 
 }

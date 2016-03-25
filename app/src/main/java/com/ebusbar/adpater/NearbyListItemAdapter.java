@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.ebusbar.dao.PositionListItemDao;
 import com.ebusbar.pile.R;
@@ -12,7 +13,7 @@ import com.ebusbar.pile.R;
 import java.util.List;
 
 /**
- *
+ * 附近电桩列表的显示器
  * Created by Jelly on 2016/3/24.
  */
 public class NearbyListItemAdapter extends BaseAdapter{
@@ -44,8 +45,11 @@ public class NearbyListItemAdapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View root = LayoutInflater.from(context).inflate(R.layout.nearby_item,null);
-//        TextView name =
-
-        return null;
+        TextView name = (TextView) root.findViewById(R.id.name);
+        TextView position_text = (TextView) root.findViewById(R.id.position_text);
+        TextView open_text = (TextView) root.findViewById(R.id.open_text);
+        TextView pile_text = (TextView) root.findViewById(R.id.pile_text);
+        TextView appoint = (TextView) root.findViewById(R.id.appoint);
+        return root;
     }
 }

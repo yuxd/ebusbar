@@ -13,9 +13,12 @@ import android.widget.TextView;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BalanceDaoImpl;
+import com.ebusbar.impl.BillDaoImpl;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.impl.ChargeCardItemDaoImpl;
 import com.ebusbar.utils.RoundBitmapUtil;
+
+import java.util.ArrayList;
 
 /**
  * 我的钱包
@@ -39,13 +42,17 @@ public class MyWalletActivity extends BaseActivity{
      */
     private ImageView usericon;
     /**
-     *
+     * 余额
      */
     private TextView money_text;
     /**
      * 充电卡数
      */
     private TextView card_text;
+    /**
+     * 账单数
+     */
+    TextView bill_text;
     /**
      * bitmapImpl
      */
@@ -70,6 +77,14 @@ public class MyWalletActivity extends BaseActivity{
      * 充电卡消息
      */
     private final int msgChargeCard = 0x003;
+    /**
+     * BillDaoImpl
+     */
+    private BillDaoImpl billDao;
+    /**
+     * 账户消息
+     */
+    private final int msgBill = 0x004;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +102,7 @@ public class MyWalletActivity extends BaseActivity{
         usericon = (ImageView) this.findViewById(R.id.usericon);
         money_text = (TextView) this.findViewById(R.id.money_text);
         card_text = (TextView) this.findViewById(R.id.card_text);
+        bill_text = (TextView) this.findViewById(R.id.bill_text);
     }
 
     @Override
@@ -95,6 +111,7 @@ public class MyWalletActivity extends BaseActivity{
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
         balanceDao = new BalanceDaoImpl(this,handler,msgBalance);
         chargeCardItemDao = new ChargeCardItemDaoImpl(this,handler,msgChargeCard);
+        billDao = new BillDaoImpl(this,handler,msgBill);
     }
 
     @Override
@@ -111,8 +128,21 @@ public class MyWalletActivity extends BaseActivity{
         if(!TextUtils.isEmpty(entity.getUsericon())){
             bitmapImpl.getBitmap(entity.getUsericon());
         }
+//        if(!TextUtils.isEmpty(entity.getBalanceAmt())){
+//            money_text.setText(entity.getBalanceAmt());
+//        }
         balanceDao.getBalanceDao(entity.getToken(), entity.getCustID());
-        chargeCardItemDao.getChargeCardItemDao(entity.getToken(),entity.getCustID());
+        chargeCardItemDao.getChargeCardItemDao(entity.getToken(), entity.getCustID());
+        billDao.getBillDaos(entity.getToken(),entity.getCustID());
+    }
+
+    /**
+     * 当界面获取焦点
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setActivityView();
     }
 
     /**
@@ -121,6 +151,9 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View balance(View view){
+        if(TextUtils.isEmpty(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt())){
+            return view;
+        }
         BalanceActivity.startAppActivity(this);
         return view;
     }
@@ -131,7 +164,10 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View chargeCard(View view){
-        ChargeCardActivity.startAppActivity(this);
+        if(chargeCardItemDao.chargeCardItemDaos.size() == 0){
+            return view;
+        }
+        ChargeCardActivity.startAppActivity(this,(ArrayList)chargeCardItemDao.chargeCardItemDaos);
         return view;
     }
 
@@ -142,7 +178,10 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View bill(View view){
-        BillActivity.startAppActivity(this);
+        if(billDao.billDaos.size() == 0){
+            return view;
+        }
+        BillActivity.startAppActivity(this,(ArrayList)billDao.billDaos);
         return view;
     }
 
@@ -157,13 +196,22 @@ public class MyWalletActivity extends BaseActivity{
                     if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getIsSuccess(),"N")){
                         return;
                     }
-                    money_text.setText(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
+                    application.getLoginDao().getCrm_login().setBalanceAmt(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
+                    application.cacheLogin();
+                    application.loadCacheLogin();
+                    money_text.setText(application.getLoginDao().getCrm_login().getBalanceAmt());
                     break;
                 case msgChargeCard:
                     if(chargeCardItemDao.chargeCardItemDaos.size() == 0){
                         return;
                     }
                     card_text.setText(chargeCardItemDao.chargeCardItemDaos.size()+"");
+                    break;
+                case msgBill:
+                    if(billDao.billDaos.size() == 0){
+                        return;
+                    }
+                    bill_text.setText(billDao.billDaos.size()+"");
                     break;
             }
         }
