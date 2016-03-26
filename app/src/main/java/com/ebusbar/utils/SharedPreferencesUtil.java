@@ -2,6 +2,9 @@ package com.ebusbar.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.ebusbar.dao.LoginDao;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -55,6 +58,8 @@ public class SharedPreferencesUtil {
             ByteArrayInputStream bais = new ByteArrayInputStream(base64Bytes);
             ObjectInputStream ois = new ObjectInputStream(bais);
             object = ois.readObject();
+            Log.v("已经加载缓存","已经加载缓存");
+            Log.v("Token", ((LoginDao)object).getCrm_login().getToken());
             return object;
         } catch (IOException e) {
             e.printStackTrace();

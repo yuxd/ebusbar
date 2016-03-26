@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ebusbar.adpater.ChargeCardListAdapter;
+import com.ebusbar.dao.AddChargeCardDao;
 import com.ebusbar.dao.ChargeCardItemDao;
 
 import java.util.ArrayList;
@@ -85,7 +87,7 @@ public class ChargeCardActivity extends BaseActivity{
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DeleteChargeCardActivity.startAppActivity(ChargeCardActivity.this,daos.get(position));
+                DeleteChargeCardActivity.startAppActivity(ChargeCardActivity.this, daos.get(position));
             }
         });
     }
@@ -105,10 +107,35 @@ public class ChargeCardActivity extends BaseActivity{
      * @return
      */
     public View addCard(View view){
-        AddChargeCardActivity.startAppActivity(this);
+        AddChargeCardActivity.startAppActivity(this,DELETE);
         return view;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case DELETE:
+                if(resultCode == AddChargeCardActivity.SUCCESS){
+                    Toast.makeText(ChargeCardActivity.this, "添加充电卡成功！", Toast.LENGTH_SHORT).show();
+                    AddChargeCardDao dao = data.getParcelableExtra("AddChargeCardDao");
+                    AddChargeCardDao.CrmAccountsInsertEntity insertEntity = dao.getCrm_accounts_insert();
+                    ChargeCardItemDao chargeCardItemDao = new ChargeCardItemDao();
+                    ChargeCardItemDao.CrmAccountsGetEntity entity = new ChargeCardItemDao.CrmAccountsGetEntity();
+                    entity.setAccountID(insertEntity.getAccountID());
+                    entity.setAccountNo(insertEntity.getAccountNo());
+                    entity.setAccountType(insertEntity.getAccountType());
+                    entity.setCustId(insertEntity.getCustId());
+                    entity.setIsSuccess(insertEntity.getIsSuccess());
+                    entity.setReturnStatus(insertEntity.getReturnStatus());
+                    chargeCardItemDao.setCrm_accounts_get(entity);
+                    daos.add(chargeCardItemDao);
+                    adapter.notifyDataSetChanged(); //更新数据
+                }else if(resultCode == AddChargeCardActivity.FAILURE){
+                    Toast.makeText(ChargeCardActivity.this,"添加充电卡失败！",Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
 
     /**
      * 开启界面

@@ -97,6 +97,12 @@ public class FinishOrderFrag extends BaseFrag{
         completeOrderDao.getCompleteOrderDaos(data.getToken(),data.getCustID());
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setFragView();
+    }
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {

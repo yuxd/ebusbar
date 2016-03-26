@@ -210,6 +210,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         loadPosition();
     }
 
+
     /**
      * 加载电桩位置
      */
@@ -379,6 +380,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         nav_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                markerPw.dismiss();
                 NaviEmulatorActivity.startAppActivity(context, aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()));
             }
         });
@@ -386,6 +388,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         appoint_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                markerPw.dismiss();
                 SelectPileActivity.startAppActivity(context,positionDao.getEvc_stations_get().getOrgId());
             }
         });
@@ -515,6 +518,8 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        aMap.clear();
+        setFragView();
     }
 
     /**

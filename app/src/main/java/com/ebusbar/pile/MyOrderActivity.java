@@ -88,6 +88,8 @@ public class MyOrderActivity extends BaseActivity{
         myorder_vp.setAdapter(pageAdapter);
     }
 
+
+
     /**
      * 设置ViewPage的页面改变事件
      */

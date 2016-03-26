@@ -10,6 +10,7 @@ import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class BillDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public List<BillDao> billDaos;
+    public List<BillDao> billDaos = new ArrayList<>();
 
     public BillDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);

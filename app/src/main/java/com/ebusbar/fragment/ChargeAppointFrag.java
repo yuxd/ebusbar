@@ -69,10 +69,13 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
      */
     private TextView phone_text;
     /**
+     * 导航
+     */
+    private LinearLayout navigation;
+    /**
      * 没有数据时的显示
      */
     private LinearLayout nodata_show;
-
     /**
      * GetChargeAppointDaoImpl
      */
@@ -128,6 +131,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         cancel = (TextView) root.findViewById(R.id.cancel);
         phone_text = (TextView) root.findViewById(R.id.phone_text);
         nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
+        navigation = (LinearLayout) root.findViewById(R.id.navigation);
     }
 
     @Override
@@ -142,12 +146,25 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
     @Override
     public void setListener() {
         setBtnOnClickListener();
+        setNavigationListener();
     }
 
     @Override
     public void setFragView() {
         LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
         getChargeAppointDao.getNetGetChargeAppointDao(data.getToken(), data.getCustID());
+    }
+
+    /**
+     * 设置导航点击
+     */
+    public void setNavigationListener(){
+        navigation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                NaviEmulatorActivity.startAppActivity(this,getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().);
+            }
+        });
     }
 
     /**

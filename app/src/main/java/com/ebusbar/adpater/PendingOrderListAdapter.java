@@ -43,26 +43,42 @@ public class PendingOrderListAdapter extends BaseAdapter{
         return position;
     }
 
+    private class ViewHolder{
+        TextView type_text;
+        TextView state_text;
+        TextView position_text;
+        TextView order_time;
+        TextView EPId_text;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View root = LayoutInflater.from(context).inflate(R.layout.pendingorder_list_item,null);
-        TextView type_text = (TextView) root.findViewById(R.id.type_text);
-        TextView state_text = (TextView) root.findViewById(R.id.state_text);
-        TextView position_text = (TextView) root.findViewById(R.id.position_text);
-        TextView order_time = (TextView) root.findViewById(R.id.order_time);
-        TextView EPId_text = (TextView) root.findViewById(R.id.EPId_text);
+        ViewHolder viewHolder = null;
+        if(convertView == null){
+            viewHolder = new ViewHolder();
+            convertView = LayoutInflater.from(context).inflate(R.layout.pendingorder_list_item,null);
+            viewHolder.type_text = (TextView) convertView.findViewById(R.id.type_text);
+            viewHolder.state_text = (TextView) convertView.findViewById(R.id.state_text);
+            viewHolder.position_text = (TextView) convertView.findViewById(R.id.position_text);
+            viewHolder.order_time = (TextView) convertView.findViewById(R.id.order_time);
+            viewHolder.EPId_text = (TextView) convertView.findViewById(R.id.EPId_text);
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
         PendingOrderDao.EvcOrdersGetEntity data = ((PendingOrderDao) getItem(position)).getEvc_orders_get();
         if(TextUtils.equals(data.getOrderType(),"2")){
-            type_text.setText("充电预约");
+            viewHolder.type_text.setText("充电预约");
         }
         if(TextUtils.equals(data.getOrderStatus(),"2")){
-            state_text.setText("充电中");
+            viewHolder.state_text.setText("充电中");
         }else {
-            state_text.setText("待支付");
+            viewHolder.state_text.setText("待支付");
         }
-        position_text.setText(data.getOrgName());
-        order_time.setText(data.getPlanBeginDateTime());
-        EPId_text.setText(data.getOrgID());
-        return root;
+        viewHolder.state_text.setText("待支付");
+        viewHolder.position_text.setText(data.getOrgName());
+        viewHolder.order_time.setText(data.getPlanBeginDateTime());
+        viewHolder.EPId_text.setText(data.getOrgID());
+        return convertView;
     }
 }

@@ -1,9 +1,12 @@
 package com.ebusbar.dao;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Jelly on 2016/3/23.
  */
-public class AddChargeCardDao {
+public class AddChargeCardDao implements Parcelable {
 
     /**
      * returnStatus : 100
@@ -24,7 +27,7 @@ public class AddChargeCardDao {
         this.crm_accounts_insert = crm_accounts_insert;
     }
 
-    public static class CrmAccountsInsertEntity {
+    public static class CrmAccountsInsertEntity implements Parcelable {
         private String returnStatus;
         private String isSuccess;
         private String CustId;
@@ -79,5 +82,73 @@ public class AddChargeCardDao {
         public void setAccountType(String AccountType) {
             this.AccountType = AccountType;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.returnStatus);
+            dest.writeString(this.isSuccess);
+            dest.writeString(this.CustId);
+            dest.writeString(this.AccountID);
+            dest.writeString(this.AccountNo);
+            dest.writeString(this.AccountType);
+        }
+
+        public CrmAccountsInsertEntity() {
+        }
+
+        protected CrmAccountsInsertEntity(Parcel in) {
+            this.returnStatus = in.readString();
+            this.isSuccess = in.readString();
+            this.CustId = in.readString();
+            this.AccountID = in.readString();
+            this.AccountNo = in.readString();
+            this.AccountType = in.readString();
+        }
+
+        public static final Creator<CrmAccountsInsertEntity> CREATOR = new Creator<CrmAccountsInsertEntity>() {
+            @Override
+            public CrmAccountsInsertEntity createFromParcel(Parcel source) {
+                return new CrmAccountsInsertEntity(source);
+            }
+
+            @Override
+            public CrmAccountsInsertEntity[] newArray(int size) {
+                return new CrmAccountsInsertEntity[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.crm_accounts_insert, flags);
+    }
+
+    public AddChargeCardDao() {
+    }
+
+    protected AddChargeCardDao(Parcel in) {
+        this.crm_accounts_insert = in.readParcelable(CrmAccountsInsertEntity.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<AddChargeCardDao> CREATOR = new Parcelable.Creator<AddChargeCardDao>() {
+        @Override
+        public AddChargeCardDao createFromParcel(Parcel source) {
+            return new AddChargeCardDao(source);
+        }
+
+        @Override
+        public AddChargeCardDao[] newArray(int size) {
+            return new AddChargeCardDao[size];
+        }
+    };
 }

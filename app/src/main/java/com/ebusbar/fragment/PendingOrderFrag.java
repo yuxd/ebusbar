@@ -98,6 +98,12 @@ public class PendingOrderFrag extends BaseFrag{
         pendingOrder.getNetPendingOrderList(data.getToken(),data.getCustID());
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setFragView();
+    }
+
     /**
      * 设置列表的点击事件
      */

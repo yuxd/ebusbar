@@ -252,8 +252,7 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
                         return;
                     }
                     application.getLoginDao().getCrm_login().setExistsPayPassword("1");
-                    loginDao.loginDao = application.getLoginDao();
-                    loginDao.cacheObject();
+                    application.cacheLogin();
                     setResult(setPayPwdSuccess);
                     Toast.makeText(SetPayPwdActivity.this,"支付密码设置成功",Toast.LENGTH_SHORT).show();
                     ActivityControl.finishAct(SetPayPwdActivity.this);

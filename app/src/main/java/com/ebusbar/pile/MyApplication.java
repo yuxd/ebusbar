@@ -1,6 +1,7 @@
 package com.ebusbar.pile;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.LoginDaoImpl;
@@ -53,6 +54,8 @@ public class MyApplication extends Application{
         loginDao = loginDaoImpl.getCacheObject();
         if(loginDao != null){ //如果LoginDao不为空，说明在缓存中已经有登录缓存，不需要重新登录
             isLogin = true;
+        }else{
+            Log.v("获取缓存中的登录数据为空","true");
         }
     }
 
@@ -60,7 +63,8 @@ public class MyApplication extends Application{
      * 缓存对象
      */
     public void cacheLogin(){
-        loginDaoImpl.cacheObject();
+        loginDaoImpl = new LoginDaoImpl(this);
+        loginDaoImpl.cacheObject(loginDao);
     }
 
 
@@ -68,10 +72,12 @@ public class MyApplication extends Application{
      * 注销登录
      */
     public void loginOut(){
-        LoginDaoImpl loginDaoImpl = new LoginDaoImpl(this);
+        loginDaoImpl = new LoginDaoImpl(this);
         loginDaoImpl.clearCache();
         loginDao = null;
     }
+
+
 
     public LoginDao getLoginDao() {
         return loginDao;

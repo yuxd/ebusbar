@@ -71,8 +71,17 @@ public class NearbyListItemAdapter extends BaseAdapter{
         holder.position_text.setText(entity.getAddr());
         if(TextUtils.equals(entity.getIsAvailable(),"1")){
             holder.open_text.setText("对外开放");
+            holder.appoint.setBackgroundResource(R.drawable.actionbar_color_btn_bg);
+            //设置点击预约按钮的监听事件
+            holder.appoint.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    
+                }
+            });
         }else{
             holder.open_text.setText("对外封闭");
+            holder.appoint.setBackgroundResource(R.drawable.gray_color_btn_bg);
         }
         String sum = "0";
         if(!TextUtils.isEmpty(entity.getAvailableNum()) || !TextUtils.isEmpty(entity.getUnavailableNum())){
@@ -83,6 +92,9 @@ public class NearbyListItemAdapter extends BaseAdapter{
             pileInfo = sum+"个电桩，"+entity.getAvailableNum()+"个空闲";
         }
         holder.pile_text.setText(pileInfo);
+
+
+
         return convertView;
     }
 }

@@ -79,9 +79,7 @@
             android:name="com.ebusbar.pile.ChargeActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity
-            android:name="com.ebusbar.pile.AppointActivity"
-            android:launchMode="singleTask"></activity>
+        <activity android:name="com.ebusbar.pile.AppointActivity"></activity>
 
         <activity
             android:name="com.ebusbar.pile.MyAppointActivity"
@@ -110,9 +108,7 @@
             android:name=".BalanceActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity
-            android:name=".RechargeActivity"
-            ></activity>
+        <activity android:name=".RechargeActivity"></activity>
 
         <activity
             android:name=".ChargeCardActivity"
@@ -122,13 +118,13 @@
             android:name=".AddChargeCardActivity"
             android:launchMode="singleTask"></activity>
 
-        <activity android:name=".BillActivity"
-            android:launchMode="singleTask"
-            ></activity>
+        <activity
+            android:name=".BillActivity"
+            android:launchMode="singleTask"></activity>
 
-        <activity android:name=".DeleteChargeCardActivity"
-            android:launchMode="singleTask"
-            ></activity>
+        <activity
+            android:name=".DeleteChargeCardActivity"
+            android:launchMode="singleTask"></activity>
 
         <!-- alipay sdk begin -->
         <activity

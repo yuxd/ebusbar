@@ -11,9 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BitmapImpl;
+import com.ebusbar.impl.LogoutDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.RoundBitmapUtil;
 
@@ -57,11 +59,19 @@ public class AccountManageActivity extends BaseActivity{
     /**
      *
      */
-    private int msgIcon = 0x001;
+    private final int msgIcon = 0x001;
     /**
      * Application
      */
     private MyApplication application;
+    /**
+     * LogoutDaoImpl
+     */
+    private LogoutDaoImpl logoutDao;
+    /**
+     * 注销消息
+     */
+    private final int msgLogout = 0x002;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,6 +97,7 @@ public class AccountManageActivity extends BaseActivity{
     public void loadObjectAttribute() {
         application = (MyApplication) this.getApplication();
         bitmap = new BitmapImpl(this,handler,msgIcon);
+        logoutDao = new LogoutDaoImpl(this,handler,msgLogout);
     }
 
     @Override
@@ -117,17 +128,33 @@ public class AccountManageActivity extends BaseActivity{
      * 注销
      */
     public View loginOut(View view){
-        application.loginOut();
-        Log.v(TAG, "注销");
-        ActivityControl.finishAct(AccountManageActivity.this);
+        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+        logoutDao.getLogoutDao(entity.getToken(), entity.getCustID());
         return view;
     }
 
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgIcon){
-                avatar_icon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmap.img));
+            switch (msg.what){
+                case msgIcon:
+                    if(bitmap.img == null){
+                        Log.v(TAG,"获取头像失败");
+                        return;
+                    }
+                    avatar_icon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmap.img));
+                    break;
+                case msgLogout:
+                    if(logoutDao.logoutDao == null || TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getIsSuccess(),"N")){
+                        if(TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getReturnStatus(), "110")){
+                            Toast.makeText(AccountManageActivity.this,"您已经注销,无需重复注销！",Toast.LENGTH_SHORT).show();
+                        }
+                        Toast.makeText(AccountManageActivity.this,"注销失败，请检查您的网络连接",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    application.loginOut();
+                    ActivityControl.finishAct(AccountManageActivity.this);
+                    break;
             }
         }
     };

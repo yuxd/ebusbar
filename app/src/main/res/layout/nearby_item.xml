@@ -103,7 +103,7 @@
             android:layout_alignParentRight="true"
             android:text="预约"
             android:textColor="#FFFFFF"
-            android:background="#009b4c"
+            android:background="@drawable/actionbar_color_btn_bg"
             />
 
     </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.ebusbar.pile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -103,13 +104,21 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      */
     private boolean isPause = false;
     /**
-     * 是否已经成功获取结束充电的信息
-     */
-    private boolean isFinish = false;
-    /**
      * 是否是第二次请求
      */
     private boolean isSecond = false;
+    /**
+     * 是否已经预约成功
+     */
+    private boolean isSuccess = false;
+    /**
+     * 成功
+     */
+    public static final int SUCCESS = 0x004;
+    /**
+     * 失败
+     */
+    public static final int FAILURE = 0x004;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -195,7 +204,7 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      */
     public void selectTime(TextView time){
         time.setBackgroundResource(R.color.time_select_color);
-        if(selectTime != null) {
+        if(selectTime != null && selectTime != time ) {
             selectTime.setBackgroundResource(R.color.time_noselect_color);
         }
         selectTime = time;
@@ -220,7 +229,11 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
             switch (msg.what){
                 case msgAppoint:
                     if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
-                        Toast.makeText(AppointActivity.this,"预约失败，请重新预约",Toast.LENGTH_SHORT).show();
+                        if(TextUtils.equals(appointDao.appointDao.getEvc_order_set().getReturnStatus(),"117")){
+                            Toast.makeText(AppointActivity.this,"对不起，已经有人抢先一步了哦！",Toast.LENGTH_SHORT).show();
+                        }else {
+                            Toast.makeText(AppointActivity.this, "预约失败，请重新预约", Toast.LENGTH_SHORT).show();
+                        }
                         ActivityControl.finishAct(AppointActivity.this);
                         return;
                     }
@@ -232,8 +245,10 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                                 Thread.sleep(5000);
                                 handler.sendEmptyMessage(msgLoading);
                                 Thread.sleep(5000);
-                                isSecond = true; //第二次请求
-                                handler.sendEmptyMessage(msgLoading);
+                                if(!isSuccess) {
+                                    isSecond = true;
+                                    handler.sendEmptyMessage(msgLoading);
+                                }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -253,14 +268,17 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                         return;
                     }
                     if(TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getOrderStatus(), "1")){
+                        isSuccess = true;
                         Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
+                        setResult(SUCCESS);
                         appointSuccess();
                     }else{
-                        if(isSecond){
-                            isSecond = false;
-                            Toast.makeText(AppointActivity.this,"预约失败！",Toast.LENGTH_SHORT).show();
-                            appointSuccess();
+                        if(!isSecond){
+                            return;
                         }
+                        isSecond = false;
+                        setResult(FAILURE);
+                        appointSuccess();
                     }
                     break;
             }
@@ -291,12 +309,13 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
     /**
      * 启动界面
      */
-    public static void startAppActivity(Context context,String OrgName,String FacilityID,String FacilityName){
+    public static void startAppActivity(Context context,String OrgName,String FacilityID,String FacilityName,int requestCode){
         Intent intent = new Intent(context,AppointActivity.class);
         intent.putExtra("OrgName",OrgName);
         intent.putExtra("FacilityID",FacilityID);
-        intent.putExtra("FacilityName",FacilityName);
-        context.startActivity(intent);
+        intent.putExtra("FacilityName", FacilityName);
+        Activity activity = (Activity) context;
+        activity.startActivityForResult(intent,requestCode);
     }
 
     @Override

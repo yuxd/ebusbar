@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -347,14 +348,20 @@ public class LoginActivity extends BaseActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgLogin){
-                if(loginDao.loginDao == null || TextUtils.isEmpty(loginDao.loginDao.getCrm_login().getToken())){
-                    //用户名和密码错误需要执行的方法
-                    Toast.makeText(LoginActivity.this,"密码或验证码有误，请重新登录",Toast.LENGTH_SHORT).show();
+                if(loginDao.loginDao == null || TextUtils.equals(loginDao.loginDao.getCrm_login().getIsSuccess(),"N")){
+                    LoginDao.CrmLoginEntity entity = loginDao.loginDao.getCrm_login();
+                    if(TextUtils.equals(entity.getReturnStatus(),"118")){
+                        Toast.makeText(LoginActivity.this,"密码有误，请重新输入!",Toast.LENGTH_SHORT).show();
+                    }else if(TextUtils.equals(entity.getReturnStatus(),"109")){
+                        Toast.makeText(LoginActivity.this,"您输入的账户不存在，请重新输入!",Toast.LENGTH_SHORT).show();
+                    }else if(TextUtils.equals(entity.getReturnStatus(),"105")){
+                        Toast.makeText(LoginActivity.this,"登录验证码错误，请重新获取！",Toast.LENGTH_SHORT).show();
+                    }
                     return;
                 }
                 Log.v(TAG,"登录成功");
                 application.setLoginDao(loginDao.loginDao);
-                loginDao.cacheObject();
+                loginDao.cacheObject(loginDao.loginDao);
                 ActivityControl.finishExcept(FragmentTabHostActivity.STAG);
             }else if(msg.what == msgSmsCode){ //获取验证码
                 quick_code_btn.setEnabled(false);

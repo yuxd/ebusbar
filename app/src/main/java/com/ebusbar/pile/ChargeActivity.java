@@ -163,6 +163,10 @@ public class ChargeActivity extends BaseActivity{
      * 是否处于第二次
      */
     private boolean isSecond = false;
+    /**
+     * 是否成功结束
+     */
+    private boolean isFinish = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -274,11 +278,9 @@ public class ChargeActivity extends BaseActivity{
                     if(chargeOrderDao.chargeOrderDao == null || TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getIsSuccess(), "N")){
                         return;
                     }
-                    if(TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderStatus(),"2")) {
-                        chargeState = CHARGEING;
-                        charge_btn.setImageResource(R.drawable.click_finish);
-                        OrderNo = chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderNo();
-                    }
+                    chargeState = CHARGEING;
+                    charge_btn.setImageResource(R.drawable.click_finish);
+                    OrderNo = chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderNo();
                     break;
                 case msgFinishCharge: //完成充电
                     if(finishChargeDao.finishChargeDao == null || TextUtils.equals(finishChargeDao.finishChargeDao.getEvc_order_change().getIsSuccess(),"N")){
@@ -295,8 +297,10 @@ public class ChargeActivity extends BaseActivity{
                                 Thread.sleep(5000);
                                 handler.sendEmptyMessage(msgLoading);
                                 Thread.sleep(5000);
-                                isSecond = true;
-                                handler.sendEmptyMessage(msgLoading);
+                                if(!isFinish){
+                                    isSecond = true;
+                                    handler.sendEmptyMessage(msgLoading);
+                                }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -323,23 +327,28 @@ public class ChargeActivity extends BaseActivity{
                     orderInfoDao.getOrderInfoDaoImpl(loginEntity.getToken(),finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),loginEntity.getCustID());
                     break;
                 case msgInfo:
-                    if(orderInfoDao.orderInfoDao == null || !TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
+                    if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
                         Toast.makeText(ChargeActivity.this,"获取服务器数据错误，App将会再次请求数据！",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
-                    if(orderInfoDao.orderInfoDao == null || !TextUtils.equals(evcOrderGetEntity.getOrderStatus(), "4")){
-                        if(!isSecond){ //如果是第一次获取，不会出现提示信息
-                            return;
-                        }
+                    if(!TextUtils.equals(evcOrderGetEntity.getOrderStatus(), "4")){
+
                         if(TextUtils.equals(evcOrderGetEntity.getOrderStatus(),"8")){
                             Toast.makeText(ChargeActivity.this,"您的充电时间过短，系统暂未产生金额!",Toast.LENGTH_SHORT).show();
-                        }else {
+                            isFinish = true;
+                            PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
+//                            finisSuccess();
+                        } else {
+                            if(!isSecond){ //如果是第一次获取，不会出现提示信息
+                                return;
+                            }
                             Toast.makeText(ChargeActivity.this, "系统正在处理，请进入订单界面完成支付!", Toast.LENGTH_SHORT).show();
                         }
                         finisSuccess();
                         return;
                     }
+                    isFinish = true;
                     if(!isPause || loading.isShowing()){ //结束进度条
                         loading.dismiss();
                     }

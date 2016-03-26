@@ -85,6 +85,10 @@ public class MyWalletActivity extends BaseActivity{
      * 账户消息
      */
     private final int msgBill = 0x004;
+    /**
+     * 预约
+     */
+    private final int APPOINT = 0x005;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -151,7 +155,7 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View balance(View view){
-        if(TextUtils.isEmpty(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt())){
+        if(balanceDao.balanceDao == null || TextUtils.isEmpty(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt())){
             return view;
         }
         BalanceActivity.startAppActivity(this);
@@ -164,9 +168,6 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View chargeCard(View view){
-        if(chargeCardItemDao.chargeCardItemDaos.size() == 0){
-            return view;
-        }
         ChargeCardActivity.startAppActivity(this,(ArrayList)chargeCardItemDao.chargeCardItemDaos);
         return view;
     }
@@ -198,7 +199,6 @@ public class MyWalletActivity extends BaseActivity{
                     }
                     application.getLoginDao().getCrm_login().setBalanceAmt(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
                     application.cacheLogin();
-                    application.loadCacheLogin();
                     money_text.setText(application.getLoginDao().getCrm_login().getBalanceAmt());
                     break;
                 case msgChargeCard:

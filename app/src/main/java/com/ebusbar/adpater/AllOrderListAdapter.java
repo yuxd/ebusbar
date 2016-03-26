@@ -72,28 +72,44 @@ public class AllOrderListAdapter extends BaseAdapter{
         return position;
     }
 
+    private class ViewHolder {
+        TextView type_text;
+        TextView state_text;
+        TextView position_text;
+        TextView order_time;
+        TextView EPId_text;
+        TextView delete;
+    }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View item = LayoutInflater.from(context).inflate(R.layout.finishorder_list_item,null);
-        TextView type_text = (TextView) item.findViewById(R.id.type_text);
-        TextView state_text = (TextView) item.findViewById(R.id.state_text);
-        TextView position_text = (TextView) item.findViewById(R.id.position_text);
-        TextView order_time = (TextView) item.findViewById(R.id.order_time);
-        TextView EPId_text = (TextView) item.findViewById(R.id.EPId_text);
-        final TextView delete = (TextView) item.findViewById(R.id.delete);
+        ViewHolder viewHolder = null;
+        if(convertView == null){
+            viewHolder = new ViewHolder();
+            convertView = LayoutInflater.from(context).inflate(R.layout.finishorder_list_item, null);
+            viewHolder.type_text  = (TextView) convertView.findViewById(R.id.type_text);
+            viewHolder.state_text = (TextView) convertView.findViewById(R.id.state_text);
+            viewHolder.position_text = (TextView) convertView.findViewById(R.id.position_text);
+            viewHolder.order_time = (TextView) convertView.findViewById(R.id.order_time);
+            viewHolder.EPId_text = (TextView) convertView.findViewById(R.id.EPId_text);
+            viewHolder.delete = (TextView) convertView.findViewById(R.id.delete);
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
         final CompleteOrderDao.EvcOrdersGetEntity data = ((CompleteOrderDao)getItem(position)).getEvc_orders_get();
         if(TextUtils.equals(data.getOrderType(),"2")){
-            type_text.setText("电桩充电");
+            viewHolder.type_text.setText("电桩充电");
         }
         if(TextUtils.equals(data.getOrderStatus(),"8")){
-            state_text.setText("充电完成");
+            viewHolder.state_text.setText("充电完成");
         }else{
-            state_text.setText("已取消");
+            viewHolder.state_text.setText("已取消");
         }
-        position_text.setText(data.getOrgName());
-        order_time.setText(data.getPlanEndDateTime());
-        EPId_text.setText(data.getOrgID());
-        delete.setOnClickListener(new View.OnClickListener() {
+        viewHolder.position_text.setText(data.getOrgName());
+        viewHolder.order_time.setText(data.getPlanEndDateTime());
+        viewHolder.EPId_text.setText(data.getOrgID());
+        viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //删除订单
                 LoginDao.CrmLoginEntity entity = loginDao.getCrm_login();
@@ -101,7 +117,7 @@ public class AllOrderListAdapter extends BaseAdapter{
                 deleteOrderDao.getDeleteOrderDao(entity.getToken(),data.getOrderNo(),entity.getCustID());
             }
         });
-        return item;
+        return convertView;
     }
 
     private Handler handler = new Handler(){

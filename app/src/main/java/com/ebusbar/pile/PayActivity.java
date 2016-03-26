@@ -438,9 +438,13 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                     break;
                 case msgBalancePay:
                     if(balancePayDao.balancePayDao == null || TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getIsSuccess(), "N")){
-                        Toast.makeText(PayActivity.this,"支付密码错误，请重新输入",Toast.LENGTH_SHORT).show();
-                        payPassword = "";
-                        reInputEt();
+                        if(TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus(),"121")){
+                            Toast.makeText(PayActivity.this,"订单暂不能支付！",Toast.LENGTH_SHORT).show();
+                        }else if(TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus(),"115")){
+                            Toast.makeText(PayActivity.this,"支付密码错误，请重新输入",Toast.LENGTH_SHORT).show();
+                            payPassword = "";
+                            reInputEt();
+                        }
                         return;
                     }
                     Toast.makeText(PayActivity.this,"付款成功",Toast.LENGTH_SHORT).show();

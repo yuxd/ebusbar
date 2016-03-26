@@ -1,5 +1,6 @@
 package com.ebusbar.pile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.dao.AddChargeCardDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.AddChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -49,6 +51,14 @@ public class AddChargeCardActivity extends BaseActivity{
      * Application
      */
     private MyApplication application;
+    /**
+     * SUCCESS
+     */
+    public static final int SUCCESS = 0x002;
+    /**
+     * FAILURE
+     */
+    public static final int FAILURE = 0x003;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,10 +116,13 @@ public class AddChargeCardActivity extends BaseActivity{
             switch (msg.what){
                 case msgAdd:
                     if(addChargeCardDao.addChargeCardDao == null || TextUtils.equals(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getIsSuccess(), "N")){
-                        Toast.makeText(AddChargeCardActivity.this,"添加充电卡失败！",Toast.LENGTH_SHORT).show();
+                        setResult(FAILURE);
                         return;
                     }
-                    Toast.makeText(AddChargeCardActivity.this,"添加充电卡成功！",Toast.LENGTH_SHORT).show();
+                    AddChargeCardDao dao = addChargeCardDao.addChargeCardDao;
+                    Intent intent = getIntent();
+                    intent.putExtra("AddChargeCardDao",dao);
+                    setResult(SUCCESS);
                     ActivityControl.finishAct(AddChargeCardActivity.this);
                     break;
             }
@@ -117,9 +130,10 @@ public class AddChargeCardActivity extends BaseActivity{
     };
 
 
-    public static void startAppActivity(Context context){
+    public static void startAppActivity(Context context,int requestCode){
         Intent intent = new Intent(context,AddChargeCardActivity.class);
-        context.startActivity(intent);
+        Activity activity = (Activity) context;
+        activity.startActivityForResult(intent,requestCode);
     }
 
 

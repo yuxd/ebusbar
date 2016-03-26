@@ -55,6 +55,7 @@ public class LoginDaoImpl extends BaseImpl{
             service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
+                    Log.v("jsonLogin",json.trim());
                     if(NetParam.isSuccess(b,json)){
                         loginDao = JsonUtil.arrayFormJson(json,LoginDao[].class).get(0);
                     }
@@ -75,7 +76,7 @@ public class LoginDaoImpl extends BaseImpl{
             service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
-                    Log.v("json",json.trim());
+                    Log.v("jsonLogin",json.trim());
                     if (b || TextUtils.isEmpty(json)) return;
                     try {
                         loginDao = JsonUtil.arrayFormJson(json, LoginDao[].class).get(0);
@@ -95,7 +96,7 @@ public class LoginDaoImpl extends BaseImpl{
     /**
      * 缓存对象
      */
-    public void cacheObject(){
+    public void cacheObject(LoginDao loginDao){
         SharedPreferencesUtil.saveObject(context, loginDao);
     }
 
@@ -105,6 +106,9 @@ public class LoginDaoImpl extends BaseImpl{
      */
     public LoginDao getCacheObject(){
         loginDao = (LoginDao) SharedPreferencesUtil.readObject(context,loginDao.getClass().getName());
+        if(loginDao == null){
+            return null;
+        }
         return loginDao;
     }
 
@@ -112,6 +116,7 @@ public class LoginDaoImpl extends BaseImpl{
      * 清除缓存
      */
     public void clearCache(){
+        Log.v("name",loginDao.getClass().getName());
         SharedPreferencesUtil.clearObject(context,loginDao.getClass().getName());
     }
 }
