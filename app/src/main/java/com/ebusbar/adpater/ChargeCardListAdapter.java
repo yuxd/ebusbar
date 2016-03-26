@@ -41,12 +41,23 @@ public class ChargeCardListAdapter extends BaseAdapter{
         return position;
     }
 
+    private class ViewHolder{
+        TextView no;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View root = LayoutInflater.from(context).inflate(R.layout.chargecard_item,null);
-        TextView no = (TextView) root.findViewById(R.id.no);
+        ViewHolder viewHolder = null;
+        if(convertView == null){
+            viewHolder = new ViewHolder();
+            convertView = LayoutInflater.from(context).inflate(R.layout.chargecard_item,null);
+            viewHolder.no = (TextView) convertView.findViewById(R.id.no);
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
         ChargeCardItemDao dao = (ChargeCardItemDao) getItem(position);
-        no.setText(dao.getCrm_accounts_get().getAccountNo());
-        return root;
+        viewHolder.no.setText(dao.getCrm_accounts_get().getAccountNo());
+        return convertView;
     }
 }
