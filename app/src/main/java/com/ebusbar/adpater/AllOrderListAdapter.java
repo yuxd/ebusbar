@@ -1,6 +1,7 @@
 package com.ebusbar.adpater;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -9,12 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ebusbar.dao.CompleteOrderDao;
 import com.ebusbar.dao.LoginDao;
-import com.ebusbar.fragment.FinishOrderFrag;
 import com.ebusbar.impl.DeleteOrderDaoImpl;
 import com.ebusbar.pile.R;
+import com.ebusbar.utils.DialogUtil;
 
 import java.util.List;
 
@@ -46,14 +48,15 @@ public class AllOrderListAdapter extends BaseAdapter{
      * 当前需要删除的数据
      */
     private int deletePosition;
+    /**
+     * Dialog操作工具
+     */
+    private DialogUtil dialogUtil = DialogUtil.getInstance();
 
-    private FinishOrderFrag frag;
-
-    public AllOrderListAdapter(Context context,List<CompleteOrderDao> list,LoginDao loginDao,FinishOrderFrag frag) {
+    public AllOrderListAdapter(Context context,List<CompleteOrderDao> list,LoginDao loginDao) {
         this.context = context;
         this.list = list;
         this.loginDao = loginDao;
-        this.frag = frag;
         deleteOrderDao = new DeleteOrderDaoImpl(context,handler,msgDelete);
     }
 
@@ -98,9 +101,6 @@ public class AllOrderListAdapter extends BaseAdapter{
             viewHolder = (ViewHolder) convertView.getTag();
         }
         final CompleteOrderDao.EvcOrdersGetEntity data = ((CompleteOrderDao)getItem(position)).getEvc_orders_get();
-        if(TextUtils.equals(data.getOrderType(),"2")){
-            viewHolder.type_text.setText("电桩充电");
-        }
         if(TextUtils.equals(data.getOrderStatus(),"8")){
             viewHolder.state_text.setText("充电完成");
         }else{
@@ -112,9 +112,16 @@ public class AllOrderListAdapter extends BaseAdapter{
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //删除订单
-                LoginDao.CrmLoginEntity entity = loginDao.getCrm_login();
-                deletePosition = position;
-                deleteOrderDao.getDeleteOrderDao(entity.getToken(),data.getOrderNo(),entity.getCustID());
+
+                dialogUtil.showSureListenerDialog(context, "是否确认删除订单！", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        LoginDao.CrmLoginEntity entity = loginDao.getCrm_login();
+                        deletePosition = position;
+                        deleteOrderDao.getDeleteOrderDao(entity.getToken(), data.getOrderNo(), entity.getCustID());
+                    }
+                });
             }
         });
         return convertView;
@@ -126,6 +133,7 @@ public class AllOrderListAdapter extends BaseAdapter{
             switch (msg.what){
                 case msgDelete:
                     if(deleteOrderDao.deleteOrderDao == null|| TextUtils.equals(deleteOrderDao.deleteOrderDao.getEvc_order_delete().getIsSuccess(),"N")){
+                        Toast.makeText(context,"对不起，删除订单失败！",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     list.remove(deletePosition);

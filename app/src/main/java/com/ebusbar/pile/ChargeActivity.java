@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -23,10 +22,9 @@ import com.ebusbar.impl.ChargeOrderDaoImpl;
 import com.ebusbar.impl.FinishChargeDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.impl.PileInfoDaoImpl;
-import com.ebusbar.myview.MyDialog;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.DialogUtil;
 import com.ebusbar.utils.PopupWindowUtil;
-import com.ebusbar.utils.WindowUtil;
 import com.jellycai.service.ThreadManage;
 
 
@@ -64,6 +62,10 @@ public class ChargeActivity extends BaseActivity{
      */
     private ImageView charge_btn;
     /**
+     * 标题
+     */
+    private TextView title;
+    /**
      * 从上一个界面传递下来的数据
      */
     private Intent intent;
@@ -96,17 +98,13 @@ public class ChargeActivity extends BaseActivity{
      */
     private String chargeState = NOCHARGE;
     /**
-     * 确定结束的弹出框
+     * Dialog操作工具
      */
-    private MyDialog sureDialog;
+    private DialogUtil dialogUtil = DialogUtil.getInstance();
     /**
      * 弹出窗操作工具
      */
-    private PopupWindowUtil popupWindowUtil;
-    /**
-     * 窗体操作工具
-     */
-    private WindowUtil windowUtil;
+    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
     /**
      * 请求码，支付
      */
@@ -186,6 +184,7 @@ public class ChargeActivity extends BaseActivity{
         charge_degress_text = (TextView) this.findViewById(R.id.charge_degress_text);
         charge_money_text = (TextView) this.findViewById(R.id.charge_money_text);
         charge_btn = (ImageView) this.findViewById(R.id.charge_btn);
+        title = (TextView) this.findViewById(R.id.title);
     }
 
     @Override
@@ -195,8 +194,6 @@ public class ChargeActivity extends BaseActivity{
         chargeOrderDao = new ChargeOrderDaoImpl(this,handler,msgCharge);
         pileInfoDao = new PileInfoDaoImpl(this,handler,msgPileInfo);
         orderInfoDao = new OrderInfoDaoImpl(this,handler,msgInfo);
-        popupWindowUtil = PopupWindowUtil.getInstance();
-        windowUtil = WindowUtil.getInstance();
         application = (MyApplication) getApplication();
         OrderNo = intent.getStringExtra("OrderNo");
     }
@@ -213,10 +210,12 @@ public class ChargeActivity extends BaseActivity{
         }
         position_text.setText(intent.getStringExtra("OrgName"));
         EPid_text.setText(intent.getStringExtra("FacilityID"));
-        if(TextUtils.equals(intent.getStringExtra("OrderStatus"), "2")){
+        if(TextUtils.equals(intent.getStringExtra("OrderStatus"), "2")){ //充电中
+            title.setText("充电中");
             chargeState = CHARGEING;
             charge_btn.setImageResource(R.drawable.click_finish);
-        }else if(TextUtils.equals(intent.getStringExtra("OrderStatus"),"4")){
+        }else if(TextUtils.equals(intent.getStringExtra("OrderStatus"),"4")){ //待支付
+            title.setText("待支付");
             chargeState = FINISHCHARGE;
             charge_btn.setImageResource(R.drawable.click_pay);
         }
@@ -241,33 +240,20 @@ public class ChargeActivity extends BaseActivity{
             LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
             chargeOrderDao.getChargeOrderDao(FacilityID,entity.getToken(),entity.getCustID());
         } else if (TextUtils.equals(chargeState, CHARGEING)) { //充电桩正在充电，结束充电
-            showSureFinishDialog("电桩正在充电,确定结束本轮充电吗？");
+            dialogUtil.showSureListenerDialog(this, "是否结束本次充电！", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
+                    if(!TextUtils.isEmpty(OrderNo)){
+                        finishChargeDao.getFinishChargeDao(data.getToken(),OrderNo,data.getCustID());
+                    }
+                    dialog.dismiss();
+                }
+            });
         } else if (TextUtils.equals(chargeState, FINISHCHARGE)) { //已经完成充电等待支付
             PayActivity.startPayActivity(ChargeActivity.this,intent.getStringExtra("OrderNo"));
         }
         return view;
-    }
-
-    public void showSureFinishDialog(String hint){
-        MyDialog.Builder builder = new MyDialog.Builder(this).setMessage(hint);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
-                if(!TextUtils.isEmpty(OrderNo)){
-                    finishChargeDao.getFinishChargeDao(data.getToken(),OrderNo,data.getCustID());
-                }
-                dialog.dismiss();
-            }
-        });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        sureDialog = builder.create();
-        sureDialog.show();
     }
 
     private Handler handler = new Handler(){
@@ -278,6 +264,7 @@ public class ChargeActivity extends BaseActivity{
                     if(chargeOrderDao.chargeOrderDao == null || TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getIsSuccess(), "N")){
                         return;
                     }
+                    title.setText("充电中");
                     chargeState = CHARGEING;
                     charge_btn.setImageResource(R.drawable.click_finish);
                     OrderNo = chargeOrderDao.chargeOrderDao.getEvc_order_set().getOrderNo();
@@ -287,9 +274,7 @@ public class ChargeActivity extends BaseActivity{
                         Toast.makeText(ChargeActivity.this, "充电桩充电结束错误", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    sureDialog.dismiss();
-                    startLoading(); //开启进度条
+                    loading = popupWindowUtil.startLoading(ChargeActivity.this,charge_btn,"系统正在处理"); //开启进度条
                     ThreadManage.start(new Runnable() {
                         @Override
                         public void run() {
@@ -333,12 +318,11 @@ public class ChargeActivity extends BaseActivity{
                     }
                     OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
                     if(!TextUtils.equals(evcOrderGetEntity.getOrderStatus(), "4")){
-
                         if(TextUtils.equals(evcOrderGetEntity.getOrderStatus(),"8")){
                             Toast.makeText(ChargeActivity.this,"您的充电时间过短，系统暂未产生金额!",Toast.LENGTH_SHORT).show();
                             isFinish = true;
-                            PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
-//                            finisSuccess();
+//                            PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
+                            finisSuccess();
                         } else {
                             if(!isSecond){ //如果是第一次获取，不会出现提示信息
                                 return;
@@ -352,6 +336,7 @@ public class ChargeActivity extends BaseActivity{
                     if(!isPause || loading.isShowing()){ //结束进度条
                         loading.dismiss();
                     }
+                    title.setText("待支付");
                     chargeState = FINISHCHARGE;
                     charge_btn.setImageResource(R.drawable.click_pay);
 //                    充电完成后跳到支付界面
@@ -370,19 +355,6 @@ public class ChargeActivity extends BaseActivity{
         if(!isPause && loading.isShowing()){
             loading.dismiss();
         }
-    }
-
-    /**
-     * 开始进度条
-     */
-    public void startLoading(){
-        PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
-        WindowUtil windowUtil = WindowUtil.getInstance();
-        View pw_layout = getLayoutInflater().inflate(R.layout.loading, null);
-        TextView text = (TextView) pw_layout.findViewById(R.id.text);
-        text.setText("系统正在处理中...");
-        loading = popupWindowUtil.getPopopWindow(this, pw_layout, windowUtil.getScreenWidth(this), windowUtil.getScreenHeight(this));
-        loading.showAtLocation(charge_btn, Gravity.CENTER, 0, 0);
     }
 
     /**
@@ -415,6 +387,7 @@ public class ChargeActivity extends BaseActivity{
     /**
      * 开启充电界面
      * @param context
+     * @param QRId 二维码编号
      */
     public static void startAppActivity(Context context,String QRId){
         Intent intent = new Intent(context,ChargeActivity.class);

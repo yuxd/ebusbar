@@ -77,6 +77,12 @@ public class NearbyFrag extends BaseFrag{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        setFragView();
+    }
+
+    @Override
     public void init(LayoutInflater inflater,ViewGroup container) {
         root = inflater.inflate(R.layout.nearby,container,false);
         list = (ListView) root.findViewById(R.id.list);

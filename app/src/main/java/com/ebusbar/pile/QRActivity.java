@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -18,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ebusbar.utils.ActivityControl;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.zxing.camera.CameraManager;
@@ -151,12 +151,11 @@ public class QRActivity extends BaseActivity implements SurfaceHolder.Callback{
 //            bundle.putParcelable("bitmap", barcode);
 //            resultIntent.putExtras(bundle);
 //            this.setResult(RESULT_OK, resultIntent);
-            Log.v(TAG,resultString);
             //Toast.makeText(this,resultString,Toast.LENGTH_LONG).show();
             String QRId = (String) resultString.subSequence(resultString.length()-12,resultString.length());
             ChargeActivity.startAppActivity(this,QRId);
         }
-        //QRActivity.this.finish();
+        ActivityControl.finishAct(this);
     }
 
     /**
@@ -168,7 +167,7 @@ public class QRActivity extends BaseActivity implements SurfaceHolder.Callback{
         if(TextUtils.isEmpty(QRId)){
             Toast.makeText(this,"请输入二维码编号",Toast.LENGTH_SHORT).show();
         }
-        Log.v("json",QRId);
+        ActivityControl.finishAct(this);
         ChargeActivity.startAppActivity(this,QRId);
         return view;
     }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import com.ebusbar.adpater.AllOrderListAdapter;
 import com.ebusbar.dao.CompleteOrderDao;
@@ -17,6 +18,7 @@ import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.CompleteOrderDaoImpl;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.utils.PopupWindowUtil;
 
 import java.util.ArrayList;
 
@@ -61,6 +63,14 @@ public class FinishOrderFrag extends BaseFrag{
      * MyApplication
      */
     private MyApplication application;
+    /**
+     * PopupWindow操作工具
+     */
+    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
+    /**
+     * Loading
+     */
+    private PopupWindow loading;
 
     @Nullable
     @Override
@@ -73,8 +83,13 @@ public class FinishOrderFrag extends BaseFrag{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.finishorder,container,false);
+        root = inflater.inflate(R.layout.finishorder, container, false);
         finish_list = (ListView) root.findViewById(R.id.finish_list);
         nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
     }
@@ -88,32 +103,29 @@ public class FinishOrderFrag extends BaseFrag{
 
     @Override
     public void setListener() {
-
     }
 
     @Override
     public void setFragView() {
+        loading = popupWindowUtil.startLoading(context,root,"加载中");
         LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
-        completeOrderDao.getCompleteOrderDaos(data.getToken(),data.getCustID());
+        completeOrderDao.getCompleteOrderDaos(data.getToken(), data.getCustID());
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        setFragView();
-    }
+
 
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgOrder){
+                loading.dismiss();
                 if(completeOrderDao.completeOrderDaos.size() == 0){
                     nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }
                 ArrayList<CompleteOrderDao> arrayList = new ArrayList<CompleteOrderDao>();
                 arrayList.addAll(completeOrderDao.completeOrderDaos);
-                adapter = new AllOrderListAdapter(context,arrayList,application.getLoginDao(),FinishOrderFrag.this);
+                adapter = new AllOrderListAdapter(context,arrayList,application.getLoginDao());
                 finish_list.setAdapter(adapter);
             }
         }

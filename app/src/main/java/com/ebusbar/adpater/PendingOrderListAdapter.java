@@ -67,15 +67,11 @@ public class PendingOrderListAdapter extends BaseAdapter{
             viewHolder = (ViewHolder) convertView.getTag();
         }
         PendingOrderDao.EvcOrdersGetEntity data = ((PendingOrderDao) getItem(position)).getEvc_orders_get();
-        if(TextUtils.equals(data.getOrderType(),"2")){
-            viewHolder.type_text.setText("充电预约");
-        }
         if(TextUtils.equals(data.getOrderStatus(),"2")){
             viewHolder.state_text.setText("充电中");
-        }else {
+        }else if(TextUtils.equals(data.getOrderStatus(),"4")){
             viewHolder.state_text.setText("待支付");
         }
-        viewHolder.state_text.setText("待支付");
         viewHolder.position_text.setText(data.getOrgName());
         viewHolder.order_time.setText(data.getPlanBeginDateTime());
         viewHolder.EPId_text.setText(data.getOrgID());

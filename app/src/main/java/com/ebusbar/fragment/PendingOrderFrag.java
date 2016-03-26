@@ -11,14 +11,18 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 
 import com.ebusbar.adpater.PendingOrderListAdapter;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.PendingOrderDao;
 import com.ebusbar.impl.PendingOrderImpl;
+import com.ebusbar.pile.BaseActivity;
 import com.ebusbar.pile.ChargeActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.PopupWindowUtil;
 
 /**
  * 未完成订单
@@ -62,6 +66,14 @@ public class PendingOrderFrag extends BaseFrag{
      * MyApplication
      */
     private MyApplication application;
+    /**
+     * PopupWindow操作工具
+     */
+    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
+    /**
+     * Loading
+     */
+    private PopupWindow loading;
 
     @Nullable
     @Override
@@ -74,8 +86,13 @@ public class PendingOrderFrag extends BaseFrag{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.pendingorder,container,false);
+        root = inflater.inflate(R.layout.pendingorder, container, false);
         pending_list = (ListView) root.findViewById(R.id.pending_list);
         nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
     }
@@ -94,14 +111,9 @@ public class PendingOrderFrag extends BaseFrag{
 
     @Override
     public void setFragView() {
+        loading = popupWindowUtil.startLoading(context,root,"加载中");
         LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
-        pendingOrder.getNetPendingOrderList(data.getToken(),data.getCustID());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setFragView();
+        pendingOrder.getNetPendingOrderList(data.getToken(), data.getCustID());
     }
 
     /**
@@ -111,6 +123,7 @@ public class PendingOrderFrag extends BaseFrag{
         pending_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ActivityControl.finishAct((BaseActivity) getActivity());
                 PendingOrderDao.EvcOrdersGetEntity data = pendingOrder.pendingOrderDaos.get(position).getEvc_orders_get();
                 ChargeActivity.startAppActivity(context,data.getOrgName(),data.getFacilityID(),data.getOrderStatus(),data.getOrderNo());
             }
@@ -121,6 +134,7 @@ public class PendingOrderFrag extends BaseFrag{
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgPenging){
+                loading.dismiss();
                 if(pendingOrder.pendingOrderDaos.size() == 0){
                     nodata_show.setVisibility(View.VISIBLE);
                     return;

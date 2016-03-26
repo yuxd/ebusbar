@@ -1,6 +1,7 @@
 package com.ebusbar.pile;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.impl.LogoutDaoImpl;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.DialogUtil;
 import com.ebusbar.utils.RoundBitmapUtil;
 
 /**
@@ -72,6 +74,10 @@ public class AccountManageActivity extends BaseActivity{
      * 注销消息
      */
     private final int msgLogout = 0x002;
+    /**
+     * Dialog操作工具
+     */
+    private DialogUtil dialogUtil = DialogUtil.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -128,8 +134,14 @@ public class AccountManageActivity extends BaseActivity{
      * 注销
      */
     public View loginOut(View view){
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-        logoutDao.getLogoutDao(entity.getToken(), entity.getCustID());
+        dialogUtil.showSureListenerDialog(this, "是否要退出账户！", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                logoutDao.getLogoutDao(entity.getToken(), entity.getCustID());
+            }
+        });
         return view;
     }
 

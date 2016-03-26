@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -74,7 +73,6 @@ public class SelectPileActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        Log.v("asda",intent.getStringExtra("OrgId"));
         pileListItemDao.getPiles(intent.getStringExtra("OrgId"));
     }
 

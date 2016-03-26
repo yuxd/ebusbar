@@ -85,10 +85,6 @@ public class MyWalletActivity extends BaseActivity{
      * 账户消息
      */
     private final int msgBill = 0x004;
-    /**
-     * 预约
-     */
-    private final int APPOINT = 0x005;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,9 +128,7 @@ public class MyWalletActivity extends BaseActivity{
         if(!TextUtils.isEmpty(entity.getUsericon())){
             bitmapImpl.getBitmap(entity.getUsericon());
         }
-//        if(!TextUtils.isEmpty(entity.getBalanceAmt())){
-//            money_text.setText(entity.getBalanceAmt());
-//        }
+
         balanceDao.getBalanceDao(entity.getToken(), entity.getCustID());
         chargeCardItemDao.getChargeCardItemDao(entity.getToken(), entity.getCustID());
         billDao.getBillDaos(entity.getToken(),entity.getCustID());
@@ -146,7 +140,6 @@ public class MyWalletActivity extends BaseActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        setActivityView();
     }
 
     /**
@@ -191,6 +184,9 @@ public class MyWalletActivity extends BaseActivity{
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgIcon:
+                    if(bitmapImpl.img == null){
+                        return;
+                    }
                     usericon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmapImpl.img));
                     break;
                 case msgBalance:

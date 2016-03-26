@@ -141,7 +141,7 @@
             android:gravity="center"
             android:text="15分钟"
             android:textColor="#FFFFFF"
-            android:background="@color/time_noselect_color"
+            android:background="@drawable/gray_color_btn_bg"
             />
 
         <TextView
@@ -154,7 +154,7 @@
             android:gravity="center"
             android:text="30分钟"
             android:textColor="#FFFFFF"
-            android:background="@color/time_noselect_color"
+            android:background="@drawable/gray_color_btn_bg"
             />
         <TextView
             android:id="@+id/time45"
@@ -166,7 +166,7 @@
             android:gravity="center"
             android:text="45分钟"
             android:textColor="#FFFFFF"
-            android:background="@color/time_noselect_color"
+            android:background="@drawable/gray_color_btn_bg"
             />
         <TextView
             android:id="@+id/time60"
@@ -178,7 +178,7 @@
             android:gravity="center"
             android:text="60分钟"
             android:textColor="#FFFFFF"
-            android:background="@color/time_noselect_color"
+            android:background="@drawable/gray_color_btn_bg"
             />
     </LinearLayout>
 
@@ -209,12 +209,13 @@
     </RelativeLayout>
 
     <Button
+        android:id="@+id/appoint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:background="#009b4c"
+        android:background="@drawable/actionbar_color_btn_bg"
         android:text="立即预约"
         android:textColor="#FFFFFF"
         android:onClick="appoint"

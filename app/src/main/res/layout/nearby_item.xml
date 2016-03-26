@@ -68,7 +68,7 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/open_icon"
             android:layout_marginLeft="10dp"
-            android:text="对外开放"
+            android:text="繁忙中"
             />
 
         <ImageView
@@ -103,7 +103,7 @@
             android:layout_alignParentRight="true"
             android:text="预约"
             android:textColor="#FFFFFF"
-            android:background="@drawable/actionbar_color_btn_bg"
+            android:background="@drawable/gray_color_btn_bg"
             />
 
     </RelativeLayout>

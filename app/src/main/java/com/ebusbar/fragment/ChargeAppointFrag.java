@@ -1,6 +1,7 @@
 package com.ebusbar.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,12 +21,16 @@ import com.ebusbar.dao.StartChargeDao;
 import com.ebusbar.impl.FinishOrderDaoImpl;
 import com.ebusbar.impl.GetChargeAppointDaoImpl;
 import com.ebusbar.impl.StartChargeDaoImpl;
+import com.ebusbar.pile.BaseActivity;
 import com.ebusbar.pile.ChargeActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.DialogUtil;
+import com.ebusbar.utils.PopupWindowUtil;
 
 /**
- * 充电预约
+ * 我的预约充电预约
  * Created by Jelly on 2016/3/10.
  */
 public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
@@ -108,6 +114,18 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
      * MyApplication
      */
     private MyApplication application;
+    /**
+     * Dialog操作工具
+     */
+    private DialogUtil dialogUtil = DialogUtil.getInstance();
+    /**
+     * PopupWindow操作工具
+     */
+    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
+    /**
+     * 加载数据PopupWindow
+     */
+    private PopupWindow loading;
 
     @Nullable
     @Override
@@ -117,6 +135,11 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         setListener();
         setFragView();
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -151,6 +174,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
 
     @Override
     public void setFragView() {
+        loading = popupWindowUtil.startLoading(context,start,"加载中");
         LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
         getChargeAppointDao.getNetGetChargeAppointDao(data.getToken(), data.getCustID());
     }
@@ -177,21 +201,29 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login(); //用户数据
+        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login(); //用户数据
         switch (v.getId()){
-            case R.id.start: //开始充电
+            case R.id.start:
+                //开始充电,在开始充电之前
                 if(getChargeAppointDao.getChargeAppointDao == null ||TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
                     Toast.makeText(context,"对不起，暂时无法开始充电！",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                startChargeDao.getStartChargeDao(data.getToken(),getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getOrderNo(),data.getCustID());
+                startChargeDao.getStartChargeDao(entity.getToken(),getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getOrderNo(),entity.getCustID());
                 break;
             case R.id.cancel: //取消预约
                 if(getChargeAppointDao.getChargeAppointDao == null ||TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
                     Toast.makeText(context,"对不起，此订单暂时无法结束！",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                finishOrderDao.getFinishOrderDao(data.getToken(),getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getOrderNo(),data.getCustID());
+                dialogUtil.showSureListenerDialog(context, "是否需要取消预约！", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                        finishOrderDao.getFinishOrderDao(entity.getToken(),getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getOrderNo(),entity.getCustID());
+                    }
+                });
                 break;
         }
     }
@@ -200,7 +232,8 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case msgGetAppoint:
+                case msgGetAppoint: //获得预约数据
+                    loading.dismiss();
                     if(getChargeAppointDao.getChargeAppointDao == null || TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
                         nodata_show.setVisibility(View.VISIBLE);
                         return;
@@ -213,7 +246,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
                     phone_text.setText(data.getTel());
                     appoint_price_text.setText("¥0.00");
                     break;
-                case msgFinish:
+                case msgFinish: //结束预约
                     if(finishOrderDao.finishOrderDao == null || TextUtils.equals(finishOrderDao.finishOrderDao.getEvc_order_cancel().getIsSuccess(),"N")){
                         Toast.makeText(context,"对不起，此订单暂时无法结束！",Toast.LENGTH_SHORT).show();
                         return;
@@ -221,11 +254,16 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
                     Toast.makeText(context,"成功取消预约！",Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                     break;
-                case msgStart:
+                case msgStart: //开始充电
                     if(startChargeDao.startChargeDao == null || TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_change().getIsSuccess(), "N")){
-                        Toast.makeText(context,"请插好充电头！",Toast.LENGTH_SHORT).show();
+                        if(TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_change().getReturnStatus(),"116")){ //没有插好充电头
+                            Toast.makeText(context,"请插好充电头！",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        Toast.makeText(context,"充电失败！",Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    ActivityControl.finishAct((BaseActivity)getActivity());
                     StartChargeDao.EvcOrderChangeEntity entity =  startChargeDao.startChargeDao.getEvc_order_change();
                     ChargeActivity.startAppActivity(context, entity.getOrgName(), entity.getFacilityID(), entity.getOrderStatus(), entity.getOrderNo());
                     break;

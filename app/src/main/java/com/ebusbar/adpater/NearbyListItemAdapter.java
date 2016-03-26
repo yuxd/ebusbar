@@ -1,5 +1,6 @@
 package com.ebusbar.adpater;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,7 +10,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.ebusbar.dao.PositionListItemDao;
+import com.ebusbar.pile.LoginActivity;
+import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.pile.SelectPileActivity;
 
 import java.util.List;
 
@@ -21,11 +25,14 @@ public class NearbyListItemAdapter extends BaseAdapter{
 
     private Context context;
 
+    private MyApplication application;
+
     private List<PositionListItemDao> list;
 
     public NearbyListItemAdapter(Context context,List<PositionListItemDao> list) {
         this.context = context;
         this.list = list;
+        application = (MyApplication) ((Activity)context).getApplication();
     }
 
     @Override
@@ -66,22 +73,28 @@ public class NearbyListItemAdapter extends BaseAdapter{
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
-        PositionListItemDao.EvcStationsGetEntity entity = ((PositionListItemDao)getItem(position)).getEvc_stations_get();
+        final PositionListItemDao.EvcStationsGetEntity entity = ((PositionListItemDao)getItem(position)).getEvc_stations_get();
         holder.name.setText(entity.getOrgName());
         holder.position_text.setText(entity.getAddr());
         if(TextUtils.equals(entity.getIsAvailable(),"1")){
-            holder.open_text.setText("对外开放");
+            holder.open_text.setText("有空闲");
             holder.appoint.setBackgroundResource(R.drawable.actionbar_color_btn_bg);
             //设置点击预约按钮的监听事件
+            holder.appoint.setEnabled(true);
             holder.appoint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    
+                    if(!application.isLogin()){
+                        LoginActivity.startAppActivity(context);
+                    }else{
+                        SelectPileActivity.startAppActivity(context, entity.getOrgId());
+                    }
                 }
             });
         }else{
-            holder.open_text.setText("对外封闭");
+            holder.open_text.setText("繁忙中");
             holder.appoint.setBackgroundResource(R.drawable.gray_color_btn_bg);
+            holder.appoint.setEnabled(false);
         }
         String sum = "0";
         if(!TextUtils.isEmpty(entity.getAvailableNum()) || !TextUtils.isEmpty(entity.getUnavailableNum())){
@@ -92,9 +105,6 @@ public class NearbyListItemAdapter extends BaseAdapter{
             pileInfo = sum+"个电桩，"+entity.getAvailableNum()+"个空闲";
         }
         holder.pile_text.setText(pileInfo);
-
-
-
         return convertView;
     }
 }

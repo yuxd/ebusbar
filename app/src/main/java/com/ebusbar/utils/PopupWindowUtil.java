@@ -3,8 +3,13 @@ package com.ebusbar.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.ebusbar.pile.R;
 
 /**
  * PopupWindow的工具类
@@ -31,12 +36,12 @@ public class PopupWindowUtil {
      * @param height PopupWindow的高
      * @return PopupWindow PopupWindow对象
      */
-    public PopupWindow getPopupWindow(Activity context,int rootId,int width,int height){
+    public PopupWindow getPopupWindow(Context context,int rootId,int width,int height){
         if(context == null || rootId == 0 || width == 0 || height == 0){
             return null;
         }
-        View root = context.getLayoutInflater().inflate(rootId,null);
-        PopupWindow pw = getPopopWindow(context,root,width,height);
+        View root = LayoutInflater.from(context).inflate(rootId,null);
+        PopupWindow pw = getPopupWindow(context, root, width, height);
         return pw;
     }
 
@@ -48,7 +53,7 @@ public class PopupWindowUtil {
      * @param height PopupWindow的高
      * @return popupWindow PopupWindow对象
      */
-    public PopupWindow getPopopWindow(Context context,View root,int width,int height){
+    public PopupWindow getPopupWindow(Context context, View root, int width, int height){
         if(context == null || root == null || width == 0 || height == 0){
             return null;
         }
@@ -58,6 +63,23 @@ public class PopupWindowUtil {
         pw.setOutsideTouchable(true);// 设置触摸别的地方可以弹出
         pw.setBackgroundDrawable(new BitmapDrawable(context.getResources()));  //设置PopupWindow的背景为屏幕背景
         return pw;
+    }
+
+    /**
+     * 读取数据的进度条
+     * @param context Context
+     * @param hint 提示文字
+     * @return
+     */
+    public PopupWindow startLoading(Context context,View parent,String hint){
+        WindowUtil windowUtil = WindowUtil.getInstance();
+        View root = LayoutInflater.from(context).inflate(R.layout.loading, null);
+        TextView hint_text = (TextView) root.findViewById(R.id.hint);
+        hint_text.setText(hint);
+        PopupWindow loading = getPopupWindow(context,root,windowUtil.getScreenWidth((Activity) context),windowUtil.getScreenHeight((Activity) context));
+        loading.setOutsideTouchable(false);
+        loading.showAtLocation(parent, Gravity.CENTER,0,0);
+        return loading;
     }
 
 }

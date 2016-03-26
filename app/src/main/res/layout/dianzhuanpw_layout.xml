@@ -82,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="@string/noopen_text"
+                android:text="繁忙中"
                 />
         </LinearLayout>
     </RelativeLayout>
@@ -200,7 +200,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="导航"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 />
         </LinearLayout>
 
@@ -228,7 +228,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="预约"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 />
         </LinearLayout>
 

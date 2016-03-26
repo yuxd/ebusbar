@@ -47,20 +47,34 @@ public class SelectPileListAdapter extends BaseAdapter{
         return position;
     }
 
+    private class ViewHolder{
+        TextView pile_name;
+        TextView money;
+        TextView charge_type;
+        TextView pile_type;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View root = LayoutInflater.from(context).inflate(R.layout.selectpile_item,null);
-        TextView pile_name = (TextView) root.findViewById(R.id.pile_name);
-        TextView money = (TextView) root.findViewById(R.id.money);
-        TextView charge_type = (TextView) root.findViewById(R.id.charge_type);
-        TextView pile_type = (TextView) root.findViewById(R.id.pile_type);
-        PileListItemDao.EvcFacilitiesGetEntity data = ((PileListItemDao) getItem(position)).getEvc_facilities_get();
-        pile_name.setText(data.getFacilityName());
-        money.setText(data.getPrice());
-        charge_type.setText(data.getFacilityModel());
-        if(TextUtils.equals(data.getFacilityStatus(),"1")){
-            pile_type.setText("空闲中");
+        ViewHolder viewHolder = null;
+        if(convertView == null){
+            viewHolder = new ViewHolder();
+            convertView = LayoutInflater.from(context).inflate(R.layout.selectpile_item,null);
+            viewHolder.pile_name = (TextView) convertView.findViewById(R.id.pile_name);
+            viewHolder.money = (TextView) convertView.findViewById(R.id.money);
+            viewHolder.charge_type = (TextView) convertView.findViewById(R.id.charge_type);
+            viewHolder.pile_type = (TextView) convertView.findViewById(R.id.pile_type);
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder) convertView.getTag();
         }
-        return root;
+        PileListItemDao.EvcFacilitiesGetEntity entity = ((PileListItemDao) getItem(position)).getEvc_facilities_get();
+        viewHolder.pile_name.setText(entity.getFacilityName());
+        viewHolder.money.setText(entity.getPrice());
+        viewHolder.charge_type.setText(entity.getFacilityModel());
+        if(TextUtils.equals(entity.getFacilityStatus(),"1")){
+            viewHolder.pile_type.setText("空闲中");
+        }
+        return convertView;
     }
 }

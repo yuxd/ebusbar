@@ -171,13 +171,60 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     }
 
     /**
+     * 获取焦点
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+        aMap.clear();
+        setFragView(); //每次获取焦点时，重新刷新充电点
+    }
+
+    /**
+     * 暂停
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause(); //必须调用高德地图的这个方法
+        if(locationClient != null) {
+            locationClient.stopLocation(); //停止定位
+        }
+        FragmentTabHostActivity activity = (FragmentTabHostActivity) getActivity();
+        activity.drawerLayout.closeDrawer(Gravity.LEFT); //关闭左边的侧滑栏
+        isFirst = true; //把isFirst设为true，切换模块的时候就不会在调整距离了
+    }
+
+    /**
+     * 保存状态
+     * @param outState
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
+    /**
+     * 销毁
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(null != locationClient){
+            locationClient.onDestroy();
+        }
+    }
+
+    /**
      * 获取视图中的控件
      * @param inflater
      * @param container
      */
     @Override
     public void init(LayoutInflater inflater,ViewGroup container){
-        root = inflater.inflate(R.layout.dianzhuan,container,false);
+        root = inflater.inflate(R.layout.dianzhuan, container, false);
         qrcode = (ImageView) root.findViewById(R.id.qrcode);
         member = (ImageView)root.findViewById(R.id.member);
         location = (ImageView)root.findViewById(R.id.location);
@@ -276,7 +323,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
            public void onClick(View v) {
                Log.v(TAG, "打开筛选工具");
                //打开PopupWindow,显示操作栏
-               screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout,windowUtil.getScreenWidth(getActivity())/4*3, v.getHeight());
+               screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout, windowUtil.getScreenWidth(getActivity()) / 4 * 3, v.getHeight());
                int[] location = windowUtil.getViewLocation(v); //获取筛选按钮的x坐标
                //设置显示的属性，x=筛选按钮在屏幕的x坐标-PopupWindow的宽度+筛选按钮的宽度，y=筛选按钮在屏幕的y坐标
                screenPw.showAtLocation(v, Gravity.NO_GRAVITY, location[0] - screenPw.getWidth() + v.getWidth(), location[1]);
@@ -334,11 +381,12 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
                 if (marker == null) { //marker不能为空
                     return true;
                 }
-                if(markerPw != null &&markerPw.isShowing()) return true; //如果已经是弹出转状态
-                if(TextUtils.equals(currMarker,marker.getId())) {//已经弹出
+                if (markerPw != null && markerPw.isShowing()) return true; //如果已经是弹出转状态
+                if (TextUtils.equals(currMarker, marker.getId())) {//已经弹出
                     currMarker = "";
                     return true;
-                };
+                }
+                ;
                 int index = markers.indexOf(marker);
                 if (index == -1) { //集合中必须有
                     return true;
@@ -365,7 +413,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         PositionListItemDao.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
         dianzhuan_name.setText(entity.getOrgName());
         if(TextUtils.equals(entity.getIsAvailable(),"1")){
-            open_text.setText(R.string.open_text);
+            open_text.setText("有空闲");
         }
         duanzhuan_position.setText(entity.getAddr());
         String sum = "0";
@@ -389,14 +437,17 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
             @Override
             public void onClick(View v) {
                 markerPw.dismiss();
-                SelectPileActivity.startAppActivity(context,positionDao.getEvc_stations_get().getOrgId());
+                if(!application.isLogin()){
+                    LoginActivity.startAppActivity(context);
+                }else {
+                    SelectPileActivity.startAppActivity(context, positionDao.getEvc_stations_get().getOrgId());
+                }
             }
         });
-        markerPw = popupWindowUtil.getPopopWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) / 3);
+        markerPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) / 3);
         markerPw.setAnimationStyle(R.style.markerpw_anim);
         markerPw.showAtLocation(v, Gravity.BOTTOM, 0, 0);
     }
-
 
     /**
      * 加载地图
@@ -480,8 +531,6 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         });
     }
 
-
-
     /**
      * 设置验证码扫码按钮的点击事件
      */
@@ -489,7 +538,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         qrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!application.isLogin()){ //没有登录
+                if (!application.isLogin()) { //没有登录
                     LoginActivity.startAppActivity(context);
                     return;
                 }
@@ -510,53 +559,6 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
             }
         }
     };
-
-    /**
-     * 获取焦点
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        mapView.onResume();
-        aMap.clear();
-        setFragView();
-    }
-
-    /**
-     * 暂停
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-        mapView.onPause(); //必须调用高德地图的这个方法
-        if(locationClient != null) {
-            locationClient.stopLocation(); //停止定位
-        }
-        FragmentTabHostActivity activity = (FragmentTabHostActivity) getActivity();
-        activity.drawerLayout.closeDrawer(Gravity.LEFT); //关闭左边的侧滑栏
-        isFirst = true; //把isFirst设为true，切换模块的时候就不会在调整距离了
-    }
-
-    /**
-     * 保存状态
-     * @param outState
-     */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-    }
-
-    /**
-     * 销毁
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(null != locationClient){
-            locationClient.onDestroy();
-        }
-    }
 
     @Override
     public String getTAG() {

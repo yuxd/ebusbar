@@ -25,7 +25,6 @@
     <color name="viewfinder_mask">#60000000</color>
     <color name="possible_result_points">#c0ffff00</color>
     <color name="time_select_color">#009b4c</color>
-    <color name="time_noselect_color">#d6d6d6</color>
     <color name="actionbar_bg">#009b4c</color>
     <color name="actionbar_title_color">#FFFFFF</color>
     <color name="slidelayout_bg">#f4f4f4</color>

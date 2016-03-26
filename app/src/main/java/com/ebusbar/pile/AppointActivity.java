@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -19,7 +18,6 @@ import com.ebusbar.impl.AppointDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.PopupWindowUtil;
-import com.ebusbar.utils.WindowUtil;
 import com.jellycai.service.ThreadManage;
 
 /**
@@ -72,6 +70,10 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      */
     TextView name;
     /**
+     * 预约
+     */
+    TextView appoint;
+    /**
      * AppointDaoImpl
      */
     private AppointDaoImpl appointDao;
@@ -83,6 +85,10 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      * Application
      */
     private MyApplication application;
+    /**
+     * PopupWindow窗体操作工具
+     */
+    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
     /**
      * 预约进度条
      */
@@ -140,6 +146,7 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
         position_text = (TextView) this.findViewById(R.id.position_text);
         EPid_text = (TextView) this.findViewById(R.id.EPid_text);
         name = (TextView) this.findViewById(R.id.name);
+        appoint = (TextView) this.findViewById(R.id.appoint);
     }
 
     @Override
@@ -203,9 +210,9 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      * @param time
      */
     public void selectTime(TextView time){
-        time.setBackgroundResource(R.color.time_select_color);
+        time.setBackgroundResource(R.drawable.actionbar_color_btn_bg);
         if(selectTime != null && selectTime != time ) {
-            selectTime.setBackgroundResource(R.color.time_noselect_color);
+            selectTime.setBackgroundResource(R.drawable.gray_color_btn_bg);
         }
         selectTime = time;
     }
@@ -218,8 +225,9 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
             Toast.makeText(this,"请选择预约时间",Toast.LENGTH_SHORT).show();
             return view;
         }
-        LoginDao.CrmLoginEntity data= application.getLoginDao().getCrm_login();
-        appointDao.getAppointDao(intent.getStringExtra("FacilityID"), data.getToken(), selectTime.getText().toString().replace("分钟", ""), data.getCustID());
+        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+        appointDao.getAppointDao(intent.getStringExtra("FacilityID"), entity.getToken(), selectTime.getText().toString().replace("分钟", ""), entity.getCustID());
+        appoint.setEnabled(false);
         return view;
     }
 
@@ -237,7 +245,7 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                         ActivityControl.finishAct(AppointActivity.this);
                         return;
                     }
-                    startLoading();
+                    loading = popupWindowUtil.startLoading(AppointActivity.this,appoint,"正在排队");
                     ThreadManage.start(new Runnable() {
                         @Override
                         public void run() {
@@ -294,17 +302,6 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
             loading.dismiss();
         }
     }
-
-    /**
-     * 开始进度条
-     */
-    public void startLoading(){
-        PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
-        WindowUtil windowUtil = WindowUtil.getInstance();
-        loading = popupWindowUtil.getPopupWindow(this, R.layout.loading, windowUtil.getScreenWidth(this), windowUtil.getScreenHeight(this));
-        loading.showAtLocation(time15, Gravity.CENTER,0,0);
-    }
-
 
     /**
      * 启动界面

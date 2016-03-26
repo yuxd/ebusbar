@@ -244,12 +244,12 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
      * @param price
      */
     public void selectPrice(TextView price){
-        if(selectPrice != null){ //如果选择的价格不为空，改变背景为未选中
+        price.setBackgroundResource(R.drawable.select_price_btn_bg);
+        price.setTextColor(Color.WHITE);
+        if(selectPrice != null && selectPrice != price){ //如果选择的价格不为空，改变背景为未选中
             selectPrice.setBackgroundResource(R.drawable.deleteorder_btn_bg);
             selectPrice.setTextColor(Color.RED);
         }
-        price.setBackgroundResource(R.drawable.select_price_btn_bg); //设置背景为选中
-        price.setTextColor(Color.WHITE);
         selectPrice = price;
     }
 

@@ -323,7 +323,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         input_ets[3] = (ImageView) root.findViewById(R.id.input_et3);
         input_ets[4] = (ImageView) root.findViewById(R.id.input_et4);
         input_ets[5] = (ImageView) root.findViewById(R.id.input_et5);
-        payPw = popupWindowUtil.getPopopWindow(this,root,windowUtil.getScreenWidth(this),windowUtil.getScreenHeight(this));
+        payPw = popupWindowUtil.getPopupWindow(this, root, windowUtil.getScreenWidth(this), windowUtil.getScreenHeight(this));
         payPw.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
