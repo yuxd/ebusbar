@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +136,7 @@ public class PendingOrderFrag extends BaseFrag{
         public void handleMessage(Message msg) {
             if(msg.what == msgPenging){
                 loading.dismiss();
-                if(pendingOrder.pendingOrderDaos.size() == 0){
+                if(pendingOrder.pendingOrderDaos.size() == 0 || TextUtils.equals(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
                     nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }

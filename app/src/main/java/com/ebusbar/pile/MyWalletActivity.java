@@ -128,7 +128,6 @@ public class MyWalletActivity extends BaseActivity{
         if(!TextUtils.isEmpty(entity.getUsericon())){
             bitmapImpl.getBitmap(entity.getUsericon());
         }
-
         balanceDao.getBalanceDao(entity.getToken(), entity.getCustID());
         chargeCardItemDao.getChargeCardItemDao(entity.getToken(), entity.getCustID());
         billDao.getBillDaos(entity.getToken(),entity.getCustID());
@@ -148,7 +147,7 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View balance(View view){
-        if(balanceDao.balanceDao == null || TextUtils.isEmpty(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt())){
+        if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getIsSuccess(),"N")){
             return view;
         }
         BalanceActivity.startAppActivity(this);
@@ -161,6 +160,9 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View chargeCard(View view){
+        if(TextUtils.equals(chargeCardItemDao.chargeCardItemDaos.get(0).getCrm_accounts_get().getIsSuccess(),"N")){
+            return view;
+        }
         ChargeCardActivity.startAppActivity(this,(ArrayList)chargeCardItemDao.chargeCardItemDaos);
         return view;
     }
@@ -172,7 +174,7 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View bill(View view){
-        if(billDao.billDaos.size() == 0){
+        if(billDao.billDaos.size() == 0 || TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getIsSuccess(), "N")){
             return view;
         }
         BillActivity.startAppActivity(this,(ArrayList)billDao.billDaos);

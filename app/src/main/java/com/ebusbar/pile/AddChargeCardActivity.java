@@ -116,18 +116,40 @@ public class AddChargeCardActivity extends BaseActivity{
             switch (msg.what){
                 case msgAdd:
                     if(addChargeCardDao.addChargeCardDao == null || TextUtils.equals(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getIsSuccess(), "N")){
+                        AddChargeCardDao.CrmAccountsInsertEntity entity = addChargeCardDao.addChargeCardDao.getCrm_accounts_insert();
+                        if(TextUtils.equals(entity.getReturnStatus(),"119")){
+                            Toast.makeText(AddChargeCardActivity.this,"充电卡已经被绑定，请检查充电卡卡号!",Toast.LENGTH_SHORT).show();
+                            clearET();
+                            return;
+                        }else if(TextUtils.equals(entity.getReturnStatus(),"122")){
+                            Toast.makeText(AddChargeCardActivity.this,"充电卡不存在，请输入正确卡号!",Toast.LENGTH_SHORT).show();
+                            clearET();
+                            return;
+                        }else if(TextUtils.equals(entity.getReturnStatus(),"123")){
+                            Toast.makeText(AddChargeCardActivity.this,"充电卡密码错误，请重新输入密码!",Toast.LENGTH_SHORT).show();
+                            pwd.setText("");
+                            return;
+                        }
                         setResult(FAILURE);
                         return;
                     }
                     AddChargeCardDao dao = addChargeCardDao.addChargeCardDao;
                     Intent intent = getIntent();
                     intent.putExtra("AddChargeCardDao",dao);
-                    setResult(SUCCESS);
+                    setResult(SUCCESS,intent);
                     ActivityControl.finishAct(AddChargeCardActivity.this);
                     break;
             }
         }
     };
+
+    /**
+     * 清空输入框
+     */
+    public void clearET(){
+        no.setText("");
+        pwd.setText("");
+    }
 
 
     public static void startAppActivity(Context context,int requestCode){

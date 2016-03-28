@@ -189,8 +189,10 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public void setActivityView() {
         LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-        orderInfoDao.getOrderInfoDaoImpl(entity.getToken(),intent.getStringExtra("OrderNo"),entity.getCustID());
-        tran_text.setText(resourceUtil.getResourceString(PayActivity.this, R.string.money_sign)+entity.getBalanceAmt());
+        orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), intent.getStringExtra("OrderNo"), entity.getCustID());
+        if(!TextUtils.isEmpty(entity.getBalanceAmt())){
+            tran_text.setText(resourceUtil.getResourceString(PayActivity.this, R.string.money_sign)+entity.getBalanceAmt());
+        }
     }
 
     /**

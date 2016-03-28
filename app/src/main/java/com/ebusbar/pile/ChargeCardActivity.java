@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -87,7 +88,7 @@ public class ChargeCardActivity extends BaseActivity{
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DeleteChargeCardActivity.startAppActivity(ChargeCardActivity.this, daos.get(position));
+                DeleteChargeCardActivity.startAppActivity(ChargeCardActivity.this, daos.get(position), DELETE);
             }
         });
     }
@@ -107,15 +108,15 @@ public class ChargeCardActivity extends BaseActivity{
      * @return
      */
     public View addCard(View view){
-        AddChargeCardActivity.startAppActivity(this,DELETE);
+        AddChargeCardActivity.startAppActivity(this, ADD);
         return view;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
-            case DELETE:
-                if(resultCode == AddChargeCardActivity.SUCCESS){
+            case ADD:
+                if(resultCode == AddChargeCardActivity.SUCCESS){ //添加充电卡成功
                     Toast.makeText(ChargeCardActivity.this, "添加充电卡成功！", Toast.LENGTH_SHORT).show();
                     AddChargeCardDao dao = data.getParcelableExtra("AddChargeCardDao");
                     AddChargeCardDao.CrmAccountsInsertEntity insertEntity = dao.getCrm_accounts_insert();
@@ -130,11 +131,36 @@ public class ChargeCardActivity extends BaseActivity{
                     chargeCardItemDao.setCrm_accounts_get(entity);
                     daos.add(chargeCardItemDao);
                     adapter.notifyDataSetChanged(); //更新数据
-                }else if(resultCode == AddChargeCardActivity.FAILURE){
+                }else if(resultCode == AddChargeCardActivity.FAILURE){ //添加充电卡失败
                     Toast.makeText(ChargeCardActivity.this,"添加充电卡失败！",Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case DELETE:
+                if(resultCode == DeleteChargeCardActivity.SUCCESS){//删除充电卡成功
+                    Toast.makeText(ChargeCardActivity.this,"删除充电卡成功",Toast.LENGTH_SHORT).show();
+                    ChargeCardItemDao chargeCardItemDao = data.getParcelableExtra("DeleteChargeCardDao");
+                    int index = getIndexFromList(chargeCardItemDao);
+                    daos.remove(index);
+                    adapter.notifyDataSetChanged();
+                }else if(resultCode == DeleteChargeCardActivity.FAILURE){ //删除充电卡失败
+                    Toast.makeText(ChargeCardActivity.this,"删除充电卡失败",Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
+    }
+
+    /**
+     * 通过数据Dao获取数据集合中的Index
+     * @param chargeCardItemDao
+     * @return
+     */
+    public int getIndexFromList(ChargeCardItemDao chargeCardItemDao){
+        for(int i=0;i<daos.size();i++){
+            if(TextUtils.equals(daos.get(i).getCrm_accounts_get().getAccountID(),chargeCardItemDao.getCrm_accounts_get().getAccountID())){
+                return i;
+            }
+        }
+        return 0;
     }
 
     /**

@@ -31,6 +31,7 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.navi.model.NaviLatLng;
 import com.ebusbar.dao.PositionListItemDao;
 import com.ebusbar.impl.PositionDaoImpl;
 import com.ebusbar.myview.SlideSwitch;
@@ -177,7 +178,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     public void onResume() {
         super.onResume();
         mapView.onResume();
-        aMap.clear();
+        aMap.clear(true);
         setFragView(); //每次获取焦点时，重新刷新充电点
     }
 
@@ -386,7 +387,6 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
                     currMarker = "";
                     return true;
                 }
-                ;
                 int index = markers.indexOf(marker);
                 if (index == -1) { //集合中必须有
                     return true;
@@ -425,7 +425,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
             spare_text.setText(entity.getAvailableNum());
         }
         LinearLayout nav_layout = (LinearLayout) root.findViewById(R.id.nav_layout);
-        nav_layout.setOnClickListener(new View.OnClickListener() {
+        nav_layout.setOnClickListener(new View.OnClickListener() { //导航
             @Override
             public void onClick(View v) {
                 markerPw.dismiss();
@@ -435,7 +435,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         LinearLayout appoint_layout = (LinearLayout) root.findViewById(R.id.appoint_layout);
         appoint_layout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //预约
                 markerPw.dismiss();
                 if(!application.isLogin()){
                     LoginActivity.startAppActivity(context);
@@ -512,6 +512,10 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         locationChangedListener.onLocationChanged(aMapLocation);
+        NaviLatLng latLng = new NaviLatLng();
+        latLng.setLatitude(aMapLocation.getLatitude());
+        latLng.setLongitude(aMapLocation.getLongitude());
+        application.setLatLng(latLng);
         if(isFirst){
             aMap.moveCamera(CameraUpdateFactory.zoomTo(DefaultParam.ZOOM)); //修改缩放位置
             isFirst = !isFirst;

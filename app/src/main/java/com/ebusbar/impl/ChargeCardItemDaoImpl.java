@@ -3,6 +3,7 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.util.Log;
 
 import com.ebusbar.dao.ChargeCardItemDao;
 import com.ebusbar.utils.JsonUtil;
@@ -48,6 +49,7 @@ public class ChargeCardItemDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
+                Log.v("jsonCard",s.trim());
                 if(NetParam.isSuccess(b,s)){
                     chargeCardItemDaos = JsonUtil.arrayFormJson(s,ChargeCardItemDao[].class);
                 }

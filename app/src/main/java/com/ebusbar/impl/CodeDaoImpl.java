@@ -20,7 +20,7 @@ public class CodeDaoImpl extends BaseImpl{
     /**
      * 访问地址,暂时的本地服务器地址
      */
-    private static final String path= "http://192.168.0.115:8081/ebusbar/sendSms";
+    private static final String path= "http://www.genlex.com.cn/e848/server/sendsms";
 
     /**
      * 操作对象

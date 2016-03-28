@@ -47,6 +47,7 @@ public class DeleteChargeCardDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
+                Log.v("jsonDelete",s.trim());
                 if(NetParam.isSuccess(b,s)){
                     deleteChargeCardDao = JsonUtil.arrayFormJson(s,DeleteChargeCardDao[].class).get(0);
                 }

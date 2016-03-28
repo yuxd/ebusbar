@@ -232,6 +232,13 @@ public class RegActivity extends BaseActivity {
                 }
             }else if(msg.what == msgReg){ //注册
                 if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getIsSuccess(), "N")){
+                    if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getReturnStatus(),"101")){
+                        Toast.makeText(RegActivity.this,"用户已经注册！",Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getReturnStatus(),"105")){
+                        Toast.makeText(RegActivity.this,"验证码错误，请重新获取验证码！",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     Toast.makeText(RegActivity.this,"注册失败",Toast.LENGTH_SHORT).show();
                     return;
                 }

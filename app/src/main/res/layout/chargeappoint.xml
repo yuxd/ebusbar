@@ -31,7 +31,6 @@
 
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/data_show"
         android:layout_width="match_parent"

@@ -15,6 +15,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.navi.model.NaviLatLng;
 import com.ebusbar.dao.GetChargeAppointDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.StartChargeDao;
@@ -24,6 +25,7 @@ import com.ebusbar.impl.StartChargeDaoImpl;
 import com.ebusbar.pile.BaseActivity;
 import com.ebusbar.pile.ChargeActivity;
 import com.ebusbar.pile.MyApplication;
+import com.ebusbar.pile.NaviEmulatorActivity;
 import com.ebusbar.pile.R;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.DialogUtil;
@@ -186,7 +188,9 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         navigation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                NaviEmulatorActivity.startAppActivity(this,getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().);
+                NaviLatLng latLng = application.getLatLng();
+                GetChargeAppointDao.EvcOrdersGetEntity entity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
+                NaviEmulatorActivity.startAppActivity(context,latLng.getLatitude(),latLng.getLongitude(),Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
             }
         });
     }
@@ -205,14 +209,14 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
         switch (v.getId()){
             case R.id.start:
                 //开始充电,在开始充电之前
-                if(getChargeAppointDao.getChargeAppointDao == null ||TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
+                if(getChargeAppointDao.getChargeAppointDao == null ||TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(), "N")){
                     Toast.makeText(context,"对不起，暂时无法开始充电！",Toast.LENGTH_SHORT).show();
                     return;
                 }
                 startChargeDao.getStartChargeDao(entity.getToken(),getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getOrderNo(),entity.getCustID());
                 break;
             case R.id.cancel: //取消预约
-                if(getChargeAppointDao.getChargeAppointDao == null ||TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
+                if(getChargeAppointDao.getChargeAppointDao == null ||TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(), "N")){
                     Toast.makeText(context,"对不起，此订单暂时无法结束！",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -234,7 +238,7 @@ public class ChargeAppointFrag extends BaseFrag implements View.OnClickListener{
             switch (msg.what){
                 case msgGetAppoint: //获得预约数据
                     loading.dismiss();
-                    if(getChargeAppointDao.getChargeAppointDao == null || TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(),"N")){
+                    if(getChargeAppointDao.getChargeAppointDao == null || TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(), "N")){
                         nodata_show.setVisibility(View.VISIBLE);
                         return;
                     }

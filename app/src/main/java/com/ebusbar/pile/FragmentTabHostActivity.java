@@ -118,6 +118,12 @@ public class FragmentTabHostActivity extends BaseActivity{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        loadDrawLayout(); //在获取焦点之前，加载侧滑栏数据，如果有数据的话
+    }
+
+    @Override
     public void loadObjectAttribute() {
         application = (MyApplication) this.getApplication();
     }
@@ -161,10 +167,12 @@ public class FragmentTabHostActivity extends BaseActivity{
      * 加载侧滑栏里面的数据，如果用户没有登录直返回,在这里加载用户头像
      */
     public void loadDrawLayout(){
+        application = (MyApplication) getApplication();
         if(!application.isLogin()){ //没有登录
             draw_user_name.setText(R.string.slide_login_hint);
             draw_user_phone.setText(R.string.slide_login_phone_hint);
             draw_user_icon.setImageResource(R.drawable.slide_portrait);
+            money.setText("¥0.00");
             return;
         }
         LoginDao loginDao = application.getLoginDao();
@@ -313,12 +321,6 @@ public class FragmentTabHostActivity extends BaseActivity{
     @Override
     protected void onRestart() {
         super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadDrawLayout(); //在获取焦点之前，加载侧滑栏数据，如果有数据的话
     }
 
     /**

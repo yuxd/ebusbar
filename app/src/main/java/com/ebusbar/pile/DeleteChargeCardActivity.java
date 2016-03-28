@@ -1,5 +1,6 @@
 package com.ebusbar.pile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.dao.ChargeCardItemDao;
+import com.ebusbar.dao.DeleteChargeCardDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.DeleteChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -54,6 +56,15 @@ public class DeleteChargeCardActivity extends BaseActivity{
      * 删除消息
      */
     private final int msgDelete = 0x001;
+    /**
+     * 删除成功
+     */
+    public static final int SUCCESS = 0x002;
+    /**
+     * 删除失败
+     */
+    public static final int FAILURE = 0x003;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -111,10 +122,18 @@ public class DeleteChargeCardActivity extends BaseActivity{
             switch (msg.what){
                 case msgDelete:
                     if(deleteChargeCardDao.deleteChargeCardDao == null || TextUtils.equals(deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete().getIsSuccess(), "N")){
-                        Toast.makeText(DeleteChargeCardActivity.this,"密码错误，请重新输入!",Toast.LENGTH_SHORT).show();
+                        DeleteChargeCardDao.CrmAccountsDeleteEntity entity = deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete();
+                        if(TextUtils.equals(entity.getReturnStatus(),"123")){
+                            Toast.makeText(DeleteChargeCardActivity.this,"充电卡密码错误，请重新输入!",Toast.LENGTH_SHORT).show();
+                            password.setText("");
+                            return;
+                        }
+                        setResult(FAILURE);
                         return;
                     }
-                    Toast.makeText(DeleteChargeCardActivity.this,"解绑充电卡成功!",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("DeleteChargeCardDao",DeleteChargeCardActivity.this.intent.getParcelableExtra("ChargeCardItemDao"));
+                    setResult(SUCCESS,intent);
                     ActivityControl.finishAct(DeleteChargeCardActivity.this);
                     break;
             }
@@ -124,10 +143,11 @@ public class DeleteChargeCardActivity extends BaseActivity{
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context,ChargeCardItemDao dao){
+    public static void startAppActivity(Context context,ChargeCardItemDao dao,int resquestCode){
         Intent intent = new Intent(context, DeleteChargeCardActivity.class);
-        intent.putExtra("ChargeCardItemDao",dao);
-        context.startActivity(intent);
+        intent.putExtra("ChargeCardItemDao", dao);
+        Activity activity = (Activity) context;
+        activity.startActivityForResult(intent,resquestCode);
     }
 
     @Override

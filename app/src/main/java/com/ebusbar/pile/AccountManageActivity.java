@@ -158,8 +158,10 @@ public class AccountManageActivity extends BaseActivity{
                     break;
                 case msgLogout:
                     if(logoutDao.logoutDao == null || TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getIsSuccess(),"N")){
-                        if(TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getReturnStatus(), "110")){
-                            Toast.makeText(AccountManageActivity.this,"您已经注销,无需重复注销！",Toast.LENGTH_SHORT).show();
+                        if(TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getReturnStatus(), "110")){ //Token失效
+                            application.loginOut();
+                            ActivityControl.finishAct(AccountManageActivity.this);
+                            return;
                         }
                         Toast.makeText(AccountManageActivity.this,"注销失败，请检查您的网络连接",Toast.LENGTH_SHORT).show();
                         return;

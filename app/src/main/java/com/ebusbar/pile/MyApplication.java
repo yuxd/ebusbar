@@ -3,6 +3,7 @@ package com.ebusbar.pile;
 import android.app.Application;
 import android.util.Log;
 
+import com.amap.api.navi.model.NaviLatLng;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.LoginDaoImpl;
 
@@ -27,11 +28,31 @@ public class MyApplication extends Application{
      * LoginDaoImpl
      */
     private LoginDaoImpl loginDaoImpl;
+    /**
+     * 当前位置
+     */
+    private NaviLatLng latLng;
 
     @Override
     public void onCreate() {
         super.onCreate();
         loadCacheLogin();
+    }
+
+    /**
+     * 设置当前位置
+     * @param latLng
+     */
+    public void setLatLng(NaviLatLng latLng) {
+        this.latLng = latLng;
+    }
+
+    /**
+     * 获取当前位置
+     * @return
+     */
+    public NaviLatLng getLatLng() {
+        return latLng;
     }
 
     /**
