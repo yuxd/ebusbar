@@ -97,11 +97,11 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
     /**
      * 结果码,设置支付密码成功
      */
-    public static int setPayPwdSuccess = 0x001;
+    public static int SUCCESS = 0x001;
     /**
      * 结果码，设置支付密码失败
      */
-    public static int getSetPayPwdFail = 0x002;
+    public static int FAILURE = 0x002;
     /**
      * SetPayPasswordDaoImpl
      */
@@ -233,8 +233,10 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
             payPassword = "";
             setpaypwd_hint.setText("请再次输入支付密码");
             reInputEt();
-        }else if(!TextUtils.equals(payPassword1,payPassword1)){ //第二次输入和第一次输入的密码不同
+        }else if(!TextUtils.equals(payPassword,payPassword1)){ //第二次输入和第一次输入的密码不同
             Toast.makeText(this,"请和第一次输入的密码相同或点击取消按钮重新输入!",Toast.LENGTH_SHORT).show();
+            payPassword = "";
+            reInputEt();
         }else{ //确认支付密码
             LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
             setPayPasswordDao.getSetPasswordDao(entity.getToken(),payPassword,entity.getCustID());
@@ -249,11 +251,12 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
             switch (msg.what){
                 case msgSet:
                     if(setPayPasswordDao.setPayPasswordDao == null || TextUtils.equals(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getIsSuccess(),"N")){
+                        setResult(FAILURE);
                         return;
                     }
                     application.getLoginDao().getCrm_login().setExistsPayPassword("1");
                     application.cacheLogin();
-                    setResult(setPayPwdSuccess);
+                    setResult(SUCCESS);
                     Toast.makeText(SetPayPwdActivity.this,"支付密码设置成功",Toast.LENGTH_SHORT).show();
                     ActivityControl.finishAct(SetPayPwdActivity.this);
                     break;

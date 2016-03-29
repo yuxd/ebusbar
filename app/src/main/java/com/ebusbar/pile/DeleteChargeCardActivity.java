@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,10 @@ public class DeleteChargeCardActivity extends BaseActivity{
      * 充电卡
      */
     private TextView no;
+    /**
+     * 删除
+     */
+    private ImageView delete;
     /**
      * Application
      */
@@ -80,6 +85,7 @@ public class DeleteChargeCardActivity extends BaseActivity{
     public void init() {
         no = (TextView) this.findViewById(R.id.no);
         password = (EditText) this.findViewById(R.id.password);
+        delete = (ImageView) this.findViewById(R.id.delete_btn);
     }
 
     @Override
@@ -92,7 +98,7 @@ public class DeleteChargeCardActivity extends BaseActivity{
 
     @Override
     public void setListener() {
-
+        setDeleteListener();
     }
 
     @Override
@@ -101,19 +107,21 @@ public class DeleteChargeCardActivity extends BaseActivity{
     }
 
     /**
-     * 删除
-     * @param view
-     * @return
+     * 设置删除监听器
      */
-    public View delete(View view){
-        String pwds = password.getText().toString();
-        if(TextUtils.isEmpty(pwds)){
-            Toast.makeText(this,"请输入密码",Toast.LENGTH_SHORT).show();
-            return view;
-        }
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-        deleteChargeCardDao.getDeleteChargeCardDao(entity.getToken(),dao.getCrm_accounts_get().getAccountID(),pwds,entity.getCustID());
-        return view;
+    public void setDeleteListener(){
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pwds = password.getText().toString();
+                if (TextUtils.isEmpty(pwds)) {
+                    Toast.makeText(DeleteChargeCardActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                deleteChargeCardDao.getDeleteChargeCardDao(entity.getToken(), dao.getCrm_accounts_get().getAccountID(), pwds, entity.getCustID());
+            }
+        });
     }
 
     private Handler handler = new Handler(){

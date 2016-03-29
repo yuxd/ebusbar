@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,7 +106,11 @@ public class NearbyFrag extends BaseFrag{
 
     @Override
     public void setFragView() {
-        positionDao.getNetPositionListDao("shenzhen");
+        if(!TextUtils.isEmpty(application.getAdCode())){
+            String adCode = application.getAdCode();
+            adCode = adCode.substring(0,adCode.length()-2) + "00";
+            positionDao.getNetPositionListDao(adCode);
+        }
     }
 
     /**

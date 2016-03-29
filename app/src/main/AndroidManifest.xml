@@ -122,6 +122,10 @@
 
         <activity android:name=".DeleteChargeCardActivity"></activity>
 
+        <activity
+            android:name=".SearchActivity"
+            android:launchMode="singleTask"></activity>
+
         <!-- alipay sdk begin -->
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"

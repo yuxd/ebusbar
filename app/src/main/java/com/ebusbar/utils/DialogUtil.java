@@ -19,10 +19,10 @@ public class DialogUtil {
     /**
      * 显示确认按钮监听事件的Dialog
      * @param context
-     * @param hint
-     * @param onClickListener
+     * @param hint 提示
+     * @param onClickListener 点击确定按钮的监听事件
      */
-    public void showSureListenerDialog(Context context,String hint,DialogInterface.OnClickListener onClickListener){
+    public MyDialog showSureListenerDialog(Context context,String hint,DialogInterface.OnClickListener onClickListener){
         MyDialog.Builder builder = new MyDialog.Builder(context).setMessage(hint);
         builder.setPositiveButton("确定", onClickListener); //确定按钮的监听事件
         builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -33,6 +33,23 @@ public class DialogUtil {
         });
         MyDialog sureDialog = builder.create();
         sureDialog.show();
+        return sureDialog;
+    }
+
+    /**
+     * 显示确认按钮监听事件的Dialog
+     * @param context
+     * @param hint 提示
+     * @param okOnClickListener 点击确定按钮的监听事件
+     * @param cancelOnClickListener 点击关闭按钮的监听事件
+     */
+    public MyDialog showSureListenerDialog(Context context,String hint,DialogInterface.OnClickListener okOnClickListener,DialogInterface.OnClickListener cancelOnClickListener){
+        MyDialog.Builder builder = new MyDialog.Builder(context).setMessage(hint);
+        builder.setPositiveButton("确定", okOnClickListener); //确定按钮的监听事件
+        builder.setNegativeButton("取消", cancelOnClickListener);
+        MyDialog sureDialog = builder.create();
+        sureDialog.show();
+        return sureDialog;
     }
 
 }

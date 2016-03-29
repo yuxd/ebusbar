@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +26,8 @@ import com.ebusbar.impl.P3PayDaoImpl;
 import com.ebusbar.myview.MyDialog;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.DefaultParam;
+import com.ebusbar.utils.DialogUtil;
+import com.ebusbar.utils.DoubleUtil;
 import com.ebusbar.utils.PayUtil;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.ebusbar.utils.ResourceUtil;
@@ -105,7 +106,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
     /**
      * 请求码,设置支付密码
      */
-    public static int setPayPwdRequest = 0x001;
+    private static final int PayPwd = 0x001;
     /**
      * Application
      */
@@ -147,6 +148,19 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
      * 第3方支付消息
      */
     private final int msgP3Pay = 0x004;
+    /**
+     * Dialog操作工具
+     */
+    private DialogUtil dialogUtil = DialogUtil.getInstance();
+    /**
+     * 充值Dialog
+     */
+    private MyDialog dialogRecharge;
+
+    /**
+     * 充值
+     */
+    private static final int RECHARGE = 0x005;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -279,7 +293,13 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             //模拟没有设置支付密码
             LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
             if(TextUtils.equals(entity.getExistsPayPassword(),"0")) { //0 :未设置 1：已经设置
-                showSureFinishDialog("您还没有设置支付密码，是否前往设置?");
+                dialogUtil.showSureListenerDialog(this, "您还没有设置支付密码，是否前往设置?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SetPayPwdActivity.startAppActivity(PayActivity.this, PayPwd);
+                        dialog.dismiss();
+                    }
+                });
             }else {
                 showPayPw(pay);
             }
@@ -336,25 +356,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
         payPw.showAtLocation(parent, Gravity.BOTTOM,0,0);
     }
 
-    public void showSureFinishDialog(String hint){
-        MyDialog.Builder builder = new MyDialog.Builder(this).setMessage(hint);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            SetPayPwdActivity.startAppActivity(PayActivity.this, setPayPwdRequest);
-            dialog.dismiss();
-        }
-    });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        MyDialog dialog = builder.create();
-        dialog.show();
-    }
-
     @Override
     public void onClick(View v) {
         Button btn = (Button) v;
@@ -387,8 +388,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
      */
     public void reInputEt(){
         int index = payPassword.length();
-        Log.v(TAG,index+"");
-        Log.v(TAG,payPassword);
         for(int i=0;i<index;i++){
             input_ets[i].setImageResource(R.drawable.paypassword_input);
         }
@@ -433,7 +432,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                         return;
                     }
                     OrderInfoDao.EvcOrderGetEntity entity = orderInfoDao.orderInfoDao.getEvc_order_get();
-                    price = Double.parseDouble(entity.getChargingAmt()) + Double.parseDouble(entity.getServiceAmt())+"";
+                    price = DoubleUtil.add(entity.getChargingAmt(),entity.getServiceAmt());
                     payPrice_text.setText(resourceUtil.getResourceString(PayActivity.this, R.string.money_sign) + price);
                     payType_text.setText("电桩充电");
                     pay_btn.setText(resourceUtil.getResourceString(PayActivity.this, R.string.pay_btn_text) + price + "元");
@@ -446,10 +445,31 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                             Toast.makeText(PayActivity.this,"支付密码错误，请重新输入",Toast.LENGTH_SHORT).show();
                             payPassword = "";
                             reInputEt();
+                        }else if(TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus(),"114")){
+                            dialogUtil.showSureListenerDialog(PayActivity.this, "您的余额不足，是否充值！", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    RechargeActivity.startAppActivity(PayActivity.this, RECHARGE);
+                                }
+                            }, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    payPw.dismiss();
+                                }
+                            });
+                            return;
                         }
+                        payPassword = "";
+                        reInputEt();
                         return;
                     }
-                    Toast.makeText(PayActivity.this,"付款成功",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PayActivity.this, "付款成功", Toast.LENGTH_SHORT).show();
+                    //更新缓存中的余额
+                    String balance = DoubleUtil.delete(application.getLoginDao().getCrm_login().getBalanceAmt(),price);
+                    application.getLoginDao().getCrm_login().setBalanceAmt(balance);
+                    application.cacheLogin();
                     payPw.dismiss();
                     ActivityControl.finishExcept(FragmentTabHostActivity.STAG);
                     break;
@@ -475,10 +495,26 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode != setPayPwdRequest || resultCode != SetPayPwdActivity.setPayPwdSuccess){
-            return;
+        switch (requestCode){
+            case PayPwd:
+                if(resultCode == SetPayPwdActivity.SUCCESS){
+                    showPayPw(tran_btn);
+                }else if(resultCode == SetPayPwdActivity.FAILURE){
+                    Toast.makeText(this,"支付密码设置失败!",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case RECHARGE:
+                if(resultCode == RechargeActivity.SUCCESS){
+                    Toast.makeText(this,"充值成功，请输入支付密码支付!",Toast.LENGTH_SHORT).show();
+                    tran_text.setText(application.getLoginDao().getCrm_login().getBalanceAmt());
+                    payPassword = "";
+                    reInputEt();
+                }else if(resultCode == RechargeActivity.FAILURE){
+                    Toast.makeText(this,"充值失败，请选择其他操作方式!",Toast.LENGTH_SHORT).show();
+                    payPw.dismiss();
+                }
         }
-        showPayPw(tran_btn);
+
     }
 
     /**

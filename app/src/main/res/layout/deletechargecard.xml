@@ -93,11 +93,11 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/delete_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/deletechargecard_btn_bg"
         android:layout_marginTop="20dp"
-        android:onClick="delete"
         />
 
 </LinearLayout>

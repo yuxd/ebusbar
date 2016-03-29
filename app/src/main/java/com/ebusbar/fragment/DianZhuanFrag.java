@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -112,6 +113,10 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      */
     private TextView nearby;
     /**
+     * 搜索
+     */
+    private TextView search;
+    /**
      * 筛选菜单
      */
     private PopupWindow screenPw;
@@ -159,6 +164,10 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      * 当前Marker
      */
     private String currMarker;
+    /**
+     *
+     */
+    private String adCode;
 
     @Nullable
     @Override
@@ -213,6 +222,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mapView.onDestroy();
         if(null != locationClient){
             locationClient.onDestroy();
         }
@@ -231,6 +241,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         location = (ImageView)root.findViewById(R.id.location);
         screen = (ImageView) root.findViewById(R.id.screen);
         nearby = (TextView) root.findViewById(R.id.nearby);
+        search = (TextView) root.findViewById(R.id.search);
     }
 
     @Override
@@ -251,6 +262,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         setToLocationListener(); //设置定位按钮的监听事件
         setToScreenListener(); //设置筛选PopupWindow的监听事件
         setNearbyListener();
+        setSearchListener();
     }
 
     @Override
@@ -263,7 +275,11 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      * 加载电桩位置
      */
     public void loadPosition(){
-        positionDao.getNetPositionListDao("shenzhen");
+        if(!TextUtils.isEmpty(application.getAdCode())){
+            String adCode = application.getAdCode();
+            adCode = adCode.substring(0,adCode.length()-2) + "00";
+            positionDao.getNetPositionListDao(adCode);
+        }
     }
 
     /**
@@ -282,6 +298,23 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
             }
             markers.add(aMap.addMarker(markerOptions));
         }
+    }
+
+
+    /**
+     * 设置搜索监听
+     */
+    public void setSearchListener(){
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(positionDao.positionDaoList.size() == 0){
+                    Toast.makeText(context,"对不起，暂无数据，无法搜索！",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+        });
     }
 
     /**
@@ -488,6 +521,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
                 locationClient = new AMapLocationClient(context);
                 locationClientOption = new AMapLocationClientOption();
                 locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+                locationClientOption.setNeedAddress(true); //设置需要返回地址
                 locationClient.setLocationListener(DianZhuanFrag.this);
                 locationClient.setLocationOption(locationClientOption);
                 locationClient.startLocation();
@@ -516,7 +550,9 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         latLng.setLatitude(aMapLocation.getLatitude());
         latLng.setLongitude(aMapLocation.getLongitude());
         application.setLatLng(latLng);
+        application.setAdCode(aMapLocation.getAdCode());
         if(isFirst){
+            loadPosition(); //加载传充电点
             aMap.moveCamera(CameraUpdateFactory.zoomTo(DefaultParam.ZOOM)); //修改缩放位置
             isFirst = !isFirst;
         }

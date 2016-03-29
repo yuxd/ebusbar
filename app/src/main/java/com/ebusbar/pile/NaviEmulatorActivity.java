@@ -94,7 +94,7 @@ public class NaviEmulatorActivity extends BaseActivity implements AMapNaviListen
      */
     @Override
     public void onCalculateRouteSuccess() {
-        mAMapNavi.startNavi(AMapNavi.EmulatorNaviMode);
+        mAMapNavi.startNavi(AMapNavi.GPSNaviMode);
     }
 
     /**

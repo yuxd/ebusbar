@@ -1,11 +1,12 @@
 package com.ebusbar.dao;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Jelly on 2016/3/7.
  */
-public class PositionListItemDao {
-
-
+public class PositionListItemDao implements Parcelable {
     /**
      * returnStatus : 100
      * isSuccess : Y
@@ -30,7 +31,7 @@ public class PositionListItemDao {
         this.evc_stations_get = evc_stations_get;
     }
 
-    public static class EvcStationsGetEntity {
+    public static class EvcStationsGetEntity implements Parcelable {
         private String returnStatus;
         private String isSuccess;
         private String OrgId;
@@ -130,5 +131,83 @@ public class PositionListItemDao {
         public void setUnavailableNum(String unavailableNum) {
             this.unavailableNum = unavailableNum;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.returnStatus);
+            dest.writeString(this.isSuccess);
+            dest.writeString(this.OrgId);
+            dest.writeString(this.OrgName);
+            dest.writeString(this.Longitude);
+            dest.writeString(this.Latitude);
+            dest.writeString(this.OrgStatus);
+            dest.writeString(this.Addr);
+            dest.writeString(this.isAvailable);
+            dest.writeString(this.availableNum);
+            dest.writeString(this.unavailableNum);
+        }
+
+        public EvcStationsGetEntity() {
+        }
+
+        protected EvcStationsGetEntity(Parcel in) {
+            this.returnStatus = in.readString();
+            this.isSuccess = in.readString();
+            this.OrgId = in.readString();
+            this.OrgName = in.readString();
+            this.Longitude = in.readString();
+            this.Latitude = in.readString();
+            this.OrgStatus = in.readString();
+            this.Addr = in.readString();
+            this.isAvailable = in.readString();
+            this.availableNum = in.readString();
+            this.unavailableNum = in.readString();
+        }
+
+        public static final Creator<EvcStationsGetEntity> CREATOR = new Creator<EvcStationsGetEntity>() {
+            @Override
+            public EvcStationsGetEntity createFromParcel(Parcel source) {
+                return new EvcStationsGetEntity(source);
+            }
+
+            @Override
+            public EvcStationsGetEntity[] newArray(int size) {
+                return new EvcStationsGetEntity[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.evc_stations_get, flags);
+    }
+
+    public PositionListItemDao() {
+    }
+
+    protected PositionListItemDao(Parcel in) {
+        this.evc_stations_get = in.readParcelable(EvcStationsGetEntity.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<PositionListItemDao> CREATOR = new Parcelable.Creator<PositionListItemDao>() {
+        @Override
+        public PositionListItemDao createFromParcel(Parcel source) {
+            return new PositionListItemDao(source);
+        }
+
+        @Override
+        public PositionListItemDao[] newArray(int size) {
+            return new PositionListItemDao[size];
+        }
+    };
 }

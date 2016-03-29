@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BalanceDaoImpl;
@@ -139,6 +140,7 @@ public class MyWalletActivity extends BaseActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        setActivityView();
     }
 
     /**
@@ -147,7 +149,7 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View balance(View view){
-        if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getIsSuccess(),"N")){
+        if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getReturnStatus(), "110")){
             return view;
         }
         BalanceActivity.startAppActivity(this);
@@ -160,7 +162,7 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View chargeCard(View view){
-        if(TextUtils.equals(chargeCardItemDao.chargeCardItemDaos.get(0).getCrm_accounts_get().getIsSuccess(),"N")){
+        if(chargeCardItemDao.chargeCardItemDaos.size()!=0 && TextUtils.equals(chargeCardItemDao.chargeCardItemDaos.get(0).getCrm_accounts_get().getReturnStatus(),"110")){
             return view;
         }
         ChargeCardActivity.startAppActivity(this,(ArrayList)chargeCardItemDao.chargeCardItemDaos);
@@ -174,7 +176,7 @@ public class MyWalletActivity extends BaseActivity{
      * @return
      */
     public View bill(View view){
-        if(billDao.billDaos.size() == 0 || TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getIsSuccess(), "N")){
+        if(billDao.billDaos.size() != 0 && TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getReturnStatus(), "110")){
             return view;
         }
         BillActivity.startAppActivity(this,(ArrayList)billDao.billDaos);
@@ -200,13 +202,19 @@ public class MyWalletActivity extends BaseActivity{
                     money_text.setText(application.getLoginDao().getCrm_login().getBalanceAmt());
                     break;
                 case msgChargeCard:
-                    if(chargeCardItemDao.chargeCardItemDaos.size() == 0){
+                    if(chargeCardItemDao.chargeCardItemDaos.size() == 0 || TextUtils.equals(chargeCardItemDao.chargeCardItemDaos.get(0).getCrm_accounts_get().getIsSuccess(),"N")){
                         return;
                     }
                     card_text.setText(chargeCardItemDao.chargeCardItemDaos.size()+"");
                     break;
                 case msgBill:
                     if(billDao.billDaos.size() == 0){
+                        return;
+                    }
+                    if(TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getIsSuccess(),"N")){
+                        if(TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getReturnStatus(),"110")){
+                            Toast.makeText(MyWalletActivity.this,"用户已经注销，请重新登录!",Toast.LENGTH_SHORT).show();
+                        }
                         return;
                     }
                     bill_text.setText(billDao.billDaos.size()+"");

@@ -32,11 +32,28 @@ public class MyApplication extends Application{
      * 当前位置
      */
     private NaviLatLng latLng;
+    /**
+     * 城市代码
+     */
+    private String adCode;
 
     @Override
     public void onCreate() {
         super.onCreate();
         loadCacheLogin();
+    }
+
+
+    /**
+     * 设置城市代码
+     * @param adCode
+     */
+    public void setAdCode(String adCode) {
+        this.adCode = adCode;
+    }
+
+    public String getAdCode() {
+        return adCode;
     }
 
     /**
