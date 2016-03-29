@@ -15,17 +15,18 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.OrderInfoDao;
 import com.ebusbar.dao.PileInfoDao;
+import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.ChargeOrderDaoImpl;
 import com.ebusbar.impl.FinishChargeDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.impl.PileInfoDaoImpl;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.DialogUtil;
 import com.ebusbar.utils.DoubleUtil;
-import com.ebusbar.utils.PopupWindowUtil;
 import com.jellycai.service.ThreadManage;
 
 
@@ -33,7 +34,7 @@ import com.jellycai.service.ThreadManage;
  * 充电界面
  * Created by Jelly on 2016/3/9.
  */
-public class ChargeActivity extends BaseActivity{
+public class ChargeActivity extends UtilActivity implements NetErrorHandlerListener{
     /**
      * TAG
      */
@@ -99,14 +100,6 @@ public class ChargeActivity extends BaseActivity{
      */
     private String chargeState = NOCHARGE;
     /**
-     * Dialog操作工具
-     */
-    private DialogUtil dialogUtil = DialogUtil.getInstance();
-    /**
-     * 弹出窗操作工具
-     */
-    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
-    /**
      * 请求码，支付
      */
     private final int payResquest = 0x001;
@@ -134,10 +127,6 @@ public class ChargeActivity extends BaseActivity{
      * 电桩号
      */
     private String FacilityID;
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * 进度条
      */
@@ -279,6 +268,11 @@ public class ChargeActivity extends BaseActivity{
             switch (msg.what){
                 case msgCharge: //点击充电
                     if(chargeOrderDao.chargeOrderDao == null || TextUtils.equals(chargeOrderDao.chargeOrderDao.getEvc_order_set().getIsSuccess(), "N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(chargeOrderDao.chargeOrderDao.getEvc_order_set().getReturnStatus());
+                        if(toastUtil.toastError(context,errorDao,null)){
+                            return;
+                        }
+                        ActivityControl.finishAct(ChargeActivity.this);
                         return;
                     }
                     title.setText("充电中");
@@ -288,7 +282,8 @@ public class ChargeActivity extends BaseActivity{
                     break;
                 case msgFinishCharge: //完成充电
                     if(finishChargeDao.finishChargeDao == null || TextUtils.equals(finishChargeDao.finishChargeDao.getEvc_order_change().getIsSuccess(),"N")){
-                        Toast.makeText(ChargeActivity.this, "充电桩充电结束错误", Toast.LENGTH_SHORT).show();
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(finishChargeDao.finishChargeDao.getEvc_order_change().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         return;
                     }
                     loading = popupWindowUtil.startLoading(ChargeActivity.this,charge_btn,"系统正在处理"); //开启进度条
@@ -308,14 +303,11 @@ public class ChargeActivity extends BaseActivity{
                             }
                         }
                     });
-//                    chargeState = FINISHCHARGE;
-//                    charge_btn.setImageResource(R.drawable.click_pay);
-                    //充电完成后跳到支付界面
-//                    PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
                     break;
                 case msgPileInfo: //扫码二维码进入充电界面
-                    if(pileInfoDao.pileInfoDao == null || TextUtils.equals(pileInfoDao.pileInfoDao.getEvc_facility_get().getIsSuccess(), "N")){
-                        Toast.makeText(ChargeActivity.this,"二维码编号无法识别,请重新输入或者扫码",Toast.LENGTH_SHORT).show();
+                    if(pileInfoDao.pileInfoDao == null || TextUtils.equals(pileInfoDao.pileInfoDao.getEvc_facility_get().getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(pileInfoDao.pileInfoDao.getEvc_facility_get().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         ActivityControl.finishAct(ChargeActivity.this);
                         return;
                     }
@@ -330,7 +322,8 @@ public class ChargeActivity extends BaseActivity{
                     break;
                 case msgInfo:
                     if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        Toast.makeText(ChargeActivity.this,"获取服务器数据错误，App将会再次请求数据！",Toast.LENGTH_SHORT).show();
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(pileInfoDao.pileInfoDao.getEvc_facility_get().getReturnStatus());
+                        toastUtil.toastError(context, errorDao, null);
                         return;
                     }
                     OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
@@ -361,6 +354,8 @@ public class ChargeActivity extends BaseActivity{
                     break;
                 case startOrderInfo:
                     if(startOrderInfoDao.orderInfoDao == null || TextUtils.equals(startOrderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(startOrderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         return;
                     }
                     OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity1 = startOrderInfoDao.orderInfoDao.getEvc_order_get();
@@ -373,6 +368,11 @@ public class ChargeActivity extends BaseActivity{
         }
     };
 
+
+    @Override
+    public void handlerError(String returnState) {
+
+    }
 
     /**
      * 完成充电，结束进度条

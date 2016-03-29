@@ -28,6 +28,8 @@ public class PopupWindowUtil {
         return popupWindowUtil;
     }
 
+    private PopupWindowUtil(){}
+
     /**
      * 通过资源ID来获取PopupWindow
      * @param context Context

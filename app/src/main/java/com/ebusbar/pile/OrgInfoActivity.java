@@ -3,11 +3,13 @@ package com.ebusbar.pile;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.ebusbar.activities.UtilActivity;
+
 /**
  * 充电点详情
  * Created by Jelly on 2016/3/23.
  */
-public class OrgInfoActivity extends BaseActivity{
+public class OrgInfoActivity extends UtilActivity {
 
     public String TAG = "OrgInfoActivity";
 

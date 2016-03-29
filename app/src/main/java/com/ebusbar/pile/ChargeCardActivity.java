@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.ChargeCardListAdapter;
 import com.ebusbar.dao.AddChargeCardDao;
 import com.ebusbar.dao.ChargeCardItemDao;
@@ -21,7 +22,7 @@ import java.util.List;
  * 充电卡显示
  * Created by Jelly on 2016/3/23.
  */
-public class ChargeCardActivity extends BaseActivity{
+public class ChargeCardActivity extends UtilActivity {
 
     public String TAG = "ChargeCardActivity";
     /**
@@ -32,10 +33,6 @@ public class ChargeCardActivity extends BaseActivity{
      * 充电卡数据集合
      */
     private List<ChargeCardItemDao> daos;
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * 适配器
      */

@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.SelectPileListAdapter;
 import com.ebusbar.dao.PileListItemDao;
 import com.ebusbar.impl.PileListItemDaoImpl;
@@ -19,7 +20,7 @@ import com.ebusbar.utils.ActivityControl;
 /**
  * Created by Jelly on 2016/3/15.
  */
-public class SelectPileActivity extends BaseActivity{
+public class SelectPileActivity extends UtilActivity {
     /**
      * TAG
      */

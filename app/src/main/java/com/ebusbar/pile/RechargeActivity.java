@@ -16,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.PayResult;
 import com.ebusbar.impl.ReChargeDaoImpl;
@@ -30,7 +32,7 @@ import java.net.URLEncoder;
  * 充值
  * Created by Jelly on 2016/3/16.
  */
-public class RechargeActivity extends BaseActivity implements View.OnClickListener{
+public class RechargeActivity extends UtilActivity implements View.OnClickListener{
     /**
      * TAG
      */
@@ -85,10 +87,6 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
      */
     private final int msgReCharge = 0x002;
     /**
-     * Application
-     */
-    private MyApplication application;
-    /**
      * 支付价格
      */
     private String price;
@@ -124,7 +122,6 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void loadObjectAttribute() {
         reChargeDao = new ReChargeDaoImpl(this,handler,msgReCharge);
-        application = (MyApplication) getApplication();
     }
 
     @Override
@@ -298,6 +295,8 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                 }
                 case msgReCharge:
                     if(reChargeDao.reChargeDao == null || TextUtils.equals(reChargeDao.reChargeDao.getCrm_recharge().getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(reChargeDao.reChargeDao.getCrm_recharge().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         RechargeActivity.this.setResult(FAILURE);
                         ActivityControl.finishAct(RechargeActivity.this);
                         return;

@@ -12,13 +12,13 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.MyAppointPageAdapter;
-import com.ebusbar.utils.WindowUtil;
 
 /**
  * Created by Jelly on 2016/3/10.
  */
-public class MyAppointActivity extends BaseActivity{
+public class MyAppointActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -51,10 +51,6 @@ public class MyAppointActivity extends BaseActivity{
      * 线条移动的位置
      */
     private int previousPosition;
-    /**
-     * 窗体操作工具
-     */
-    private WindowUtil windowUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +74,6 @@ public class MyAppointActivity extends BaseActivity{
     @Override
     public void loadObjectAttribute() {
         pageAdapter = new MyAppointPageAdapter(getSupportFragmentManager());
-        windowUtil = WindowUtil.getInstance();
     }
 
     @Override

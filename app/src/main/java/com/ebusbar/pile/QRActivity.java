@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.utils.ActivityControl;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -31,7 +32,7 @@ import java.util.Vector;
 /**
  * Created by Jelly on 2016/3/8.
  */
-public class QRActivity extends BaseActivity implements SurfaceHolder.Callback{
+public class QRActivity extends UtilActivity implements SurfaceHolder.Callback{
     /**
      * TAG
      */

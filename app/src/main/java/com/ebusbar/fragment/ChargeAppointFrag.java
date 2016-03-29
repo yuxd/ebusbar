@@ -22,7 +22,7 @@ import com.ebusbar.dao.StartChargeDao;
 import com.ebusbar.impl.FinishOrderDaoImpl;
 import com.ebusbar.impl.GetChargeAppointDaoImpl;
 import com.ebusbar.impl.StartChargeDaoImpl;
-import com.ebusbar.pile.BaseActivity;
+import com.ebusbar.activities.BaseActivity;
 import com.ebusbar.pile.ChargeActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.NaviEmulatorActivity;

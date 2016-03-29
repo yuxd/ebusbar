@@ -18,7 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -31,7 +32,7 @@ import com.ebusbar.utils.RegExpUtil;
  * 登录界面，点击ActionBar上面的注册按钮直接进入注册界面
  * Created by Jelly on 2016/3/1.
  */
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -109,10 +110,6 @@ public class LoginActivity extends BaseActivity {
      * 倒计时的消息
      */
     private int msgCountDown = 0x003;
-    /**
-     * Application
-     */
-    private MyApplication application;
 
 
 
@@ -146,7 +143,6 @@ public class LoginActivity extends BaseActivity {
     public void loadObjectAttribute(){
         loginDao = new LoginDaoImpl(this,handler,msgLogin);
         codeDao = new CodeDaoImpl(this,handler,msgSmsCode);
-        application = (MyApplication) getApplication();
     }
 
     @Override
@@ -349,17 +345,10 @@ public class LoginActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             if(msg.what == msgLogin){
                 if(loginDao.loginDao == null || TextUtils.equals(loginDao.loginDao.getCrm_login().getIsSuccess(),"N")){
-                    LoginDao.CrmLoginEntity entity = loginDao.loginDao.getCrm_login();
-                    if(TextUtils.equals(entity.getReturnStatus(),"118")){
-                        Toast.makeText(LoginActivity.this,"密码有误，请重新输入!",Toast.LENGTH_SHORT).show();
-                    }else if(TextUtils.equals(entity.getReturnStatus(),"109")){
-                        Toast.makeText(LoginActivity.this,"您输入的账户不存在，请重新输入!",Toast.LENGTH_SHORT).show();
-                    }else if(TextUtils.equals(entity.getReturnStatus(),"105")){
-                        Toast.makeText(LoginActivity.this,"登录验证码错误，请重新获取！",Toast.LENGTH_SHORT).show();
-                    }
+                    ErrorDao errorDao = errorParamUtil.checkReturnState(loginDao.loginDao.getCrm_login().getReturnStatus());
+                    toastUtil.toastError(context,errorDao,null);
                     return;
                 }
-                Log.v(TAG,"登录成功");
                 application.setLoginDao(loginDao.loginDao);
                 loginDao.cacheObject(loginDao.loginDao);
                 ActivityControl.finishExcept(FragmentTabHostActivity.STAG);

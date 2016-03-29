@@ -19,14 +19,16 @@ import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
 import com.amap.api.navi.model.NaviInfo;
 import com.amap.api.navi.model.NaviLatLng;
 import com.autonavi.tbt.TrafficFacilityInfo;
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.utils.TTSController;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Jelly on 2016/3/8.
  */
-public class NaviEmulatorActivity extends BaseActivity implements AMapNaviListener, AMapNaviViewListener {
+public class NaviEmulatorActivity extends UtilActivity implements AMapNaviListener, AMapNaviViewListener {
     /**
      * TAG
      */

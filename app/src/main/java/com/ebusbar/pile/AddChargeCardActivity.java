@@ -13,16 +13,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.dao.AddChargeCardDao;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.AddChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.NetErrorEnum;
 
 /**
  * 绑定充电卡
  * Created by Jelly on 2016/3/23.
  */
-public class AddChargeCardActivity extends BaseActivity{
+public class AddChargeCardActivity extends UtilActivity implements NetErrorHandlerListener{
     /**
      * TAG
      */
@@ -47,10 +51,6 @@ public class AddChargeCardActivity extends BaseActivity{
      * 确定
      */
     private TextView ok;
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * SUCCESS
      */
@@ -116,20 +116,8 @@ public class AddChargeCardActivity extends BaseActivity{
             switch (msg.what){
                 case msgAdd:
                     if(addChargeCardDao.addChargeCardDao == null || TextUtils.equals(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getIsSuccess(), "N")){
-                        AddChargeCardDao.CrmAccountsInsertEntity entity = addChargeCardDao.addChargeCardDao.getCrm_accounts_insert();
-                        if(TextUtils.equals(entity.getReturnStatus(),"119")){
-                            Toast.makeText(AddChargeCardActivity.this,"充电卡已经被绑定，请检查充电卡卡号!",Toast.LENGTH_SHORT).show();
-                            clearET();
-                            return;
-                        }else if(TextUtils.equals(entity.getReturnStatus(),"122")){
-                            Toast.makeText(AddChargeCardActivity.this,"充电卡不存在，请输入正确卡号!",Toast.LENGTH_SHORT).show();
-                            clearET();
-                            return;
-                        }else if(TextUtils.equals(entity.getReturnStatus(),"123")){
-                            Toast.makeText(AddChargeCardActivity.this,"充电卡密码错误，请重新输入密码!",Toast.LENGTH_SHORT).show();
-                            pwd.setText("");
-                            return;
-                        }
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,AddChargeCardActivity.this);
                         setResult(FAILURE);
                         return;
                     }
@@ -142,6 +130,17 @@ public class AddChargeCardActivity extends BaseActivity{
             }
         }
     };
+
+    @Override
+    public void handlerError(String returnState) {
+        if(TextUtils.equals(returnState, NetErrorEnum.充电卡已经被绑定.getState())){
+            clearET();
+        }else if(TextUtils.equals(returnState,NetErrorEnum.充电卡不存在.getState())){
+            clearET();
+        } else if(TextUtils.equals(returnState,NetErrorEnum.充电卡密码错误.getState())){
+            pwd.setText("");
+        }
+    }
 
     /**
      * 清空输入框

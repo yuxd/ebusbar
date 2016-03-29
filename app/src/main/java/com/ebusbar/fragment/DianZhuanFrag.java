@@ -24,6 +24,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
@@ -44,6 +45,7 @@ import com.ebusbar.pile.QRActivity;
 import com.ebusbar.pile.R;
 import com.ebusbar.pile.SelectPileActivity;
 import com.ebusbar.utils.DefaultParam;
+import com.ebusbar.utils.FloatUtil;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.ebusbar.utils.ResourceUtil;
 import com.ebusbar.utils.WindowUtil;
@@ -165,9 +167,10 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      */
     private String currMarker;
     /**
-     *
+     * 地图操作工具
      */
-    private String adCode;
+    private AMapUtils aMapUtils = new AMapUtils();
+
 
     @Nullable
     @Override
@@ -443,7 +446,12 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         TextView sum_text = (TextView) root.findViewById(R.id.sum_text);
         TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
         TextView price = (TextView) root.findViewById(R.id.price);
+        TextView distance_text = (TextView) root.findViewById(R.id.distance_text);
         PositionListItemDao.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
+        NaviLatLng naviLatLng = application.getLatLng();
+        LatLng startLatLng = new LatLng(naviLatLng.getLatitude(),naviLatLng.getLongitude());
+        LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
+        distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
         dianzhuan_name.setText(entity.getOrgName());
         if(TextUtils.equals(entity.getIsAvailable(),"1")){
             open_text.setText("有空闲");

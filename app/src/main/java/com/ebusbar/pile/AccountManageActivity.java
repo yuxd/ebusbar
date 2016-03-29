@@ -8,24 +8,24 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.impl.LogoutDaoImpl;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.DialogUtil;
-import com.ebusbar.utils.RoundBitmapUtil;
+import com.ebusbar.utils.NetErrorEnum;
 
 /**
  * 账户管理
  * Created by Jelly on 2016/3/7.
  */
-public class AccountManageActivity extends BaseActivity{
+public class AccountManageActivity extends UtilActivity implements NetErrorHandlerListener{
     /**
      * TAG
      */
@@ -63,10 +63,6 @@ public class AccountManageActivity extends BaseActivity{
      */
     private final int msgIcon = 0x001;
     /**
-     * Application
-     */
-    private MyApplication application;
-    /**
      * LogoutDaoImpl
      */
     private LogoutDaoImpl logoutDao;
@@ -74,10 +70,6 @@ public class AccountManageActivity extends BaseActivity{
      * 注销消息
      */
     private final int msgLogout = 0x002;
-    /**
-     * Dialog操作工具
-     */
-    private DialogUtil dialogUtil = DialogUtil.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,7 +93,6 @@ public class AccountManageActivity extends BaseActivity{
 
     @Override
     public void loadObjectAttribute() {
-        application = (MyApplication) this.getApplication();
         bitmap = new BitmapImpl(this,handler,msgIcon);
         logoutDao = new LogoutDaoImpl(this,handler,msgLogout);
     }
@@ -150,20 +141,15 @@ public class AccountManageActivity extends BaseActivity{
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgIcon:
-                    if(bitmap.img == null){
-                        Log.v(TAG,"获取头像失败");
+                    if(bitmap.img == null){ //用户头像获取失败
                         return;
                     }
-                    avatar_icon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmap.img));
+                    avatar_icon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmap.img));
                     break;
                 case msgLogout:
                     if(logoutDao.logoutDao == null || TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getIsSuccess(),"N")){
-                        if(TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getReturnStatus(), "110")){ //Token失效
-                            application.loginOut();
-                            ActivityControl.finishAct(AccountManageActivity.this);
-                            return;
-                        }
-                        Toast.makeText(AccountManageActivity.this,"注销失败，请检查您的网络连接",Toast.LENGTH_SHORT).show();
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(logoutDao.logoutDao.getCrm_logout().getReturnStatus());
+                        toastUtil.toastError(context, errorDao, AccountManageActivity.this);
                         return;
                     }
                     application.loginOut();
@@ -172,6 +158,14 @@ public class AccountManageActivity extends BaseActivity{
             }
         }
     };
+
+    @Override
+    public void handlerError(String returnState) {
+        if(TextUtils.equals(returnState, NetErrorEnum.Token失效.getState())){
+            application.loginOut();
+            ActivityControl.finishAct(AccountManageActivity.this);
+        }
+    }
 
     /**
      * 启动AccountManageActivity

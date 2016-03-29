@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.utils.CountDownUtil;
 import com.ebusbar.utils.DefaultParam;
@@ -23,7 +24,7 @@ import com.ebusbar.utils.RegExpUtil;
 /**
  * Created by Jelly on 2016/3/1.
  */
-public class ForgetPwdActivity extends BaseActivity{
+public class ForgetPwdActivity extends UtilActivity {
     /**
      * TAG
      */

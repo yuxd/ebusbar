@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.impl.SetPasswordDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 
@@ -21,7 +22,7 @@ import com.ebusbar.utils.ActivityControl;
  * 设置密码
  * Created by Jelly on 2016/3/1.
  */
-public class SetPwdActivity extends BaseActivity{
+public class SetPwdActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -51,10 +52,6 @@ public class SetPwdActivity extends BaseActivity{
      */
     private int msgSetPwd=0x001;
     /**
-     * Application
-     */
-    private MyApplication application;
-    /**
      * 需要修改密码的手机号
      */
     private String phone;
@@ -70,7 +67,6 @@ public class SetPwdActivity extends BaseActivity{
 
     @Override
     public void loadObjectAttribute() {
-        application = (MyApplication) getApplication();
         setPasswordDao = new SetPasswordDaoImpl(this,handler,msgSetPwd);
         phone = getIntent().getStringExtra("phone");
     }
@@ -176,7 +172,7 @@ public class SetPwdActivity extends BaseActivity{
         public void handleMessage(Message msg) {
             if(msg.what == msgSetPwd){
                 if(setPasswordDao == null || !TextUtils.equals(setPasswordDao.setPasswordDao.getMessage(),"1")){
-                    Log.v(TAG,"修改密码错误");
+
                     return;
                 }
                 ActivityControl.finishAct(SetPwdActivity.this);

@@ -10,14 +10,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.BalanceDaoImpl;
 import com.ebusbar.impl.BillDaoImpl;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.impl.ChargeCardItemDaoImpl;
-import com.ebusbar.utils.RoundBitmapUtil;
 
 import java.util.ArrayList;
 
@@ -25,15 +25,11 @@ import java.util.ArrayList;
  * 我的钱包
  * Created by Jelly on 2016/3/16.
  */
-public class MyWalletActivity extends BaseActivity{
+public class MyWalletActivity extends UtilActivity {
     /**
      * TAG
      */
     public String TAG = "MyWalletActivity";
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * 昵称
      */
@@ -108,7 +104,6 @@ public class MyWalletActivity extends BaseActivity{
 
     @Override
     public void loadObjectAttribute() {
-        application = (MyApplication) getApplication();
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
         balanceDao = new BalanceDaoImpl(this,handler,msgBalance);
         chargeCardItemDao = new ChargeCardItemDaoImpl(this,handler,msgChargeCard);
@@ -191,10 +186,12 @@ public class MyWalletActivity extends BaseActivity{
                     if(bitmapImpl.img == null){
                         return;
                     }
-                    usericon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmapImpl.img));
+                    usericon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmapImpl.img));
                     break;
                 case msgBalance:
                     if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(balanceDao.balanceDao.getCrm_balanceamt_get().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         return;
                     }
                     application.getLoginDao().getCrm_login().setBalanceAmt(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
@@ -209,12 +206,6 @@ public class MyWalletActivity extends BaseActivity{
                     break;
                 case msgBill:
                     if(billDao.billDaos.size() == 0){
-                        return;
-                    }
-                    if(TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getIsSuccess(),"N")){
-                        if(TextUtils.equals(billDao.billDaos.get(0).getCrm_balancelog_get().getReturnStatus(),"110")){
-                            Toast.makeText(MyWalletActivity.this,"用户已经注销，请重新登录!",Toast.LENGTH_SHORT).show();
-                        }
                         return;
                     }
                     bill_text.setText(billDao.billDaos.size()+"");

@@ -1,79 +1,108 @@
 package com.ebusbar.dao;
 
+import java.util.List;
+
 /**
  * Created by Jelly on 2016/3/28.
  */
 public class TestDao {
 
     /**
-     * result : {"err_code":"0","model":"101009513977^1101479736999","success":true}
-     * request_id : z2amben5spsi
+     * interfaceName : crm_login
+     * returnStatus : 100
+     * isSuccess : Y
+     * data : [{"CustID":"86201603290000000656","Mobile":"15062464932","Token":"0x746b32303136303332394438323837354543","BalanceAmt":"97.56","ExistsPayPassword":"1"},{"CustID":"86201603290000000656","Mobile":"15062464932","Token":"0x746b32303136303332394438323837354543","BalanceAmt":"97.56","ExistsPayPassword":"1"}]
+     */
+    private String interfaceName;
+    private String returnStatus;
+    private String isSuccess;
+    /**
+     * CustID : 86201603290000000656
+     * Mobile : 15062464932
+     * Token : 0x746b32303136303332394438323837354543
+     * BalanceAmt : 97.56
+     * ExistsPayPassword : 1
      */
 
-    private AlibabaAliqinFcSmsNumSendResponseEntity alibaba_aliqin_fc_sms_num_send_response;
+    private List<DataEntity> data;
 
-    public AlibabaAliqinFcSmsNumSendResponseEntity getAlibaba_aliqin_fc_sms_num_send_response() {
-        return alibaba_aliqin_fc_sms_num_send_response;
+    public String getInterfaceName() {
+        return interfaceName;
     }
 
-    public void setAlibaba_aliqin_fc_sms_num_send_response(AlibabaAliqinFcSmsNumSendResponseEntity alibaba_aliqin_fc_sms_num_send_response) {
-        this.alibaba_aliqin_fc_sms_num_send_response = alibaba_aliqin_fc_sms_num_send_response;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
-    public static class AlibabaAliqinFcSmsNumSendResponseEntity {
-        /**
-         * err_code : 0
-         * model : 101009513977^1101479736999
-         * success : true
-         */
+    public String getReturnStatus() {
+        return returnStatus;
+    }
 
-        private ResultEntity result;
-        private String request_id;
+    public void setReturnStatus(String returnStatus) {
+        this.returnStatus = returnStatus;
+    }
 
-        public ResultEntity getResult() {
-            return result;
+    public String getIsSuccess() {
+        return isSuccess;
+    }
+
+    public void setIsSuccess(String isSuccess) {
+        this.isSuccess = isSuccess;
+    }
+
+    public List<DataEntity> getData() {
+        return data;
+    }
+
+    public void setData(List<DataEntity> data) {
+        this.data = data;
+    }
+
+    public static class DataEntity {
+        private String CustID;
+        private String Mobile;
+        private String Token;
+        private String BalanceAmt;
+        private String ExistsPayPassword;
+
+        public String getCustID() {
+            return CustID;
         }
 
-        public void setResult(ResultEntity result) {
-            this.result = result;
+        public void setCustID(String CustID) {
+            this.CustID = CustID;
         }
 
-        public String getRequest_id() {
-            return request_id;
+        public String getMobile() {
+            return Mobile;
         }
 
-        public void setRequest_id(String request_id) {
-            this.request_id = request_id;
+        public void setMobile(String Mobile) {
+            this.Mobile = Mobile;
         }
 
-        public static class ResultEntity {
-            private String err_code;
-            private String model;
-            private boolean success;
+        public String getToken() {
+            return Token;
+        }
 
-            public String getErr_code() {
-                return err_code;
-            }
+        public void setToken(String Token) {
+            this.Token = Token;
+        }
 
-            public void setErr_code(String err_code) {
-                this.err_code = err_code;
-            }
+        public String getBalanceAmt() {
+            return BalanceAmt;
+        }
 
-            public String getModel() {
-                return model;
-            }
+        public void setBalanceAmt(String BalanceAmt) {
+            this.BalanceAmt = BalanceAmt;
+        }
 
-            public void setModel(String model) {
-                this.model = model;
-            }
+        public String getExistsPayPassword() {
+            return ExistsPayPassword;
+        }
 
-            public boolean isSuccess() {
-                return success;
-            }
-
-            public void setSuccess(boolean success) {
-                this.success = success;
-            }
+        public void setExistsPayPassword(String ExistsPayPassword) {
+            this.ExistsPayPassword = ExistsPayPassword;
         }
     }
 }

@@ -18,20 +18,20 @@ import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.fragment.CarFrag;
 import com.ebusbar.fragment.FixFrag;
 import com.ebusbar.fragment.ShopFrag;
 import com.ebusbar.fragment.Tab1Fragment;
 import com.ebusbar.impl.BitmapImpl;
-import com.ebusbar.utils.RoundBitmapUtil;
 
 
 /**
  * 主框架界面
  * Created by Jelly on 2016/2/25.
  */
-public class FragmentTabHostActivity extends BaseActivity{
+public class FragmentTabHostActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -102,11 +102,7 @@ public class FragmentTabHostActivity extends BaseActivity{
     /**
      * 获取头像的消息
      */
-    private int msgIcon = 0x001;
-    /**
-     * Application
-     */
-    private MyApplication application;
+    private final int msgIcon = 0x001;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -312,8 +308,13 @@ public class FragmentTabHostActivity extends BaseActivity{
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgIcon){
-                draw_user_icon.setImageBitmap(RoundBitmapUtil.toRoundBitmap(bitmapImpl.img));
+            switch (msg.what){
+                case msgIcon:
+                    if(bitmapImpl.img == null){
+                        return;
+                    }
+                    draw_user_icon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmapImpl.img));
+                    break;
             }
         }
     };

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.ListView;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.BillListAdapter;
 import com.ebusbar.dao.BillDao;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * 消费账单
  * Created by Jelly on 2016/3/23.
  */
-public class BillActivity extends BaseActivity{
+public class BillActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -25,10 +26,6 @@ public class BillActivity extends BaseActivity{
      * LstView
      */
     private ListView list;
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * 适配器
      */

@@ -17,9 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.OrderInfoDao;
 import com.ebusbar.dao.PayResult;
+import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.BalancePayDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.impl.P3PayDaoImpl;
@@ -28,6 +31,7 @@ import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.DefaultParam;
 import com.ebusbar.utils.DialogUtil;
 import com.ebusbar.utils.DoubleUtil;
+import com.ebusbar.utils.NetErrorEnum;
 import com.ebusbar.utils.PayUtil;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.ebusbar.utils.ResourceUtil;
@@ -41,7 +45,7 @@ import java.net.URLEncoder;
  * 支付页面
  * Created by Jelly on 2016/3/11.
  */
-public class PayActivity extends BaseActivity implements View.OnClickListener{
+public class PayActivity extends UtilActivity implements View.OnClickListener , NetErrorHandlerListener{
     /**
      * TAG
      */
@@ -427,7 +431,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                     break;
                 case msgInfo:
                     if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        Toast.makeText(PayActivity.this,"请求订单信息失败，请重新请求！",Toast.LENGTH_SHORT).show();
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                        toastUtil.toastError(context, errorDao, null);
                         ActivityControl.finishAct(PayActivity.this);
                         return;
                     }
@@ -439,28 +444,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                     break;
                 case msgBalancePay:
                     if(balancePayDao.balancePayDao == null || TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getIsSuccess(), "N")){
-                        if(TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus(),"121")){
-                            Toast.makeText(PayActivity.this,"订单暂不能支付！",Toast.LENGTH_SHORT).show();
-                        }else if(TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus(),"115")){
-                            Toast.makeText(PayActivity.this,"支付密码错误，请重新输入",Toast.LENGTH_SHORT).show();
-                            payPassword = "";
-                            reInputEt();
-                        }else if(TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus(),"114")){
-                            dialogUtil.showSureListenerDialog(PayActivity.this, "您的余额不足，是否充值！", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    RechargeActivity.startAppActivity(PayActivity.this, RECHARGE);
-                                }
-                            }, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    payPw.dismiss();
-                                }
-                            });
-                            return;
-                        }
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,PayActivity.this);
                         payPassword = "";
                         reInputEt();
                         return;
@@ -475,7 +460,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
                     break;
                 case msgP3Pay:
                     if(p3PayDao.p3PayDao == null || TextUtils.equals(p3PayDao.p3PayDao.getEvc_order_pay().getIsSuccess(),"N")){
-                        Toast.makeText(PayActivity.this,"充值失败，请联系客服退款!",Toast.LENGTH_SHORT).show();
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(p3PayDao.p3PayDao.getEvc_order_pay().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         return;
                     }
                     Toast.makeText(PayActivity.this,"付款成功",Toast.LENGTH_SHORT).show();
@@ -486,6 +472,25 @@ public class PayActivity extends BaseActivity implements View.OnClickListener{
             }
         }
     };
+
+    @Override
+    public void handlerError(String returnState) {
+        if(TextUtils.equals(returnState,NetErrorEnum.余额不足.getState())){
+            dialogUtil.showSureListenerDialog(PayActivity.this, "您的余额不足，是否充值！", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    RechargeActivity.startAppActivity(PayActivity.this, RECHARGE);
+                }
+            }, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    payPw.dismiss();
+                }
+            });
+        }
+    }
 
     /**
      * 返回结果

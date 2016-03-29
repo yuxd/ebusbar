@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.RegUserDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -27,7 +29,7 @@ import com.ebusbar.utils.RegExpUtil;
  * 注册界面
  * Created by Jelly on 2016/3/1.
  */
-public class RegActivity extends BaseActivity {
+public class RegActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -219,7 +221,6 @@ public class RegActivity extends BaseActivity {
                 reg_code_btn.setEnabled(false);
                 countDown();
                 if(TextUtils.equals(codeDao.codeDao.getCrm_validation().getIsSuccess(),"N")){ //保存验证码失败
-                    Log.v(TAG,"发送验证码失败，请60秒后重新获取！");
                     Toast.makeText(RegActivity.this,"发送验证码失败，请60秒后重新获取！",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -232,14 +233,8 @@ public class RegActivity extends BaseActivity {
                 }
             }else if(msg.what == msgReg){ //注册
                 if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getIsSuccess(), "N")){
-                    if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getReturnStatus(),"101")){
-                        Toast.makeText(RegActivity.this,"用户已经注册！",Toast.LENGTH_SHORT).show();
-                        return;
-                    }else if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getReturnStatus(),"105")){
-                        Toast.makeText(RegActivity.this,"验证码错误，请重新获取验证码！",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    Toast.makeText(RegActivity.this,"注册失败",Toast.LENGTH_SHORT).show();
+                    ErrorDao errorDao = errorParamUtil.checkReturnState(regUserDao.regUserDao.getCrm_register().getReturnStatus());
+                    toastUtil.toastError(context,errorDao,null);
                     return;
                 }
                 ActivityControl.finishAct(RegActivity.this);

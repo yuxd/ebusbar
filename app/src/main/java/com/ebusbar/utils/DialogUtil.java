@@ -16,6 +16,8 @@ public class DialogUtil {
         return dialogUtil;
     }
 
+    private DialogUtil(){};
+
     /**
      * 显示确认按钮监听事件的Dialog
      * @param context

@@ -24,6 +24,8 @@ public class WindowUtil {
     }
 
 
+    private WindowUtil(){}
+
     /**
      * 获取屏幕的宽
      * @param context Context

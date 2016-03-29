@@ -13,18 +13,20 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.AppointDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.PopupWindowUtil;
 import com.jellycai.service.ThreadManage;
 
 /**
  * 预约界面
  * Created by Jelly on 2016/3/9.
  */
-public class AppointActivity extends BaseActivity implements View.OnClickListener{
+public class AppointActivity extends UtilActivity implements View.OnClickListener , NetErrorHandlerListener{
     /**
      * TAG
      */
@@ -81,14 +83,6 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
      * 预约消息
      */
     private final int msgAppoint = 0x001;
-    /**
-     * Application
-     */
-    private MyApplication application;
-    /**
-     * PopupWindow窗体操作工具
-     */
-    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
     /**
      * 预约进度条
      */
@@ -237,15 +231,8 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
             switch (msg.what){
                 case msgAppoint:
                     if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
-                        if(TextUtils.equals(appointDao.appointDao.getEvc_order_set().getReturnStatus(),"117")){
-                            Toast.makeText(AppointActivity.this,"对不起，已经有人抢先一步了哦！",Toast.LENGTH_SHORT).show();
-                        }else if(TextUtils.equals(appointDao.appointDao.getEvc_order_set().getReturnStatus(),"110")){
-                            Toast.makeText(AppointActivity.this, "用户已经注销，请重新登录!", Toast.LENGTH_SHORT).show();
-                        }else if(TextUtils.equals(appointDao.appointDao.getEvc_order_set().getReturnStatus(),"125")){
-                            Toast.makeText(AppointActivity.this, "您有未完成订单，不能继续预约!", Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(AppointActivity.this, "预约失败，请重新预约!", Toast.LENGTH_SHORT).show();
-                        }
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(appointDao.appointDao.getEvc_order_set().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         ActivityControl.finishAct(AppointActivity.this);
                         return;
                     }
@@ -266,9 +253,6 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                             }
                         }
                     });
-//                Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
-//                ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
-//                NaviEmulatorActivity.startAppActivity(AppointActivity.this,intent.getDoubleExtra("startlat",0),intent.getDoubleExtra("startlong",0),intent.getDoubleExtra("endlat",0),intent.getDoubleExtra("endlong",0));
                     break;
                 case msgLoading:
                     LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
@@ -296,6 +280,11 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
             }
         }
     };
+
+    @Override
+    public void handlerError(String returnState) {
+
+    }
 
     /**
      * 预约充电成功，结束进度条和当前界面

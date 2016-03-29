@@ -14,17 +14,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.dao.ChargeCardItemDao;
-import com.ebusbar.dao.DeleteChargeCardDao;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.DeleteChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.NetErrorEnum;
 
 /**
  *
  * Created by Jelly on 2016/3/23.
  */
-public class DeleteChargeCardActivity extends BaseActivity{
+public class DeleteChargeCardActivity extends UtilActivity implements NetErrorHandlerListener{
     /**
      * TAG
      */
@@ -49,10 +52,6 @@ public class DeleteChargeCardActivity extends BaseActivity{
      * 删除
      */
     private ImageView delete;
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * DeleteChargeCardDaoImpl
      */
@@ -130,10 +129,8 @@ public class DeleteChargeCardActivity extends BaseActivity{
             switch (msg.what){
                 case msgDelete:
                     if(deleteChargeCardDao.deleteChargeCardDao == null || TextUtils.equals(deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete().getIsSuccess(), "N")){
-                        DeleteChargeCardDao.CrmAccountsDeleteEntity entity = deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete();
-                        if(TextUtils.equals(entity.getReturnStatus(),"123")){
-                            Toast.makeText(DeleteChargeCardActivity.this,"充电卡密码错误，请重新输入!",Toast.LENGTH_SHORT).show();
-                            password.setText("");
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete().getReturnStatus());
+                        if(toastUtil.toastError(context,errorDao,DeleteChargeCardActivity.this)){
                             return;
                         }
                         setResult(FAILURE);
@@ -147,6 +144,13 @@ public class DeleteChargeCardActivity extends BaseActivity{
             }
         }
     };
+
+    @Override
+    public void handlerError(String returnState) {
+        if(TextUtils.equals(returnState, NetErrorEnum.充电卡密码错误.getState())){
+            password.setText("");
+        }
+    }
 
     /**
      * 开启界面

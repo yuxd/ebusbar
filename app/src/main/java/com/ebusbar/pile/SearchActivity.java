@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.dao.PositionListItemDao;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
  * 搜索电桩
  * Created by Jelly on 2016/3/28.
  */
-public class SearchActivity extends BaseActivity{
+public class SearchActivity extends UtilActivity {
     /**
      * TAG
      */

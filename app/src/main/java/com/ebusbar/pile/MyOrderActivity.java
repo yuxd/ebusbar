@@ -6,19 +6,19 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.MyOrderPageAdapter;
 
 /**
  * Created by Jelly on 2016/3/10.
  */
-public class MyOrderActivity extends BaseActivity{
+public class MyOrderActivity extends UtilActivity {
     /**
      * TAG
      */
@@ -39,10 +39,6 @@ public class MyOrderActivity extends BaseActivity{
      * 页面
      */
     private ViewPager myorder_vp;
-    /**
-     * 屏幕的宽度
-     */
-    private int screenWidth;
     /**
      * 页面适配器
      */
@@ -72,7 +68,6 @@ public class MyOrderActivity extends BaseActivity{
 
     @Override
     public void loadObjectAttribute() {
-        getScreenSize();
         pageAdapter = new MyOrderPageAdapter(getSupportFragmentManager());
     }
 
@@ -84,7 +79,7 @@ public class MyOrderActivity extends BaseActivity{
 
     @Override
     public void setActivityView() {
-        tab_line.getLayoutParams().width = screenWidth/2; //设置线条指示器的宽度
+        tab_line.getLayoutParams().width = windowUtil.getScreenWidth(this)/2; //设置线条指示器的宽度
         myorder_vp.setAdapter(pageAdapter);
     }
 
@@ -141,22 +136,13 @@ public class MyOrderActivity extends BaseActivity{
             finish_btn.setTextColor(resources.getColor(R.color.tab_select_color));
         }
         //设置线条移动的动画
-        TranslateAnimation ta = new TranslateAnimation(previousPosition,position*screenWidth/2,0,0);
+        TranslateAnimation ta = new TranslateAnimation(previousPosition,position*windowUtil.getScreenWidth(this)/2,0,0);
         ta.setDuration(200);
         ta.setFillAfter(true);
         ta.setInterpolator(new LinearInterpolator());
         tab_line.startAnimation(ta);
-        previousPosition = position*screenWidth/2;
+        previousPosition = position*windowUtil.getScreenWidth(this)/2;
 
-    }
-
-    /**
-     * 获取屏幕的宽度
-     */
-    private void getScreenSize(){
-        DisplayMetrics dm = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        screenWidth = dm.widthPixels;
     }
 
     /**

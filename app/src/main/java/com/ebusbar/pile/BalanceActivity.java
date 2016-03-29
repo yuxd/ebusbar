@@ -5,18 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.dao.LoginDao;
 
 /**
  * 账户余额
  * Created by Jelly on 2016/3/16.
  */
-public class BalanceActivity extends BaseActivity{
+public class BalanceActivity extends UtilActivity {
     /**
      * Balance
      */
@@ -29,10 +29,6 @@ public class BalanceActivity extends BaseActivity{
      * Intent
      */
     private Intent intent;
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * 充值请求
      */
@@ -82,7 +78,6 @@ public class BalanceActivity extends BaseActivity{
         if(requestCode == RECHARGE){
             switch (resultCode){
                 case RechargeActivity.SUCCESS:
-                    Log.v(TAG,"充值成功");
                     Toast.makeText(BalanceActivity.this, "充值成功！", Toast.LENGTH_SHORT).show();
                     setActivityView();
                     break;

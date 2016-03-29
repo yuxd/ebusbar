@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.impl.SetPayPasswordDaoImpl;
@@ -25,7 +27,7 @@ import com.ebusbar.utils.DefaultParam;
  * 设置支付密码
  * Created by Jelly on 2016/3/14.
  */
-public class SetPayPwdActivity extends BaseActivity implements View.OnClickListener {
+public class SetPayPwdActivity extends UtilActivity implements View.OnClickListener {
     /**
      * TAG
      */
@@ -110,11 +112,6 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
      * 设置密码消息
      */
     private final int msgSet = 0x003;
-
-    /**
-     * Application
-     */
-    private MyApplication application;
     /**
      * LoginDaoImpl
      */
@@ -157,7 +154,6 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void loadObjectAttribute() {
         setPayPasswordDao = new SetPayPasswordDaoImpl(this,handler,msgSet);
-        application = (MyApplication) getApplication();
         loginDao = new LoginDaoImpl(this);
     }
 
@@ -251,6 +247,8 @@ public class SetPayPwdActivity extends BaseActivity implements View.OnClickListe
             switch (msg.what){
                 case msgSet:
                     if(setPayPasswordDao.setPayPasswordDao == null || TextUtils.equals(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         setResult(FAILURE);
                         return;
                     }
