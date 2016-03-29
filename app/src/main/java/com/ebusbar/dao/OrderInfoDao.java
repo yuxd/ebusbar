@@ -6,23 +6,25 @@ package com.ebusbar.dao;
  */
 public class OrderInfoDao {
 
-
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : EV_20160322_00000125
-     * OrderStatus : 8
-     * OrderType : EVR
+     * OrderNo : O-20160326-00107
+     * OrderStatus : 4
+     * OrderType : EVCR
      * CompanyID : C01
-     * CustID : EV_20160321_00000077
+     * CustID : 86201603250000000351
      * OrgID : C00000001
      * OrgName : 科兴科学园
-     * FacilityID : F000001
-     * ChargingAmt : 0.00
-     * ServiceAmt : 0.00
-     * ChargingQty : 0.00
-     * PlanBeginDateTime : 2016-03-22 14:38:22
-     * PlanEndDateTime : 2016-03-22 15:08:22
+     * FacilityID : 0755300000000033
+     * ChargingAmt : 12.00
+     * ServiceAmt : 0.03
+     * ChargingQty : 123.00
+     * ChargingTime : 21
+     * PlanBeginDateTime : 2016-03-26 11:36:47
+     * PlanEndDateTime : 2016-03-26 11:51:47
+     * RealBeginDateTime : 03 26 2016 11:37AM
+     * RealEndDateTime : 2016-03-28 18:32:46
      * Tel : 0755-82891087
      */
 
@@ -50,8 +52,11 @@ public class OrderInfoDao {
         private String ChargingAmt;
         private String ServiceAmt;
         private String ChargingQty;
+        private String ChargingTime;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
+        private String RealBeginDateTime;
+        private String RealEndDateTime;
         private String Tel;
 
         public String getReturnStatus() {
@@ -158,6 +163,14 @@ public class OrderInfoDao {
             this.ChargingQty = ChargingQty;
         }
 
+        public String getChargingTime() {
+            return ChargingTime;
+        }
+
+        public void setChargingTime(String ChargingTime) {
+            this.ChargingTime = ChargingTime;
+        }
+
         public String getPlanBeginDateTime() {
             return PlanBeginDateTime;
         }
@@ -172,6 +185,22 @@ public class OrderInfoDao {
 
         public void setPlanEndDateTime(String PlanEndDateTime) {
             this.PlanEndDateTime = PlanEndDateTime;
+        }
+
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
+        }
+
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
+        }
+
+        public String getRealEndDateTime() {
+            return RealEndDateTime;
+        }
+
+        public void setRealEndDateTime(String RealEndDateTime) {
+            this.RealEndDateTime = RealEndDateTime;
         }
 
         public String getTel() {

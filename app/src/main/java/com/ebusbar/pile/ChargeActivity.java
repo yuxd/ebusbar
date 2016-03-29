@@ -24,6 +24,7 @@ import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.impl.PileInfoDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.DialogUtil;
+import com.ebusbar.utils.DoubleUtil;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.jellycai.service.ThreadManage;
 
@@ -154,6 +155,15 @@ public class ChargeActivity extends BaseActivity{
      */
     private final int msgInfo = 0x006;
     /**
+     * OrderInfoDaoImpl
+     */
+    private OrderInfoDaoImpl startOrderInfoDao;
+    /**
+     * 在刚进来界面时获取订单详情的消息
+     */
+    private final int startOrderInfo = 0x007;
+
+    /**
      * 界面是否处于失去焦点状态
      */
     private boolean isPause = false;
@@ -166,6 +176,7 @@ public class ChargeActivity extends BaseActivity{
      */
     private boolean isFinish = false;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,6 +185,13 @@ public class ChargeActivity extends BaseActivity{
         loadObjectAttribute();
         setListener();
         setActivityView();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPause = true;
     }
 
     @Override
@@ -194,6 +212,7 @@ public class ChargeActivity extends BaseActivity{
         chargeOrderDao = new ChargeOrderDaoImpl(this,handler,msgCharge);
         pileInfoDao = new PileInfoDaoImpl(this,handler,msgPileInfo);
         orderInfoDao = new OrderInfoDaoImpl(this,handler,msgInfo);
+        startOrderInfoDao = new OrderInfoDaoImpl(this,handler,startOrderInfo);
         application = (MyApplication) getApplication();
         OrderNo = intent.getStringExtra("OrderNo");
     }
@@ -207,6 +226,9 @@ public class ChargeActivity extends BaseActivity{
         if(!TextUtils.isEmpty(intent.getStringExtra("QRId"))){ //读取二维码数据
             pileInfoDao.getPileInfoDao(intent.getStringExtra("QRId"));
             return;
+        }else{
+            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            startOrderInfoDao.getOrderInfoDaoImpl(entity.getToken(),intent.getStringExtra("OrderNo"),entity.getCustID());
         }
         position_text.setText(intent.getStringExtra("OrgName"));
         EPid_text.setText(intent.getStringExtra("FacilityID"));
@@ -219,12 +241,7 @@ public class ChargeActivity extends BaseActivity{
             chargeState = FINISHCHARGE;
             charge_btn.setImageResource(R.drawable.click_pay);
         }
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        isPause = true;
     }
 
     /**
@@ -341,6 +358,16 @@ public class ChargeActivity extends BaseActivity{
                     charge_btn.setImageResource(R.drawable.click_pay);
 //                    充电完成后跳到支付界面
                     PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
+                    break;
+                case startOrderInfo:
+                    if(startOrderInfoDao.orderInfoDao == null || TextUtils.equals(startOrderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
+                        return;
+                    }
+                    OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity1 = startOrderInfoDao.orderInfoDao.getEvc_order_get();
+                    charge_degress_text.setText(evcOrderGetEntity1.getChargingQty()+"度");
+                    charge_time_text.setText(evcOrderGetEntity1.getChargingTime() + "分钟");
+                    String price = DoubleUtil.add(evcOrderGetEntity1.getChargingAmt(),evcOrderGetEntity1.getServiceAmt());
+                    charge_money_text.setText("¥" + price);
                     break;
             }
         }

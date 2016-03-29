@@ -241,6 +241,8 @@ public class AppointActivity extends BaseActivity implements View.OnClickListene
                             Toast.makeText(AppointActivity.this,"对不起，已经有人抢先一步了哦！",Toast.LENGTH_SHORT).show();
                         }else if(TextUtils.equals(appointDao.appointDao.getEvc_order_set().getReturnStatus(),"110")){
                             Toast.makeText(AppointActivity.this, "用户已经注销，请重新登录!", Toast.LENGTH_SHORT).show();
+                        }else if(TextUtils.equals(appointDao.appointDao.getEvc_order_set().getReturnStatus(),"125")){
+                            Toast.makeText(AppointActivity.this, "您有未完成订单，不能继续预约!", Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(AppointActivity.this, "预约失败，请重新预约!", Toast.LENGTH_SHORT).show();
                         }
