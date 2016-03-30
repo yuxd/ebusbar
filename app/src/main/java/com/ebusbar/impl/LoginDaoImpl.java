@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.utils.JsonUtil;
-import com.ebusbar.utils.NetParam;
+import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.SharedPreferencesUtil;
 import com.jellycai.service.ResponseResultHandler;
 

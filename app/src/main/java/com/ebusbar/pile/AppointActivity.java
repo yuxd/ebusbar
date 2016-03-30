@@ -118,7 +118,7 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
     /**
      * 失败
      */
-    public static final int FAILURE = 0x004;
+    public static final int FAILURE = 0x005;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -233,6 +233,7 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                     if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
                         ErrorDao errorDao = errorParamUtil.checkReturnState(appointDao.appointDao.getEvc_order_set().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
+                        setResult(FAILURE);
                         ActivityControl.finishAct(AppointActivity.this);
                         return;
                     }
@@ -260,7 +261,8 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                     break;
                 case msgInfo:
                     if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        Toast.makeText(AppointActivity.this,"获取服务器数据错误，App将会再次请求数据！",Toast.LENGTH_SHORT).show();
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
                         return;
                     }
                     if(TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getOrderStatus(), "1")){

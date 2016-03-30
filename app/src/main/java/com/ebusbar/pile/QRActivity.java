@@ -168,7 +168,6 @@ public class QRActivity extends UtilActivity implements SurfaceHolder.Callback{
         if(TextUtils.isEmpty(QRId)){
             Toast.makeText(this,"请输入二维码编号",Toast.LENGTH_SHORT).show();
         }
-        ActivityControl.finishAct(this);
         ChargeActivity.startAppActivity(this,QRId);
         return view;
     }

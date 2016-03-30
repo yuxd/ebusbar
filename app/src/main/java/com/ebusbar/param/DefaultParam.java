@@ -1,4 +1,4 @@
-package com.ebusbar.utils;
+package com.ebusbar.param;
 
 /**
  * 默认的参数

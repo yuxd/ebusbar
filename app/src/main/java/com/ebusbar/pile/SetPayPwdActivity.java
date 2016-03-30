@@ -21,7 +21,7 @@ import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.impl.SetPayPasswordDaoImpl;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.DefaultParam;
+import com.ebusbar.param.DefaultParam;
 
 /**
  * 设置支付密码

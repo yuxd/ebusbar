@@ -8,21 +8,22 @@ public class GetChargeAppointDao {
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : O-20160328-00143
+     * OrderNo : O-20160329-00355
      * OrderStatus : 1
      * OrderType : EVCP
      * CompanyID : C01
-     * CustID : 86201603250000000351
+     * CustID : 86201603290000000667
      * OrgID : C00000001
-     * OrgName : 科兴科学园
+     * OrgName : 深大站
      * FacilityID : 0755300000000033
-     * Longitude : 113.930250
-     * Latitude : 22.540693
+     * Longitude : 113.938000
+     * Latitude : 22.539223
      * ChargingAmt : 0.00
      * ServiceAmt : 0.00
      * ChargingQty : 0.00
-     * PlanBeginDateTime : 2016-03-28 09:55:46
-     * PlanEndDateTime : 2016-03-28 10:10:46
+     * ChargingTime : 0
+     * PlanBeginDateTime : 2016-03-29 19:39:34
+     * PlanEndDateTime : 2016-03-29 19:54:34
      * Tel : 0755-82891087
      */
 
@@ -52,6 +53,7 @@ public class GetChargeAppointDao {
         private String ChargingAmt;
         private String ServiceAmt;
         private String ChargingQty;
+        private String ChargingTime;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
         private String Tel;
@@ -174,6 +176,14 @@ public class GetChargeAppointDao {
 
         public void setChargingQty(String ChargingQty) {
             this.ChargingQty = ChargingQty;
+        }
+
+        public String getChargingTime() {
+            return ChargingTime;
+        }
+
+        public void setChargingTime(String ChargingTime) {
+            this.ChargingTime = ChargingTime;
         }
 
         public String getPlanBeginDateTime() {

@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.param.NetErrorEnum;
 
 /**
  * 错误参数

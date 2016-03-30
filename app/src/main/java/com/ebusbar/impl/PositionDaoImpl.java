@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.ebusbar.dao.PositionListItemDao;
 import com.ebusbar.utils.JsonUtil;
-import com.ebusbar.utils.NetParam;
+import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 import java.util.ArrayList;

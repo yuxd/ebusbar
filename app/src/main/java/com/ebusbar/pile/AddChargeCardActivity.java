@@ -20,7 +20,7 @@ import com.ebusbar.dao.LoginDao;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.AddChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.NetErrorEnum;
+import com.ebusbar.param.NetErrorEnum;
 
 /**
  * 绑定充电卡

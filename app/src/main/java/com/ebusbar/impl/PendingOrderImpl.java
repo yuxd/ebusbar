@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.ebusbar.dao.PendingOrderDao;
 import com.ebusbar.utils.JsonUtil;
-import com.ebusbar.utils.NetParam;
+import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 import java.util.ArrayList;

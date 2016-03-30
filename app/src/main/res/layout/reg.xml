@@ -145,7 +145,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/login_btn_bg"
+            android:background="@drawable/actionbar_color_btn_bg"
             android:layout_marginTop="20dp"
             android:text="@string/reg_btn_text"
             android:textColor="@color/reg_btn_text_color"

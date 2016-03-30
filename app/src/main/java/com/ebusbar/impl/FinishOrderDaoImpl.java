@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import com.ebusbar.dao.FinishOrderDao;
 import com.ebusbar.utils.JsonUtil;
-import com.ebusbar.utils.NetParam;
+import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 /**

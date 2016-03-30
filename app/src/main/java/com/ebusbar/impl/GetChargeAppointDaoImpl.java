@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.ebusbar.dao.GetChargeAppointDao;
 import com.ebusbar.utils.JsonUtil;
-import com.ebusbar.utils.NetParam;
+import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
@@ -30,8 +30,6 @@ public class GetChargeAppointDaoImpl extends BaseImpl{
     }
 
     public void getNetGetChargeAppointDao(String Token,String custid){
-        Log.v("Token",Token);
-        Log.v("custid",custid);
         if(TextUtils.isEmpty(Token) || TextUtils.isEmpty(custid)){
             return;
         }

@@ -3,7 +3,7 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.os.Handler;
 
-import com.ebusbar.utils.NetParam;
+import com.ebusbar.param.NetParam;
 import com.jellycai.service.URLService;
 
 import java.util.HashMap;

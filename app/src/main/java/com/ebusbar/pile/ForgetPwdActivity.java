@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.utils.CountDownUtil;
-import com.ebusbar.utils.DefaultParam;
+import com.ebusbar.param.DefaultParam;
 import com.ebusbar.utils.RegExpUtil;
 
 /**

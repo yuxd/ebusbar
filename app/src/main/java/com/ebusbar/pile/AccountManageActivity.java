@@ -19,7 +19,7 @@ import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.BitmapImpl;
 import com.ebusbar.impl.LogoutDaoImpl;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.NetErrorEnum;
+import com.ebusbar.param.NetErrorEnum;
 
 /**
  * 账户管理
