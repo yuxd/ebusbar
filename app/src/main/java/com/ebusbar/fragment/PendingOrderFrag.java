@@ -1,6 +1,5 @@
 package com.ebusbar.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,22 +13,22 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 
+import com.ebusbar.activities.BaseActivity;
 import com.ebusbar.adpater.PendingOrderListAdapter;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.PendingOrderDao;
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.PendingOrderImpl;
-import com.ebusbar.activities.BaseActivity;
 import com.ebusbar.pile.ChargeActivity;
-import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
 import com.ebusbar.utils.ActivityControl;
-import com.ebusbar.utils.PopupWindowUtil;
 
 /**
  * 未完成订单
  * Created by Jelly on 2016/3/10.
  */
-public class PendingOrderFrag extends BaseFrag{
+public class PendingOrderFrag extends UtilFragment {
     /**
      * TAG
      */
@@ -60,18 +59,6 @@ public class PendingOrderFrag extends BaseFrag{
      */
     private int msgPenging = 0x001;
     /**
-     * Context
-     */
-    private Context context;
-    /**
-     * MyApplication
-     */
-    private MyApplication application;
-    /**
-     * PopupWindow操作工具
-     */
-    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
-    /**
      * Loading
      */
     private PopupWindow loading;
@@ -79,6 +66,7 @@ public class PendingOrderFrag extends BaseFrag{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater,container);
         loadObjectAttribute();
         setListener();
@@ -100,8 +88,6 @@ public class PendingOrderFrag extends BaseFrag{
 
     @Override
     public void loadObjectAttribute() {
-        context = getActivity();
-        application = (MyApplication) getActivity().getApplication();
         pendingOrder = new PendingOrderImpl(context,handler,msgPenging);
     }
 
@@ -136,7 +122,11 @@ public class PendingOrderFrag extends BaseFrag{
         public void handleMessage(Message msg) {
             if(msg.what == msgPenging){
                 loading.dismiss();
-                if(pendingOrder.pendingOrderDaos.size() == 0 || TextUtils.equals(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
+                if(pendingOrder.pendingOrderDaos == null || pendingOrder.pendingOrderDaos.size() == 0){
+                    return;
+                }
+                if(TextUtils.equals(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
+                    ErrorDao errorDao = errorParamUtil.checkReturnState(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
                     nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }

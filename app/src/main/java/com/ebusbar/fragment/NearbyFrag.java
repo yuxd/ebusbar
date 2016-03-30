@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ebusbar.adpater.NearbyListItemAdapter;
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.PositionDaoImpl;
 import com.ebusbar.pile.FragmentTabHostActivity;
 import com.ebusbar.pile.MyApplication;
@@ -25,7 +26,7 @@ import com.ebusbar.pile.R;
  * 附近电桩
  * Created by Jelly on 2016/3/24.
  */
-public class NearbyFrag extends BaseFrag{
+public class NearbyFrag extends UtilFragment {
     /**
      * TAG
      */
@@ -70,6 +71,7 @@ public class NearbyFrag extends BaseFrag{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater, container);
         loadObjectAttribute();
         setListener();

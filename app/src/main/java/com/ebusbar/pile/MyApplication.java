@@ -3,7 +3,7 @@ package com.ebusbar.pile;
 import android.app.Application;
 import android.util.Log;
 
-import com.amap.api.navi.model.NaviLatLng;
+import com.amap.api.maps.model.LatLng;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.LoginDaoImpl;
 
@@ -31,7 +31,7 @@ public class MyApplication extends Application{
     /**
      * 当前位置
      */
-    private NaviLatLng latLng;
+    private LatLng latLng;
     /**
      * 城市代码
      */
@@ -60,7 +60,7 @@ public class MyApplication extends Application{
      * 设置当前位置
      * @param latLng
      */
-    public void setLatLng(NaviLatLng latLng) {
+    public void setLatLng(LatLng latLng) {
         this.latLng = latLng;
     }
 
@@ -68,7 +68,7 @@ public class MyApplication extends Application{
      * 获取当前位置
      * @return
      */
-    public NaviLatLng getLatLng() {
+    public LatLng getLatLng() {
         return latLng;
     }
 

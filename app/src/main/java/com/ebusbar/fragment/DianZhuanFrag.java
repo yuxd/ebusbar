@@ -1,6 +1,5 @@
 package com.ebusbar.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,22 +32,19 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.amap.api.navi.model.NaviLatLng;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.PositionListItemDao;
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.PositionDaoImpl;
 import com.ebusbar.myview.SlideSwitch;
+import com.ebusbar.param.DefaultParam;
 import com.ebusbar.pile.FragmentTabHostActivity;
 import com.ebusbar.pile.LoginActivity;
-import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.NaviEmulatorActivity;
 import com.ebusbar.pile.QRActivity;
 import com.ebusbar.pile.R;
 import com.ebusbar.pile.SelectPileActivity;
-import com.ebusbar.param.DefaultParam;
 import com.ebusbar.utils.FloatUtil;
-import com.ebusbar.utils.PopupWindowUtil;
-import com.ebusbar.utils.ResourceUtil;
-import com.ebusbar.utils.WindowUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +53,7 @@ import java.util.List;
  * 电桩模块
  * Created by Jelly on 2016/2/25.
  */
-public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
+public class DianZhuanFrag extends UtilFragment implements AMapLocationListener{
     /**
      * TAG
      */
@@ -90,10 +86,6 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      * aMap定位改变监听器
      */
     private LocationSource.OnLocationChangedListener locationChangedListener;
-    /**
-     * 容器
-     */
-    private Context context;
     /**
      * 定位按钮
      */
@@ -147,34 +139,15 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
      */
     private PopupWindow markerPw;
     /**
-     * 弹出窗体操作对象
-     */
-    private PopupWindowUtil popupWindowUtil;
-    /**
-     * 资源操作工具
-     */
-    private ResourceUtil resourceUtil;
-    /**
-     * 窗口操作工具
-     */
-    private WindowUtil windowUtil;
-    /**
-     * Application
-     */
-    private MyApplication application;
-    /**
      * 当前Marker
      */
     private String currMarker;
-    /**
-     * 地图操作工具
-     */
-    private AMapUtils aMapUtils = new AMapUtils();
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater, container);
         loadObjectAttribute();
         loadMap(savedInstanceState);
@@ -249,12 +222,7 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
 
     @Override
     public void loadObjectAttribute() {
-        context = getContext(); //获取主容器
-        application = (MyApplication) getActivity().getApplication();
         positionDao = new PositionDaoImpl(context,handler,msgPositionList);
-        popupWindowUtil = PopupWindowUtil.getInstance();
-        resourceUtil = ResourceUtil.getInstance();
-        windowUtil = WindowUtil.getInstance();
     }
 
     @Override
@@ -358,7 +326,6 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
        screen.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               Log.v(TAG, "打开筛选工具");
                //打开PopupWindow,显示操作栏
                screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout, windowUtil.getScreenWidth(getActivity()) / 4 * 3, v.getHeight());
                int[] location = windowUtil.getViewLocation(v); //获取筛选按钮的x坐标
@@ -448,8 +415,8 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         TextView price = (TextView) root.findViewById(R.id.price);
         TextView distance_text = (TextView) root.findViewById(R.id.distance_text);
         PositionListItemDao.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
-        NaviLatLng naviLatLng = application.getLatLng();
-        LatLng startLatLng = new LatLng(naviLatLng.getLatitude(),naviLatLng.getLongitude());
+        LatLng naviLatLng = application.getLatLng();
+        LatLng startLatLng = new LatLng(naviLatLng.latitude,naviLatLng.longitude);
         LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
         distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
         dianzhuan_name.setText(entity.getOrgName());
@@ -554,13 +521,13 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         locationChangedListener.onLocationChanged(aMapLocation);
-        NaviLatLng latLng = new NaviLatLng();
-        latLng.setLatitude(aMapLocation.getLatitude());
-        latLng.setLongitude(aMapLocation.getLongitude());
+        LatLng latLng = new LatLng(aMapLocation.getLatitude(),aMapLocation.getLongitude());
         application.setLatLng(latLng);
-        application.setAdCode(aMapLocation.getAdCode());
+//        application.setAdCode(aMapLocation.getAdCode());
+        application.setAdCode("520300");
+        Log.v(TAG,aMapLocation.getAdCode());
         if(isFirst){
-            loadPosition(); //加载传充电点
+            loadPosition(); //加载充电点
             aMap.moveCamera(CameraUpdateFactory.zoomTo(DefaultParam.ZOOM)); //修改缩放位置
             isFirst = !isFirst;
         }
@@ -599,9 +566,13 @@ public class DianZhuanFrag extends BaseFrag implements AMapLocationListener{
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgPositionList){
-               if(positionDao.positionDaoList == null || positionDao.positionDaoList.size() == 0){
-                   Log.v(TAG,"充电桩数据获取错误");
+                if(positionDao.positionDaoList == null || positionDao.positionDaoList.size() == 0){
                     return;
+                }
+               if(TextUtils.equals(positionDao.positionDaoList.get(0).getEvc_stations_get().getIsSuccess(),"N")){
+                   ErrorDao errorDao = errorParamUtil.checkReturnState(positionDao.positionDaoList.get(0).getEvc_stations_get().getReturnStatus());
+                   toastUtil.toastError(context,errorDao,null);
+                   return;
                }
                 setPositionOnMap(positionDao.positionDaoList);
             }

@@ -7,12 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ebusbar.fragments.SimpleFragment;
 import com.ebusbar.pile.R;
 
 /**
  * Created by Jelly on 2016/3/24.
  */
-public class Tab1Fragment extends BaseFrag{
+public class Tab1Fragment extends SimpleFragment {
     /**
      * TAG
      */
@@ -26,6 +27,7 @@ public class Tab1Fragment extends BaseFrag{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater,container);
         loadObjectAttribute();
         setListener();

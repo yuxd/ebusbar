@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ebusbar.fragments.SimpleFragment;
 import com.ebusbar.pile.R;
 
 /**
  * 商店模块
  * Created by Jelly on 2016/2/25.
  */
-public class ShopFrag extends BaseFrag{
+public class ShopFrag extends SimpleFragment {
     /**
      * TAG
      */
@@ -25,6 +26,7 @@ public class ShopFrag extends BaseFrag{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         root = inflater.inflate(R.layout.shop,container,false);
         return root;
     }

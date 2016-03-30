@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -15,6 +14,7 @@ import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.SelectPileListAdapter;
 import com.ebusbar.dao.PileListItemDao;
 import com.ebusbar.impl.PileListItemDaoImpl;
+import com.ebusbar.utils.ActivityControl;
 
 /**
  * Created by Jelly on 2016/3/15.
@@ -112,8 +112,8 @@ public class SelectPileActivity extends UtilActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case APPOINT:
-                Log.v(TAG,resultCode+"");
                 if(resultCode == AppointActivity.SUCCESS){
+                    ActivityControl.finishAct(SelectPileActivity.this);
                     MyAppointActivity.startAppActivity(SelectPileActivity.this);
                 }else if(resultCode == AppointActivity.FAILURE){
                     setActivityView();

@@ -140,13 +140,13 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case msgIcon:
+                case msgIcon: //获取用户头像
                     if(bitmap.img == null){ //用户头像获取失败
                         return;
                     }
                     avatar_icon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmap.img));
                     break;
-                case msgLogout:
+                case msgLogout: //注销
                     if(logoutDao.logoutDao == null || TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getIsSuccess(),"N")){
                         ErrorDao errorDao = errorParamUtil.checkReturnState(logoutDao.logoutDao.getCrm_logout().getReturnStatus());
                         toastUtil.toastError(context, errorDao, AccountManageActivity.this);

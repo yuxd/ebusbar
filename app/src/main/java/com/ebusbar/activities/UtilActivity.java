@@ -7,6 +7,7 @@ import com.ebusbar.utils.DialogUtil;
 import com.ebusbar.utils.BitmapUtil;
 import com.ebusbar.utils.ErrorParamUtil;
 import com.ebusbar.utils.PopupWindowUtil;
+import com.ebusbar.utils.SPCacheUtil;
 import com.ebusbar.utils.ToastUtil;
 import com.ebusbar.utils.WindowUtil;
 
@@ -40,6 +41,10 @@ public abstract class UtilActivity extends SimpleActivity{
      * Window操作工具
      */
     public WindowUtil windowUtil = WindowUtil.getInstance();
+    /**
+     * SharePreference缓存操作工具
+     */
+    public SPCacheUtil spCacheUtil = SPCacheUtil.getInstance();
 
 
     @Override

@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.pile.R;
 
 /**
  * Created by Jelly on 2016/3/10.
  */
-public class CarAppointFrag extends BaseFrag {
+public class CarAppointFrag extends UtilFragment {
     /**
      * TAG
      */
@@ -24,6 +25,7 @@ public class CarAppointFrag extends BaseFrag {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater,container);
         loadObjectAttribute();
         setListener();

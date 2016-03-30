@@ -25,15 +25,16 @@ public abstract class SimpleActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initBaseActivity();
+        initActivity();
     }
     /**
      * 初始化BaseActivity
      */
-    public void initBaseActivity(){
+    public void initActivity(){
         context = this; //在这里把上This转换为Context
         application = (MyApplication) getApplication();
     }
+
     /**
      * 初始化控件
      */

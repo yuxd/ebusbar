@@ -21,6 +21,9 @@ public class LoginDaoImpl extends BaseImpl{
      * LoginDao
      */
     public  LoginDao loginDao;
+
+    private SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getInstance();
+
     /**
      * 构造函数
      * @param context
@@ -93,11 +96,12 @@ public class LoginDaoImpl extends BaseImpl{
             });
         }
     }
+
     /**
      * 缓存对象
      */
     public void cacheObject(LoginDao loginDao){
-        SharedPreferencesUtil.saveObject(context, loginDao);
+        sharedPreferencesUtil.saveObject(context, loginDao);
     }
 
     /**
@@ -105,7 +109,7 @@ public class LoginDaoImpl extends BaseImpl{
      * @return
      */
     public LoginDao getCacheObject(){
-        loginDao = (LoginDao) SharedPreferencesUtil.readObject(context,loginDao.getClass().getName());
+        loginDao = (LoginDao) sharedPreferencesUtil.readObject(context,loginDao.getClass().getName());
         if(loginDao == null){
             return null;
         }
@@ -116,7 +120,6 @@ public class LoginDaoImpl extends BaseImpl{
      * 清除缓存
      */
     public void clearCache(){
-        Log.v("name",loginDao.getClass().getName());
-        SharedPreferencesUtil.clearObject(context,loginDao.getClass().getName());
+        sharedPreferencesUtil.clearObject(context,loginDao.getClass().getName());
     }
 }

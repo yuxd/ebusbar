@@ -15,7 +15,9 @@ import android.widget.PopupWindow;
 
 import com.ebusbar.adpater.AllOrderListAdapter;
 import com.ebusbar.dao.CompleteOrderDao;
+import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.CompleteOrderDaoImpl;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
@@ -27,7 +29,7 @@ import java.util.ArrayList;
  * 已完成订单
  * Created by Jelly on 2016/3/10.
  */
-public class FinishOrderFrag extends BaseFrag{
+public class FinishOrderFrag extends UtilFragment {
     /**
      * TAG
      */
@@ -76,6 +78,7 @@ public class FinishOrderFrag extends BaseFrag{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater,container);
         loadObjectAttribute();
         setListener();
@@ -120,7 +123,12 @@ public class FinishOrderFrag extends BaseFrag{
         public void handleMessage(Message msg) {
             if(msg.what == msgOrder){
                 loading.dismiss();
-                if(completeOrderDao.completeOrderDaos.size() == 0 || TextUtils.equals(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
+                if(completeOrderDao.completeOrderDaos == null || completeOrderDao.completeOrderDaos.size() == 0){
+                    return;
+                }
+                if(TextUtils.equals(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
+                    ErrorDao errorDao = errorParamUtil.checkReturnState(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
+                    toastUtil.toastError(context,errorDao,null);
                     nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }

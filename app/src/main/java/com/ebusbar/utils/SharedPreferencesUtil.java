@@ -2,9 +2,6 @@ package com.ebusbar.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.ebusbar.dao.LoginDao;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -19,13 +16,20 @@ import java.io.ObjectOutputStream;
  */
 public class SharedPreferencesUtil {
 
+    private static SharedPreferencesUtil sharedPreferencesUtil =  new SharedPreferencesUtil();
+
+    public static SharedPreferencesUtil getInstance(){
+        return sharedPreferencesUtil;
+    }
+
+    private SharedPreferencesUtil(){}
 
     /**
      * SharedPreferences保存用户对象
      * @param context
      * @param object
      */
-    public static void saveObject(Context context,Object object){
+    public void saveObject(Context context,Object object){
         try {
             SharedPreferences sharedPreferences = context.getSharedPreferences(object.getClass().getName(), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();//获取编辑器
@@ -41,12 +45,38 @@ public class SharedPreferencesUtil {
     }
 
     /**
+     * 保存字符串
+     * @param context
+     * @param fileName
+     * @param value
+     */
+    public void saveString(Context context,String fileName,String key,String value){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(fileName,Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key,value);
+        editor.commit();
+    }
+
+    /**
+     * 读取字符串
+     * @param context
+     * @param fileName
+     * @param key
+     * @return
+     */
+    public String readString(Context context,String fileName,String key){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(fileName,Context.MODE_PRIVATE);
+        String result = sharedPreferences.getString(key, "");
+        return  result;
+    }
+
+    /**
      * 通过SharedPreferences读取对象
      * @param context
      * @param fileName
      * @return
      */
-    public static Object readObject(Context context,String fileName){
+    public Object readObject(Context context,String fileName){
         Object object = null;
         try {
             SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
@@ -58,8 +88,6 @@ public class SharedPreferencesUtil {
             ByteArrayInputStream bais = new ByteArrayInputStream(base64Bytes);
             ObjectInputStream ois = new ObjectInputStream(bais);
             object = ois.readObject();
-            Log.v("已经加载缓存","已经加载缓存");
-            Log.v("Token", ((LoginDao)object).getCrm_login().getToken());
             return object;
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,7 +102,7 @@ public class SharedPreferencesUtil {
      * @param context
      * @param fileName
      */
-    public static void clearObject(Context context,String fileName){
+    public void clearObject(Context context,String fileName){
         SharedPreferences sharedPreferences = context.getSharedPreferences(fileName, Context.MODE_PRIVATE);
         sharedPreferences.edit().clear().commit();
     }

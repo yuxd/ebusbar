@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.pile.R;
 
 /**
  * 服务模块
  * Created by Jelly on 2016/2/25.
  */
-public class FixFrag extends BaseFrag{
+public class FixFrag extends UtilFragment {
     /**
      * TAG
      */
@@ -26,6 +27,7 @@ public class FixFrag extends BaseFrag{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         root = inflater.inflate(R.layout.fix,container,false);
         return root;
     }
