@@ -9,13 +9,14 @@ public class PileListItemDao {
      * returnStatus : 100
      * isSuccess : Y
      * OrgId : C00000001
-     * OrgName : 科兴科学园
-     * FacilityID : F000001
-     * FacilityName : 1号充电桩
-     * FacilityModel : 快充200V
-     * FacilityStatus : 1
+     * OrgName : 深大站
+     * FacilityID : 0755300000000033
+     * FacilityName : 99号充电桩
+     * FacilityType : 0
+     * FacilityModel : 1
+     * FacilityStatus : 0
      * Price : 0
-     * FacilityNo : 00001
+     * ApplicableCar : 特斯拉-宝马
      */
 
     private EvcFacilitiesGetEntity evc_facilities_get;
@@ -35,10 +36,11 @@ public class PileListItemDao {
         private String OrgName;
         private String FacilityID;
         private String FacilityName;
+        private String FacilityType;
         private String FacilityModel;
         private String FacilityStatus;
         private String Price;
-        private String FacilityNo;
+        private String ApplicableCar;
 
         public String getReturnStatus() {
             return returnStatus;
@@ -88,6 +90,14 @@ public class PileListItemDao {
             this.FacilityName = FacilityName;
         }
 
+        public String getFacilityType() {
+            return FacilityType;
+        }
+
+        public void setFacilityType(String FacilityType) {
+            this.FacilityType = FacilityType;
+        }
+
         public String getFacilityModel() {
             return FacilityModel;
         }
@@ -112,12 +122,12 @@ public class PileListItemDao {
             this.Price = Price;
         }
 
-        public String getFacilityNo() {
-            return FacilityNo;
+        public String getApplicableCar() {
+            return ApplicableCar;
         }
 
-        public void setFacilityNo(String FacilityNo) {
-            this.FacilityNo = FacilityNo;
+        public void setApplicableCar(String ApplicableCar) {
+            this.ApplicableCar = ApplicableCar;
         }
     }
 }

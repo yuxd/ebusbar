@@ -41,8 +41,8 @@ import com.ebusbar.impl.NearbyStationDaoImpl;
 import com.ebusbar.map.MyLocation;
 import com.ebusbar.myview.SlideSwitch;
 import com.ebusbar.param.DefaultParam;
-import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.LoginActivity;
+import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.NaviEmulatorActivity;
 import com.ebusbar.pile.QRActivity;
 import com.ebusbar.pile.R;
@@ -151,6 +151,12 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      * 充电点的PopupWindow
      */
     private PopupWindow markerPw;
+    /**
+     * 是否筛选使用
+     */
+    private boolean isUse = false;
+
+    private List<AllStationDao> dismissList = new ArrayList<>();
 
 
     @Nullable
@@ -283,6 +289,8 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         }
     }
 
+
+
     /**
      * 设置地图上所有电桩的位置
      */
@@ -314,7 +322,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                     Toast.makeText(context, "对不起，暂无数据，无法搜索！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SearchActivity.startAppActivity(context,(ArrayList<AllStationDao>) allStationDao.daos);
+                SearchActivity.startAppActivity(context, (ArrayList<AllStationDao>) allStationDao.daos);
             }
         });
     }
@@ -368,6 +376,19 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
        });
     }
 
+    public List<AllStationDao> screenUse(List<AllStationDao> list){
+        dismissList.clear();
+        List<AllStationDao> show = new ArrayList<>();
+        for(int i=0;i<list.size();i++){
+            if(TextUtils.equals("1", list.get(i).getEvc_stations_getall().getIsAvailable())){
+                show.add(list.get(i));
+            }else{
+                dismissList.add(list.get(i));
+            }
+        }
+        return show;
+    }
+
     /**
      * 设置点击开关的父容器的布局的时候能够改变开关状态
      */
@@ -375,10 +396,27 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         LinearLayout use_layout = (LinearLayout) screenPw.getContentView().findViewById(R.id.use_layout);
         final SlideSwitch use_ss = (SlideSwitch) screenPw.getContentView().findViewById(R.id.use_switch);
         use_ss.setSlide(false);
+        if(isUse){
+            use_ss.changeSwitchStatus();
+        }
         use_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 use_ss.changeSwitchStatus();
+            }
+        });
+        use_ss.setOnSwitchChangedListener(new SlideSwitch.OnSwitchChangedListener() {
+            @Override
+            public void onSwitchChanged(SlideSwitch obj, int status) {
+                if(status == 1){
+                    isUse = true;
+                    allStationDao.daos = screenUse(allStationDao.daos);
+                    setAllStationOnMap(allStationDao.daos);
+                }else{
+                    isUse = false;
+                    allStationDao.daos.addAll(dismissList);
+                    setAllStationOnMap(allStationDao.daos);
+                }
             }
         });
         LinearLayout enough_layout = (LinearLayout) screenPw.getContentView().findViewById(R.id.enough_layout);
@@ -390,6 +428,8 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                 enough_ss.changeSwitchStatus();
             }
         });
+
+
     }
 
     /**

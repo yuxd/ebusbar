@@ -126,7 +126,7 @@
 
         <activity
             android:name=".ModCustNameActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <!-- alipay sdk begin -->
         <activity

@@ -37,9 +37,9 @@ public class AllStationDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                if(NetParam.isSuccess(b,s)){
-                    LogUtil.v("jsonAll",s.trim());
-                    daos = JsonUtil.arrayFormJson(s,AllStationDao[].class);
+                if (NetParam.isSuccess(b, s)) {
+                    LogUtil.v("jsonAll", s.trim());
+                    daos = JsonUtil.arrayFormJson(s, AllStationDao[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }
@@ -50,5 +50,7 @@ public class AllStationDaoImpl extends BaseImpl{
             }
         });
     }
+
+
 
 }

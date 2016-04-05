@@ -9,24 +9,26 @@ public class OrderInfoDao {
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : O-20160331-00385
-     * OrderStatus : 0
-     * OrderType : EVCP
+     * OrderNo : O-20160405-00480
+     * OrderStatus : 2
+     * OrderType : EVCR
      * CompanyID : C01
-     * CustID : 86201603290000000667
-     * OrgID : GZ0000001
-     * OrgName : 红花岗1站
+     * CustID : 86201604010000000709
+     * OrgID : C00000001
+     * OrgName : 深大站
      * FacilityID : 0755300000000033
-     * Longitude : 106.910680
-     * Latitude : 27.602907
+     * FacilityName : 99号充电桩
+     * Longitude : 113.938000
+     * Latitude : 22.540692
      * ChargingAmt : 0.00
      * ServiceAmt : 0.00
      * ChargingQty : 0.00
      * ChargingTime : 0
      * PlanCost : 1.50
-     * PlanCostPayed : 0
-     * PlanBeginDateTime : 2016-03-31 19:14:41
-     * PlanEndDateTime : 2016-03-31 19:29:41
+     * PlanCostPayed : 1
+     * PlanBeginDateTime : 2016-04-05 17:31:16
+     * PlanEndDateTime : 2016-04-05 17:46:16
+     * RealBeginDateTime : 2016-04-05 17:31:28
      * Tel : 0755-82891087
      */
 
@@ -51,6 +53,7 @@ public class OrderInfoDao {
         private String OrgID;
         private String OrgName;
         private String FacilityID;
+        private String FacilityName;
         private String Longitude;
         private String Latitude;
         private String ChargingAmt;
@@ -61,6 +64,7 @@ public class OrderInfoDao {
         private String PlanCostPayed;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
+        private String RealBeginDateTime;
         private String Tel;
 
         public String getReturnStatus() {
@@ -143,6 +147,14 @@ public class OrderInfoDao {
             this.FacilityID = FacilityID;
         }
 
+        public String getFacilityName() {
+            return FacilityName;
+        }
+
+        public void setFacilityName(String FacilityName) {
+            this.FacilityName = FacilityName;
+        }
+
         public String getLongitude() {
             return Longitude;
         }
@@ -221,6 +233,14 @@ public class OrderInfoDao {
 
         public void setPlanEndDateTime(String PlanEndDateTime) {
             this.PlanEndDateTime = PlanEndDateTime;
+        }
+
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
+        }
+
+        public void setRealBeginDateTime(String RealBeginDateTime) {
+            this.RealBeginDateTime = RealBeginDateTime;
         }
 
         public String getTel() {

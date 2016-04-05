@@ -11,6 +11,31 @@
         layout="@layout/nearby_actionbar"
         ></include>
 
+    <RelativeLayout
+        android:id="@+id/screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="筛选条件"
+            android:textSize="16sp"
+            />
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/down"
+            />
+    </RelativeLayout>
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"

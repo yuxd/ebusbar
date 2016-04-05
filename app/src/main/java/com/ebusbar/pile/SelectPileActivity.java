@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.SelectPileListAdapter;
@@ -89,7 +91,11 @@ public class SelectPileActivity extends UtilActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PileListItemDao.EvcFacilitiesGetEntity data = pileListItemDao.piles.get(position).getEvc_facilities_get();
-                AppointActivity.startAppActivity(SelectPileActivity.this,data.getOrgName(),data.getFacilityID(),data.getFacilityName(),APPOINT);
+                if (!TextUtils.equals("0",data.getFacilityStatus())) {
+                    Toast.makeText(SelectPileActivity.this,"有人正在使用，请您稍等片刻",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                AppointActivity.startAppActivity(SelectPileActivity.this, data.getOrgName(), data.getFacilityID(), data.getFacilityName(), APPOINT);
             }
         });
     }

@@ -6,21 +6,30 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ebusbar.adpater.NearbyListItemAdapter;
+import com.ebusbar.dao.NearbyStationDao;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.NearbyStationDaoImpl;
+import com.ebusbar.myview.SlideSwitch;
 import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.pile.SearchActivity;
 import com.ebusbar.utils.LogUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 附近电桩
@@ -52,6 +61,17 @@ public class NearbyStationFragment extends UtilFragment {
      */
     private ImageView member;
     /**
+     * 搜索
+     */
+    private TextView search;
+    /**
+     * 筛选
+     */
+    private RelativeLayout screen;
+
+    private RelativeLayout actionBar_layout;
+
+    /**
      * PositionDaoImpl
      */
     private NearbyStationDaoImpl nearbyStationDao;
@@ -67,6 +87,22 @@ public class NearbyStationFragment extends UtilFragment {
      * Adapter
      */
     private NearbyListItemAdapter adapter;
+    /**
+     * 筛选弹出框
+     */
+    private PopupWindow screenPw;
+    /**
+     * 是否弹出
+     */
+    private boolean isShow = false;
+    /**
+     * 隐藏的充电点
+     */
+    private List<NearbyStationDao> dismissList = new ArrayList<>();
+    /**
+     * 筛选可用的是否打开
+     */
+    private boolean isUse = false;
 
     @Nullable
     @Override
@@ -82,7 +118,6 @@ public class NearbyStationFragment extends UtilFragment {
     @Override
     public void onResume() {
         super.onResume();
-        setFragView();
     }
 
     @Override
@@ -91,6 +126,9 @@ public class NearbyStationFragment extends UtilFragment {
         list = (ListView) root.findViewById(R.id.list);
         map = (TextView) root.findViewById(R.id.map);
         member = (ImageView) root.findViewById(R.id.member);
+        search = (TextView) root.findViewById(R.id.search);
+        screen = (RelativeLayout) root.findViewById(R.id.screen);
+        actionBar_layout = (RelativeLayout) root.findViewById(R.id.actionBar_layout);
     }
 
     @Override
@@ -104,6 +142,8 @@ public class NearbyStationFragment extends UtilFragment {
     public void setListener() {
         setMapListener();
         setOpenDrawerListener();
+        setSearchListener();
+        setScreenListener();
     }
 
     @Override
@@ -115,6 +155,7 @@ public class NearbyStationFragment extends UtilFragment {
             nearbyStationDao.getDaos(adCode);
         }
     }
+
 
     /**
      * 当点击会员头像的时候,打开抽屉
@@ -130,6 +171,97 @@ public class NearbyStationFragment extends UtilFragment {
     }
 
     /**
+     * 设置筛选按钮的监听器
+     */
+    public void setScreenListener(){
+        screen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(screenPw != null && isShow){
+                    screenPw.dismiss();
+                    isShow = false;
+                    return;
+                }else if(screenPw != null && !isShow){
+                    screenPw.showAsDropDown(v);
+                    isShow = true;
+                    return;
+                }
+                View root = LayoutInflater.from(context).inflate(R.layout.nearby_screen_layout,null);
+                final RelativeLayout use = (RelativeLayout) root.findViewById(R.id.use);
+                RelativeLayout enough = (RelativeLayout) root.findViewById(R.id.enough);
+                final SlideSwitch use_switch = (SlideSwitch) root.findViewById(R.id.use_switch);
+                final SlideSwitch enough_switch = (SlideSwitch) root.findViewById(R.id.enough_switch);
+                use_switch.setEnabled(false);
+                enough_switch.setEnabled(false);
+                if(isUse){
+                    use_switch.changeSwitchStatus();
+                }
+                use.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        use_switch.changeSwitchStatus();
+                    }
+                });
+
+                enough.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        enough_switch.changeSwitchStatus();
+                    }
+                });
+
+                use_switch.setOnSwitchChangedListener(new SlideSwitch.OnSwitchChangedListener() {
+                    @Override
+                    public void onSwitchChanged(SlideSwitch obj, int status) {
+                        if (status == 1) {
+                            isUse = true;
+                            nearbyStationDao.daos = screenUse(nearbyStationDao.daos);
+                            LogUtil.v(TAG,nearbyStationDao.daos.size()+"");
+                            adapter = new NearbyListItemAdapter(context,nearbyStationDao.daos);
+                            list.setAdapter(adapter);
+                        } else {
+                            isUse = false;
+                            nearbyStationDao.daos.addAll(dismissList);
+                            adapter = new NearbyListItemAdapter(context,nearbyStationDao.daos);
+                            list.setAdapter(adapter);
+                        }
+                    }
+                });
+
+
+
+                ImageView bg = (ImageView) root.findViewById(R.id.bg);
+                bg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (screenPw != null && screenPw.isShowing()) {
+                            screenPw.dismiss();
+                            isShow = false;
+                        }
+                    }
+                });
+                screenPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) - actionBar_layout.getHeight() - screen.getHeight() - windowUtil.getStateBarHeight(context));
+                screenPw.showAsDropDown(v);
+                isShow = true;
+            }
+        });
+    }
+
+
+    public List<NearbyStationDao> screenUse(List<NearbyStationDao> list){
+        dismissList.clear();
+        List<NearbyStationDao> show = new ArrayList<>();
+        for(int i=0;i<list.size();i++){
+            if(TextUtils.equals("1", list.get(i).getEvc_stations_get().getIsAvailable())){
+                show.add(list.get(i));
+            }else{
+                dismissList.add(list.get(i));
+            }
+        }
+        return show;
+    }
+
+    /**
      * 设置切换Map的点击事件
      */
     public void setMapListener(){
@@ -140,6 +272,18 @@ public class NearbyStationFragment extends UtilFragment {
                 ft.remove(NearbyStationFragment.this);
                 ft.add(R.id.content, new AllStationFragment());
                 ft.commit();
+            }
+        });
+    }
+
+    /**
+     * 设置搜索监听
+     */
+    public void setSearchListener(){
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchActivity.startAppActivity(context);
             }
         });
     }

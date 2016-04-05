@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ebusbar.dao.PileListItemDao;
@@ -48,10 +49,11 @@ public class SelectPileListAdapter extends BaseAdapter{
     }
 
     private class ViewHolder{
-        TextView pile_name;
-        TextView money;
-        TextView charge_type;
-        TextView pile_type;
+        TextView facilityName;
+        TextView facilityType;
+        TextView facilityModel;
+        TextView applicableCar;
+        ImageView appoint_btn;
     }
 
     @Override
@@ -60,20 +62,27 @@ public class SelectPileListAdapter extends BaseAdapter{
         if(convertView == null){
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(context).inflate(R.layout.selectpile_item,null);
-            viewHolder.pile_name = (TextView) convertView.findViewById(R.id.pile_name);
-            viewHolder.money = (TextView) convertView.findViewById(R.id.money);
-            viewHolder.charge_type = (TextView) convertView.findViewById(R.id.charge_type);
-            viewHolder.pile_type = (TextView) convertView.findViewById(R.id.pile_type);
+            viewHolder.facilityName = (TextView) convertView.findViewById(R.id.facilityName);
+            viewHolder.applicableCar = (TextView) convertView.findViewById(R.id.applicableCar);
+            viewHolder.facilityType = (TextView) convertView.findViewById(R.id.facilityType);
+            viewHolder.facilityModel = (TextView) convertView.findViewById(R.id.facilityModel);
+            viewHolder.appoint_btn = (ImageView) convertView.findViewById(R.id.appoint_btn);
             convertView.setTag(viewHolder);
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
         PileListItemDao.EvcFacilitiesGetEntity entity = ((PileListItemDao) getItem(position)).getEvc_facilities_get();
-        viewHolder.pile_name.setText(entity.getFacilityName());
-        viewHolder.money.setText(entity.getPrice());
-        viewHolder.charge_type.setText(entity.getFacilityModel());
-        if(TextUtils.equals(entity.getFacilityStatus(),"1")){
-            viewHolder.pile_type.setText("空闲中");
+        viewHolder.facilityName.setText(entity.getFacilityName().replace("号桩","").replace("号充电桩",""));
+        if(!TextUtils.isEmpty(entity.getApplicableCar())){
+            viewHolder.applicableCar.setText(entity.getApplicableCar().replace("-","、"));
+        }
+        if(TextUtils.equals(entity.getFacilityType(),"1")){
+            viewHolder.facilityType.setText("直流桩");
+        }else if(TextUtils.equals(entity.getFacilityModel(),"0")){
+            viewHolder.facilityType.setText("交流桩");
+        }
+        if(!TextUtils.equals(entity.getFacilityStatus(),"0")){
+            viewHolder.appoint_btn.setImageResource(R.drawable.selectpilenoappointbtn);
         }
         return convertView;
     }

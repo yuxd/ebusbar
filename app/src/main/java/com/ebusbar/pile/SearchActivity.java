@@ -3,8 +3,11 @@ package com.ebusbar.pile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
@@ -13,6 +16,8 @@ import android.widget.ListView;
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.SearchListAdapter;
 import com.ebusbar.dao.AllStationDao;
+import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.impl.AllStationDaoImpl;
 import com.ebusbar.utils.LogUtil;
 
 import java.util.ArrayList;
@@ -28,7 +33,7 @@ public class SearchActivity extends UtilActivity {
      */
     public String TAG = "SearchActivity";
     /**
-     *
+     * 列表
      */
     private ListView list;
     /**
@@ -51,6 +56,14 @@ public class SearchActivity extends UtilActivity {
      * 适配器
      */
     private SearchListAdapter adapter;
+    /**
+     * 获取所有充电桩
+     */
+    private AllStationDaoImpl allStationDao;
+    /**
+     * 获取所有电桩的消息
+     */
+    private final int msgAllStation = 0x001;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +85,10 @@ public class SearchActivity extends UtilActivity {
     public void loadObjectAttribute() {
         intent = getIntent();
         daos = intent.getParcelableArrayListExtra("daos");
-        daos = setCondition(daos);
+        if(daos != null){
+            daos = setCondition(daos);
+        }
+        allStationDao = new AllStationDaoImpl(this,handler,msgAllStation);
     }
 
     @Override
@@ -82,7 +98,9 @@ public class SearchActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-
+        if(daos == null){
+            allStationDao.getDaos();
+        }
     }
 
     /**
@@ -98,14 +116,17 @@ public class SearchActivity extends UtilActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String searchText = search_et.getText().toString();
-                LogUtil.v(TAG,"开始搜索：" + searchText);
+                LogUtil.v(TAG, "开始搜索：" + searchText);
+                if (daos == null || daos.size() == 0) {
+                    return;
+                }
                 try {
                     searchs = searchUtil.searchListOnRegExp(searchText, daos);
-                }catch (Exception e){
-                    Log.e(TAG,e.getMessage());
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
                 }
-                if(searchs != null){
-                    adapter = new SearchListAdapter(context,application,searchs);
+                if (searchs != null) {
+                    adapter = new SearchListAdapter(context, application, searchs);
                     list.setAdapter(adapter);
                 }
             }
@@ -129,6 +150,21 @@ public class SearchActivity extends UtilActivity {
         return daos;
     }
 
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if(allStationDao.daos == null){
+                return;
+            }
+            if(TextUtils.equals("N",allStationDao.daos.get(0).getEvc_stations_getall().getIsSuccess())){
+                ErrorDao errorDao = errorParamUtil.checkReturnState(allStationDao.daos.get(0).getEvc_stations_getall().getReturnStatus());
+                toastUtil.toastError(context,errorDao,null);
+                return;
+            }
+            daos = setCondition(allStationDao.daos);
+        }
+    };
+
     /**
      * 开启界面
      * @param context
@@ -136,6 +172,15 @@ public class SearchActivity extends UtilActivity {
     public static void startAppActivity(Context context,ArrayList<AllStationDao> daos){
         Intent intent = new Intent(context,SearchActivity.class);
         intent.putParcelableArrayListExtra("daos",daos);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 从附近界面跳入到搜索界面
+     * @param context
+     */
+    public static void startAppActivity(Context context){
+        Intent intent = new Intent(context,SearchActivity.class);
         context.startActivity(intent);
     }
 

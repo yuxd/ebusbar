@@ -59,7 +59,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
      */
     private BitmapImpl bitmap;
     /**
-     *
+     * 用户头像消息
      */
     private final int msgIcon = 0x001;
     /**
@@ -73,7 +73,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
     /**
      * 修改昵称
      */
-    public static final int nickName = 0x003;
+    public static final int NICKNAMEREQUEST = 0x003;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,7 +130,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
      * @return
      */
     public View nickName(View view){
-        ModCustNameActivity.startAppActivity(context,nickName);
+        ModCustNameActivity.startAppActivity(context, NICKNAMEREQUEST);
         return view;
     }
 
@@ -177,6 +177,20 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
         if(TextUtils.equals(returnState, NetErrorEnum.Token失效.getState())){
             application.loginOut();
             ActivityControl.finishAct(AccountManageActivity.this);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case NICKNAMEREQUEST:
+                if(resultCode == ModCustNameActivity.SUCCESS){
+                    LoginDao.DataEntity entity = application.getLoginDao().getData();
+                    nickname_text.setText(entity.getCustName());
+                }else if(resultCode == ModCustNameActivity.FAILURE){
+
+                }
+                break;
         }
     }
 

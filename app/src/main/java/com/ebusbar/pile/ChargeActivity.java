@@ -59,6 +59,10 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
      */
     private TextView charge_money_text;
     /**
+     * 电桩号
+     */
+    private TextView facilityName;
+    /**
      * 开始充电按钮
      */
     private ImageView charge_btn;
@@ -191,6 +195,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
         charge_money_text = (TextView) this.findViewById(R.id.charge_money_text);
         charge_btn = (ImageView) this.findViewById(R.id.charge_btn);
         title = (TextView) this.findViewById(R.id.title);
+        facilityName = (TextView) this.findViewById(R.id.facilityName);
     }
 
     @Override
@@ -311,6 +316,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                         return;
                     }
                     PileInfoDao.EvcFacilityGetEntity entity = pileInfoDao.pileInfoDao.getEvc_facility_get();
+                    facilityName.setText(entity.getFacilityName().replace("号桩","").replace("号电桩",""));
                     position_text.setText(entity.getOrgName());
                     EPid_text.setText(entity.getFacilityID());
                     FacilityID = entity.getFacilityID();
@@ -327,7 +333,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                     }
                     OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
                     if(!TextUtils.equals(evcOrderGetEntity.getOrderStatus(), "4")){
-                        if(TextUtils.equals(evcOrderGetEntity.getOrderStatus(),"8")){
+                        if(TextUtils.equals(evcOrderGetEntity.getOrderStatus(),"8") || TextUtils.isEmpty(evcOrderGetEntity.getChargingAmt())){
                             Toast.makeText(ChargeActivity.this,"您的充电时间过短，系统暂未产生金额!",Toast.LENGTH_SHORT).show();
                             isFinish = true;
 //                            PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
@@ -351,13 +357,14 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
 //                    充电完成后跳到支付界面
                     PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),PayActivity.CHARGE,PAYREQUEST);
                     break;
-                case startOrderInfo:
+                case startOrderInfo: //进入界面时获取订单详情
                     if(startOrderInfoDao.orderInfoDao == null || TextUtils.equals(startOrderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
                         ErrorDao errorDao = errorParamUtil.checkReturnState(startOrderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
                     OrderInfoDao.EvcOrderGetEntity evcOrderGetEntity1 = startOrderInfoDao.orderInfoDao.getEvc_order_get();
+                    facilityName.setText(evcOrderGetEntity1.getFacilityName().replace("号桩","").replace("号充电桩",""));
                     charge_degress_text.setText(evcOrderGetEntity1.getChargingQty()+"度");
                     charge_time_text.setText(evcOrderGetEntity1.getChargingTime() + "分钟");
                     String price = DoubleUtil.add(evcOrderGetEntity1.getChargingAmt(),evcOrderGetEntity1.getServiceAmt());

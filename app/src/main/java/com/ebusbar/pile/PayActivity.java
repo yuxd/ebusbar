@@ -239,7 +239,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
             ActivityControl.finishAct(this);
             return view;
         }
-        dialogUtil.showSureListenerDialog(context, "是否取消预约支付，取消支付后预约订单将不能继续支付！", new DialogInterface.OnClickListener() {
+        dialogUtil.showSureListenerDialog(context, "是否取消预约支付？", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //取消预约支付

@@ -1,6 +1,8 @@
 package com.ebusbar.utils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.View;
 
@@ -63,5 +65,14 @@ public class WindowUtil {
         int[] location = new int[2]; //获取筛选按钮的x坐标
         view.getLocationOnScreen(location);
         return location;
+    }
+
+
+    public int getStateBarHeight(Context context){
+        Rect rect= new Rect();
+        Activity activity = (Activity) context;
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+        int statusBarHeight = rect.top;
+        return  statusBarHeight;
     }
 }

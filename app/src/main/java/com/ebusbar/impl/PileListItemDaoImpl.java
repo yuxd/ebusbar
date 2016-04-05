@@ -6,8 +6,9 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.ebusbar.dao.PileListItemDao;
-import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
+import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.utils.LogUtil;
 import com.jellycai.service.ResponseResultHandler;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class PileListItemDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
+                LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
                     piles = JsonUtil.arrayFormJson(s, PileListItemDao[].class);
                 }
