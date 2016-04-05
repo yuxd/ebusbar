@@ -1,11 +1,16 @@
 package com.ebusbar.pile;
 
 import android.app.Application;
-import android.util.Log;
 
+import com.amap.api.maps.AMapOptions;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.ebusbar.dao.LoginDao;
 import com.ebusbar.impl.LoginDaoImpl;
+import com.ebusbar.map.MyLocation;
+import com.ebusbar.param.DefaultParam;
+import com.ebusbar.utils.LogUtil;
+import com.ebusbar.utils.SPCacheUtil;
 
 /**
  * MyApplication
@@ -16,6 +21,10 @@ public class MyApplication extends Application{
      * TAG
      */
     private static String TAG = "MyApplication";
+    /**
+     * SharePreference操作工具
+     */
+    private SPCacheUtil spCacheUtil = SPCacheUtil.getInstance();
     /**
      * 是否登录
      */
@@ -31,45 +40,35 @@ public class MyApplication extends Application{
     /**
      * 当前位置
      */
-    private LatLng latLng;
+    private MyLocation location;
     /**
-     * 城市代码
+     * 地图的默认设置
      */
-    private String adCode;
+    private CameraPosition cameraPosition;
 
     @Override
     public void onCreate() {
         super.onCreate();
         loadCacheLogin();
+        loadCacheLocation();
+        setMapOption();
     }
 
 
-    /**
-     * 设置城市代码
-     * @param adCode
-     */
-    public void setAdCode(String adCode) {
-        this.adCode = adCode;
+    public CameraPosition getCameraPosition() {
+        return cameraPosition;
     }
 
-    public String getAdCode() {
-        return adCode;
+    public void setCameraPosition(CameraPosition cameraPosition) {
+        this.cameraPosition = cameraPosition;
     }
 
-    /**
-     * 设置当前位置
-     * @param latLng
-     */
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
+    public MyLocation getLocation() {
+        return location;
     }
 
-    /**
-     * 获取当前位置
-     * @return
-     */
-    public LatLng getLatLng() {
-        return latLng;
+    public void setLocation(MyLocation location) {
+        this.location = location;
     }
 
     /**
@@ -85,6 +84,19 @@ public class MyApplication extends Application{
     }
 
     /**
+     * 设置地图的初始显示位置
+     */
+    public void setMapOption(){
+        AMapOptions aMapOptions = new AMapOptions();
+        LatLng latLng = new LatLng(22,144);
+        if(location != null) {
+            latLng = new LatLng(Double.parseDouble(location.getLatitude()), Double.parseDouble(location.getLongitude()));
+        }
+        aMapOptions.camera(CameraPosition.fromLatLngZoom(latLng, DefaultParam.ZOOM));
+        cameraPosition = aMapOptions.getCamera();
+    }
+
+    /**
      * 加载缓存登录,如果缓存中存在登录缓存，不需要重新登录
      */
     public void loadCacheLogin(){
@@ -93,7 +105,19 @@ public class MyApplication extends Application{
         if(loginDao != null){ //如果LoginDao不为空，说明在缓存中已经有登录缓存，不需要重新登录
             isLogin = true;
         }else{
-            Log.v("获取缓存中的登录数据为空","true");
+            LogUtil.v(TAG,"登录缓存为空");
+        }
+    }
+
+    /**
+     * 加载缓存中的位置信息
+     */
+    public void loadCacheLocation(){
+        location = spCacheUtil.getMyLocation(this);
+        if(location != null){
+            LogUtil.v(TAG,"成功获取缓存中的位置："+location.getAdCode());
+        }else{
+            LogUtil.v(TAG,"位置缓存为空");
         }
     }
 

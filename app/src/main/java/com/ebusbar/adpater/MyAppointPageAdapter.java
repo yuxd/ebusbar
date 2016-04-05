@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.ebusbar.fragment.CarAppointFrag;
-import com.ebusbar.fragment.ChargeAppointFrag;
+import com.ebusbar.fragment.ChargeAppointFragment;
 import com.ebusbar.fragment.FixAppointFrag;
 
 /**
@@ -20,7 +20,7 @@ public class MyAppointPageAdapter extends FragmentPagerAdapter{
     @Override
     public Fragment getItem(int position) {
         if(position == 0){
-            return  new ChargeAppointFrag();
+            return  new ChargeAppointFragment();
         }else if(position == 1){
             return  new CarAppointFrag();
         }else if(position == 2){

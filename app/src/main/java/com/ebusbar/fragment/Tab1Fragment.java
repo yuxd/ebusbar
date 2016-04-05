@@ -53,7 +53,7 @@ public class Tab1Fragment extends SimpleFragment {
     @Override
     public void setFragView() {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-        ft.replace(R.id.content,new DianZhuanFrag());
+        ft.replace(R.id.content,new AllStationFragment());
         ft.commit();
     }
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F0F0"
+    >
+
+
+    <include
+        android:id="@id/actionBar_layout"
+        layout="@layout/modcustname_actionbar"
+        ></include>
+
+    <EditText
+        android:id="@+id/custName_et"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#FFFFFF"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        />
+
+</LinearLayout>

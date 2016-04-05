@@ -117,7 +117,7 @@ public class MyWalletActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+        LoginDao.DataEntity entity = application.getLoginDao().getData();
         if(!TextUtils.isEmpty(entity.getCustName())){
             nickname_text.setText(entity.getCustName());
         }
@@ -194,9 +194,9 @@ public class MyWalletActivity extends UtilActivity {
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
-                    application.getLoginDao().getCrm_login().setBalanceAmt(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
+                    application.getLoginDao().getData().setBalanceAmt(balanceDao.balanceDao.getCrm_balanceamt_get().getBalanceAmt());
                     application.cacheLogin();
-                    money_text.setText(application.getLoginDao().getCrm_login().getBalanceAmt());
+                    money_text.setText(application.getLoginDao().getData().getBalanceAmt());
                     break;
                 case msgChargeCard:
                     if(chargeCardItemDao.chargeCardItemDaos.size() == 0 || TextUtils.equals(chargeCardItemDao.chargeCardItemDaos.get(0).getCrm_accounts_get().getIsSuccess(),"N")){

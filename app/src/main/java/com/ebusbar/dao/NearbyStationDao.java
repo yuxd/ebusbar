@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by Jelly on 2016/3/7.
  */
-public class PositionListItemDao implements Parcelable {
+public class NearbyStationDao implements Parcelable {
     /**
      * returnStatus : 100
      * isSuccess : Y
@@ -192,22 +192,22 @@ public class PositionListItemDao implements Parcelable {
         dest.writeParcelable(this.evc_stations_get, flags);
     }
 
-    public PositionListItemDao() {
+    public NearbyStationDao() {
     }
 
-    protected PositionListItemDao(Parcel in) {
+    protected NearbyStationDao(Parcel in) {
         this.evc_stations_get = in.readParcelable(EvcStationsGetEntity.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<PositionListItemDao> CREATOR = new Parcelable.Creator<PositionListItemDao>() {
+    public static final Parcelable.Creator<NearbyStationDao> CREATOR = new Parcelable.Creator<NearbyStationDao>() {
         @Override
-        public PositionListItemDao createFromParcel(Parcel source) {
-            return new PositionListItemDao(source);
+        public NearbyStationDao createFromParcel(Parcel source) {
+            return new NearbyStationDao(source);
         }
 
         @Override
-        public PositionListItemDao[] newArray(int size) {
-            return new PositionListItemDao[size];
+        public NearbyStationDao[] newArray(int size) {
+            return new NearbyStationDao[size];
         }
     };
 }

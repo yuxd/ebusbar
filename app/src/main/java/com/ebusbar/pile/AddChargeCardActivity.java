@@ -104,7 +104,7 @@ public class AddChargeCardActivity extends UtilActivity implements NetErrorHandl
                     Toast.makeText(AddChargeCardActivity.this,"卡号和密码不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                LoginDao.DataEntity entity = application.getLoginDao().getData();
                 addChargeCardDao.addAddChargeCardDao(entity.getToken(),nos,pwds,entity.getCustID());
             }
         });

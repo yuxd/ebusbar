@@ -1,5 +1,6 @@
 package com.ebusbar.pile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -23,20 +25,20 @@ import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.OrderInfoDao;
 import com.ebusbar.dao.PayResult;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
-import com.ebusbar.impl.BalancePayDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
-import com.ebusbar.impl.P3PayDaoImpl;
-import com.ebusbar.myview.MyDialog;
-import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.impl.PayDaoImpl;
 import com.ebusbar.param.DefaultParam;
-import com.ebusbar.utils.DialogUtil;
-import com.ebusbar.utils.DoubleUtil;
 import com.ebusbar.param.NetErrorEnum;
+import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.DoubleUtil;
 import com.ebusbar.utils.PayUtil;
-import com.ebusbar.utils.PopupWindowUtil;
-import com.ebusbar.utils.ResourceUtil;
-import com.ebusbar.utils.WindowUtil;
 import com.jellycai.service.ThreadManage;
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -45,7 +47,7 @@ import java.net.URLEncoder;
  * 支付页面
  * Created by Jelly on 2016/3/11.
  */
-public class PayActivity extends UtilActivity implements View.OnClickListener , NetErrorHandlerListener{
+public class PayActivity extends UtilActivity implements View.OnClickListener , NetErrorHandlerListener,IWXAPIEventHandler {
     /**
      * TAG
      */
@@ -79,18 +81,6 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
      */
     private PopupWindow payPw;
     /**
-     * 弹出窗的操作事件
-     */
-    private PopupWindowUtil popupWindowUtil;
-    /**
-     * 资源操作工具
-     */
-    private ResourceUtil resourceUtil;
-    /**
-     * 窗体操作工具
-     */
-    private WindowUtil windowUtil;
-    /**
      * 支付密码
      */
     private String payPassword = "";
@@ -112,11 +102,6 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
      */
     private static final int PayPwd = 0x001;
     /**
-     * Application
-     */
-    private MyApplication application;
-
-    /**
      * OrderInfoDaoImpl
      */
     private OrderInfoDaoImpl orderInfoDao;
@@ -129,14 +114,6 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
      */
     private String price;
     /**
-     * BalancePayDaoImpl
-     */
-    private BalancePayDaoImpl balancePayDao;
-    /**
-     * 余额支付消息
-     */
-    private final int msgBalancePay = 0x003;
-    /**
      * 支付测试
      */
     private boolean isTest = true;
@@ -145,26 +122,49 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
      */
     private String tradeNo;
     /**
-     * P3PayDaoImpl
+     * 充值请求
      */
-    private P3PayDaoImpl p3PayDao;
+    private static final int RECHARGEQEQUEST = 0x003;
     /**
-     * 第3方支付消息
+     * 支付和电桩有关的订单
      */
-    private final int msgP3Pay = 0x004;
+    public static final String CHARGE = "电桩充电";
     /**
-     * Dialog操作工具
+     * 支付和租车有关的订单
      */
-    private DialogUtil dialogUtil = DialogUtil.getInstance();
+    public static final String CAR = "租车";
     /**
-     * 充值Dialog
+     * 支付类型: 1：电桩预约支付 2：电桩充电支付
      */
-    private MyDialog dialogRecharge;
-
+    private int payType = 0;
     /**
-     * 充值
+     * 预约支付
      */
-    private static final int RECHARGE = 0x005;
+    private final int APPOINTPAY = 1;
+    /**
+     * 充电支付
+     */
+    private final int CHARGEPAY = 2;
+    /**
+     * PayDaoImpl
+     */
+    private PayDaoImpl payDao;
+    /**
+     * 支付消息
+     */
+    private final int msgPay = 0x004;
+    /**
+     * 是否为余额支付
+     */
+    private boolean isBalance = false;
+    /**
+     * 支付成功
+     */
+    public static final int SUCCESS = 0x005;
+    /**
+     * 支付失败
+     */
+    public static final int FAILURE = 0x006;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -190,13 +190,8 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
     @Override
     public void loadObjectAttribute() {
         intent = getIntent();
-        popupWindowUtil = PopupWindowUtil.getInstance();
-        windowUtil = WindowUtil.getInstance();
-        resourceUtil = ResourceUtil.getInstance();
-        application = (MyApplication) getApplication();
         orderInfoDao = new OrderInfoDaoImpl(this,handler,msgInfo);
-        balancePayDao = new BalancePayDaoImpl(this,handler,msgBalancePay);
-        p3PayDao = new P3PayDaoImpl(this,handler,msgP3Pay);
+        payDao = new PayDaoImpl(this,handler,msgPay);
     }
 
     @Override
@@ -206,8 +201,10 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
 
     @Override
     public void setActivityView() {
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-        orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), intent.getStringExtra("OrderNo"), entity.getCustID());
+        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        if(TextUtils.equals(intent.getStringExtra("type"),CHARGE)){
+            orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), intent.getStringExtra("OrderNo"), entity.getCustID());
+        }
         if(!TextUtils.isEmpty(entity.getBalanceAmt())){
             tran_text.setText(resourceUtil.getResourceString(PayActivity.this, R.string.money_sign)+entity.getBalanceAmt());
         }
@@ -235,6 +232,23 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                 setPay(((ImageView) v));
             }
         });
+    }
+    @Override
+    public View back(View view) {
+        if(payType == CHARGEPAY){
+            ActivityControl.finishAct(this);
+            return view;
+        }
+        dialogUtil.showSureListenerDialog(context, "是否取消预约支付，取消支付后预约订单将不能继续支付！", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //取消预约支付
+                intent.putExtra("OrderNo", intent.getStringExtra("OrderNo"));
+                setResult(FAILURE,intent);
+                ActivityControl.finishAct(PayActivity.this);
+            }
+        });
+        return view;
     }
 
     /**
@@ -292,10 +306,21 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                 }
             });
         }else if(selectPay.getId() == R.id.wchatpay_btn){ //微信支付
-            Toast.makeText(this,"对不起，暂不支持微信支付!",Toast.LENGTH_SHORT).show();
+            final IWXAPI api = WXAPIFactory.createWXAPI(context, null);
+            // 将该app注册到微信
+            api.registerApp("wxd930ea5d5a258f4f");
+            PayReq request = new PayReq();
+            request.appId = "wxd930ea5d5a258f4f";
+            request.partnerId = "1900000109";
+            request.prepayId= "1101000000140415649af9fc314aa427";
+            request.packageValue = "Sign=WXPay";
+            request.nonceStr= "1101000000140429eb40476f8896f4c9";
+            request.timeStamp= "1398746574";
+            request.sign= "7FFECB600D7157C5AA49810D2D8F28BC2811827B";
+            api.sendReq(request);
         }else if(selectPay.getId() == R.id.tran_btn){ //余额支付
             //模拟没有设置支付密码
-            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            LoginDao.DataEntity entity = application.getLoginDao().getData();
             if(TextUtils.equals(entity.getExistsPayPassword(),"0")) { //0 :未设置 1：已经设置
                 dialogUtil.showSureListenerDialog(this, "您还没有设置支付密码，是否前往设置?", new DialogInterface.OnClickListener() {
                     @Override
@@ -372,17 +397,22 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     return;
                 }
                 payPassword = payPassword.substring(0,payPassword.length()-1);
-                reInputEt();
+                reInputEt(payPassword);
                 break;
             default:
                 if(payPassword.length() == 6){ //如果支付密码已经有6位，不能继续输入
                     return;
                 }
                 payPassword += btn.getText();
-                reInputEt();
+                reInputEt(payPassword);
                 if(payPassword.length() == 6){ //如果是最后一位输入6位，直接支付
-                    LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-                    balancePayDao.getBalancePayDao(entity.getToken(),intent.getStringExtra("OrderNo"),payPassword,entity.getCustID());
+                    isBalance = true;
+                    LoginDao.DataEntity entity = application.getLoginDao().getData();
+                    if(payType == APPOINTPAY){
+                        payDao.getDao(entity.getToken(),intent.getStringExtra("OrderNo"),"0",payPassword,PayDaoImpl.BALANCEPAY,PayDaoImpl.APPOINTPAY,entity.getCustID());
+                    }else if(payType == CHARGEPAY){
+                        payDao.getDao(entity.getToken(),intent.getStringExtra("OrderNo"),"0",payPassword,PayDaoImpl.BALANCEPAY,PayDaoImpl.CHARGEPAY,entity.getCustID());
+                    }
                 }
         }
     }
@@ -390,13 +420,36 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
     /**
      * 更改密码框状态
      */
-    public void reInputEt(){
+    public void reInputEt(String payPassword){
         int index = payPassword.length();
         for(int i=0;i<index;i++){
             input_ets[i].setImageResource(R.drawable.paypassword_input);
         }
         for(int i=index;i<DefaultParam.PAYPASSWOEDSUM;i++){
             input_ets[i].setImageResource(R.drawable.paypassword_noinput);
+        }
+    }
+
+    @Override
+    public void onReq(BaseReq baseReq) {
+
+    }
+
+    @Override
+    public void onResp(BaseResp baseResp) {
+        switch (baseResp.errCode) {
+            case BaseResp.ErrCode.ERR_OK:
+                Toast.makeText(this,"发送成功",Toast.LENGTH_SHORT).show();
+                break;
+            case BaseResp.ErrCode.ERR_USER_CANCEL:
+                Toast.makeText(this,"发送取消",Toast.LENGTH_SHORT).show();
+                break;
+            case BaseResp.ErrCode.ERR_AUTH_DENIED:
+                Toast.makeText(this,"发送被拒绝",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Toast.makeText(this,"发送返回",Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 
@@ -416,8 +469,12 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     String resultStatus = payResult.getResultStatus();
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-                        p3PayDao.getP3PayDao(entity.getToken(),intent.getStringExtra("OrderNo"),tradeNo,"2",entity.getCustID());
+                        LoginDao.DataEntity entity = application.getLoginDao().getData();
+                        if(payType == APPOINTPAY)
+                            payDao.getDao(entity.getToken(),intent.getStringExtra("OrderNo"),tradeNo,"0",PayDaoImpl.ALIPAY,PayDaoImpl.APPOINTPAY,entity.getCustID());
+                        else if (payType == CHARGEPAY)
+                            payDao.getDao(entity.getToken(),intent.getStringExtra("OrderNo"),tradeNo,"0",PayDaoImpl.ALIPAY,PayDaoImpl.CHARGEPAY,entity.getCustID());
+
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
                         // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -437,35 +494,36 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                         return;
                     }
                     OrderInfoDao.EvcOrderGetEntity entity = orderInfoDao.orderInfoDao.getEvc_order_get();
-                    price = DoubleUtil.add(entity.getChargingAmt(),entity.getServiceAmt());
+                    if(TextUtils.equals(entity.getOrderStatus(),"4")){
+                        price = DoubleUtil.add(entity.getChargingAmt(),entity.getServiceAmt());
+                        payType_text.setText("电桩充电");
+                        payType = CHARGEPAY;
+                    }else if(TextUtils.equals(entity.getOrderStatus(),"0")){
+                        price = entity.getPlanCost();
+                        payType_text.setText("电桩预约");
+                        payType = APPOINTPAY;
+                    }
                     payPrice_text.setText(resourceUtil.getResourceString(PayActivity.this, R.string.money_sign) + price);
-                    payType_text.setText("电桩充电");
                     pay_btn.setText(resourceUtil.getResourceString(PayActivity.this, R.string.pay_btn_text) + price + "元");
                     break;
-                case msgBalancePay:
-                    if(balancePayDao.balancePayDao == null || TextUtils.equals(balancePayDao.balancePayDao.getEvc_order_pay().getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(balancePayDao.balancePayDao.getEvc_order_pay().getReturnStatus());
+                case msgPay: //统一支付接口
+                    if(TextUtils.equals(payDao.dao.getIsSuccess(),"N")){
+                        intent.putExtra("OrderNo", intent.getStringExtra("OrderNo"));
+                        setResult(FAILURE,intent);
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(payDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,PayActivity.this);
-                        payPassword = "";
-                        reInputEt();
                         return;
                     }
-                    Toast.makeText(PayActivity.this, "付款成功", Toast.LENGTH_SHORT).show();
-                    //更新缓存中的余额
-                    String balance = DoubleUtil.delete(application.getLoginDao().getCrm_login().getBalanceAmt(),price);
-                    application.getLoginDao().getCrm_login().setBalanceAmt(balance);
-                    application.cacheLogin();
-                    payPw.dismiss();
-                    ActivityControl.finishExcept(FragmentTabHostActivity.STAG);
-                    break;
-                case msgP3Pay:
-                    if(p3PayDao.p3PayDao == null || TextUtils.equals(p3PayDao.p3PayDao.getEvc_order_pay().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(p3PayDao.p3PayDao.getEvc_order_pay().getReturnStatus());
-                        toastUtil.toastError(context,errorDao,null);
-                        return;
+                    intent.putExtra("OrderNo", intent.getStringExtra("OrderNo"));
+                    setResult(SUCCESS,intent);
+                    if(isBalance){
+                        payPw.dismiss();
+                        //更新缓存中的余额
+                        String balance = DoubleUtil.delete(application.getLoginDao().getData().getBalanceAmt(),price);
+                        application.getLoginDao().getData().setBalanceAmt(balance);
+                        application.cacheLogin();
                     }
-                    Toast.makeText(PayActivity.this,"付款成功",Toast.LENGTH_SHORT).show();
-                    ActivityControl.finishExcept(FragmentTabHostActivity.STAG);
+                    ActivityControl.finishAct(PayActivity.this);
                     break;
                 default:
                     break;
@@ -480,7 +538,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    RechargeActivity.startAppActivity(PayActivity.this, RECHARGE);
+                    RechargeActivity.startAppActivity(PayActivity.this, RECHARGEQEQUEST);
                 }
             }, new DialogInterface.OnClickListener() {
                 @Override
@@ -489,7 +547,20 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     payPw.dismiss();
                 }
             });
+        }else if(TextUtils.equals(returnState,NetErrorEnum.支付密码错误.getState())){
+            payPassword = "";
+            reInputEt(payPassword);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_BACK:
+                back(null);
+                break;
+        }
+        return false;
     }
 
     /**
@@ -508,12 +579,12 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     Toast.makeText(this,"支付密码设置失败!",Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case RECHARGE:
+            case RECHARGEQEQUEST:
                 if(resultCode == RechargeActivity.SUCCESS){
                     Toast.makeText(this,"充值成功，请输入支付密码支付!",Toast.LENGTH_SHORT).show();
-                    tran_text.setText(application.getLoginDao().getCrm_login().getBalanceAmt());
+                    tran_text.setText(application.getLoginDao().getData().getBalanceAmt());
                     payPassword = "";
-                    reInputEt();
+                    reInputEt(payPassword);
                 }else if(resultCode == RechargeActivity.FAILURE){
                     Toast.makeText(this,"充值失败，请选择其他操作方式!",Toast.LENGTH_SHORT).show();
                     payPw.dismiss();
@@ -522,14 +593,19 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
 
     }
 
+
+
     /**
-     * 开启支付界面
+     * 开启支付订单界面
      */
-    public static void startPayActivity(Context context,String OrderNo){
+    public static void startPayActivity(Context context,String OrderNo,String type,int requestCode){
         Intent intent = new Intent(context,PayActivity.class);
         intent.putExtra("OrderNo",OrderNo);
-        context.startActivity(intent);
+        intent.putExtra("type", type);
+        Activity activity = (Activity) context;
+        activity.startActivityForResult(intent,requestCode);
     }
+
 
     @Override
     public String getTAG() {

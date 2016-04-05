@@ -22,8 +22,15 @@ import com.ebusbar.dao.LoginDao;
 import com.ebusbar.dao.PayResult;
 import com.ebusbar.impl.ReChargeDaoImpl;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.LogUtil;
 import com.ebusbar.utils.PayUtil;
 import com.jellycai.service.ThreadManage;
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -32,7 +39,7 @@ import java.net.URLEncoder;
  * 充值
  * Created by Jelly on 2016/3/16.
  */
-public class RechargeActivity extends UtilActivity implements View.OnClickListener{
+public class RechargeActivity extends UtilActivity implements View.OnClickListener,IWXAPIEventHandler {
     /**
      * TAG
      */
@@ -230,7 +237,19 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
                 });
                 break;
             case R.id.wchatpay_btn:
-                Toast.makeText(RechargeActivity.this,"对不起，暂不支持微信支付!",Toast.LENGTH_SHORT).show();
+                LogUtil.v(TAG,"微信支付");
+                final IWXAPI api = WXAPIFactory.createWXAPI(context, null);
+                // 将该app注册到微信
+                api.registerApp("wx2faca1abbcec3d6b");
+                PayReq request = new PayReq();
+                request.appId = "wx2faca1abbcec3d6b";
+                request.partnerId = "1900000109";
+                request.prepayId= "1101000000140415649af9fc314aa427";
+                request.packageValue = "Sign=WXPay";
+                request.nonceStr= "1101000000140429eb40476f8896f4c9";
+                request.timeStamp= "1398746574";
+                request.sign= "7FFECB600D7157C5AA49810D2D8F28BC2811827B";
+                api.sendReq(request);
                 break;
         }
         return view;
@@ -263,6 +282,31 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
     }
 
 
+    @Override
+    public void onReq(BaseReq baseReq) {
+
+    }
+
+    @Override
+    public void onResp(BaseResp baseResp) {
+        LogUtil.v(TAG,baseResp.errCode+"");
+        switch (baseResp.errCode) {
+            case BaseResp.ErrCode.ERR_OK:
+                Toast.makeText(this,"发送成功",Toast.LENGTH_SHORT).show();
+                break;
+            case BaseResp.ErrCode.ERR_USER_CANCEL:
+                Toast.makeText(this,"发送取消",Toast.LENGTH_SHORT).show();
+                break;
+            case BaseResp.ErrCode.ERR_AUTH_DENIED:
+                Toast.makeText(this,"发送被拒绝",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Toast.makeText(this,"发送返回",Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -279,7 +323,7 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
                     String resultStatus = payResult.getResultStatus();
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                        LoginDao.DataEntity entity = application.getLoginDao().getData();
                         reChargeDao.getReChargeDao(entity.getToken(),price,tradeNo,"1",entity.getCustID());
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
@@ -302,7 +346,7 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
                         return;
                     }
                     //重置缓存
-                    application.getLoginDao().getCrm_login().setBalanceAmt(reChargeDao.reChargeDao.getCrm_recharge().getBalanceAmt());
+                    application.getLoginDao().getData().setBalanceAmt(reChargeDao.reChargeDao.getCrm_recharge().getBalanceAmt());
                     application.cacheLogin();
                     //设置返回消息
                     Intent intent = getIntent();

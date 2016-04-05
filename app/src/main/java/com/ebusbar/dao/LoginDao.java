@@ -9,59 +9,73 @@ import java.io.Serializable;
 public class LoginDao implements Serializable{
 
     /**
+     * interfaceName : crm_login
      * returnStatus : 100
      * isSuccess : Y
-     * CustID : EV_20160319_00000057
-     * CustName : genlex101
-     * Mobile : 18617050557
-     * Token : 0x746b32303136303332313445304530373146
-     * Sex : 男
-     * Age : 116
-     * BalanceAmt : 1000.00
-     * Usericon : https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=560678108,398434082&amp;fm=116&amp;gp=0.jpg
-     * Verified : 1
+     * data : {"CustID":"86201603290000000665","CustName":"KUNKKA","Mobile":"15062464932","Token":"0x746b32303136303430313642434432353843","Sex":"男","BalanceAmt":"10.00","Usericon":"http://www.jf258.com/uploads/2014-09-05/233921364.jpg","ExistsPayPassword":"0","Verified":"0","Addr":"123"}
      */
 
-    private CrmLoginEntity crm_login;
+    private String interfaceName;
+    private String returnStatus;
+    private String isSuccess;
+    /**
+     * CustID : 86201603290000000665
+     * CustName : KUNKKA
+     * Mobile : 15062464932
+     * Token : 0x746b32303136303430313642434432353843
+     * Sex : 男
+     * BalanceAmt : 10.00
+     * Usericon : http://www.jf258.com/uploads/2014-09-05/233921364.jpg
+     * ExistsPayPassword : 0
+     * Verified : 0
+     * Addr : 123
+     */
 
-    public CrmLoginEntity getCrm_login() {
-        return crm_login;
+    private DataEntity data;
+
+    public String getInterfaceName() {
+        return interfaceName;
     }
 
-    public void setCrm_login(CrmLoginEntity crm_login) {
-        this.crm_login = crm_login;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
-    public static class CrmLoginEntity implements  Serializable{
-        private String returnStatus;
-        private String isSuccess;
+    public String getReturnStatus() {
+        return returnStatus;
+    }
+
+    public void setReturnStatus(String returnStatus) {
+        this.returnStatus = returnStatus;
+    }
+
+    public String getIsSuccess() {
+        return isSuccess;
+    }
+
+    public void setIsSuccess(String isSuccess) {
+        this.isSuccess = isSuccess;
+    }
+
+    public DataEntity getData() {
+        return data;
+    }
+
+    public void setData(DataEntity data) {
+        this.data = data;
+    }
+
+    public static class DataEntity implements Serializable{
         private String CustID;
         private String CustName;
         private String Mobile;
         private String Token;
         private String Sex;
-        private String Age;
         private String BalanceAmt;
         private String Usericon;
-        private String Verified;
         private String ExistsPayPassword;
-
-
-        public String getReturnStatus() {
-            return returnStatus;
-        }
-
-        public void setReturnStatus(String returnStatus) {
-            this.returnStatus = returnStatus;
-        }
-
-        public String getIsSuccess() {
-            return isSuccess;
-        }
-
-        public void setIsSuccess(String isSuccess) {
-            this.isSuccess = isSuccess;
-        }
+        private String Verified;
+        private String Addr;
 
         public String getCustID() {
             return CustID;
@@ -103,14 +117,6 @@ public class LoginDao implements Serializable{
             this.Sex = Sex;
         }
 
-        public String getAge() {
-            return Age;
-        }
-
-        public void setAge(String Age) {
-            this.Age = Age;
-        }
-
         public String getBalanceAmt() {
             return BalanceAmt;
         }
@@ -127,6 +133,14 @@ public class LoginDao implements Serializable{
             this.Usericon = Usericon;
         }
 
+        public String getExistsPayPassword() {
+            return ExistsPayPassword;
+        }
+
+        public void setExistsPayPassword(String ExistsPayPassword) {
+            this.ExistsPayPassword = ExistsPayPassword;
+        }
+
         public String getVerified() {
             return Verified;
         }
@@ -135,12 +149,12 @@ public class LoginDao implements Serializable{
             this.Verified = Verified;
         }
 
-        public String getExistsPayPassword() {
-            return ExistsPayPassword;
+        public String getAddr() {
+            return Addr;
         }
 
-        public void setExistsPayPassword(String existsPayPassword) {
-            ExistsPayPassword = existsPayPassword;
+        public void setAddr(String Addr) {
+            this.Addr = Addr;
         }
     }
 }

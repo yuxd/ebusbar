@@ -204,6 +204,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="¥0.0"
+            android:textColor="#FF0000"
             />
 
     </RelativeLayout>

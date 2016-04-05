@@ -4,51 +4,53 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.P3PayDao;
-import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.dao.PayingAppointOrderDao;
 import com.ebusbar.param.NetParam;
+import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.utils.LogUtil;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
- * 第3方支付
- * Created by Jelly on 2016/3/23.
+ * 生成待支付的预约订单
+ * Created by Jelly on 2016/3/31.
  */
-public class P3PayDaoImpl extends BaseImpl{
+public class PayingAppointOrderDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public P3PayDao p3PayDao;
+    public PayingAppointOrderDao dao;
 
-
-    public P3PayDaoImpl(Context context, Handler handler, int msg) {
+    public PayingAppointOrderDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "evc.order.pay";
+        execmode = "evc.planorder.set";
     }
 
-    public P3PayDaoImpl(Context context) {
+    public PayingAppointOrderDaoImpl(Context context) {
         super(context);
     }
 
     /**
      * 获得数据
      */
-    public void getP3PayDao(String Token,String OrderNo,String PayOrderNo,String Type,String custid){
-        if(NetParam.isEmpty(Token,OrderNo,PayOrderNo,Type,custid)){
+    public void getDao(String Token,String custid,String FacilityID,String Minutes,String Cost){
+        if(NetParam.isEmpty(Token,custid,FacilityID,Minutes,Cost)){
+            LogUtil.v(TAG,"参数为空");
             return;
         }
-        conditionMap.clear();
         timestamp = NetParam.getTime();
-        conditionMap.put("Token",Token);
-        conditionMap.put("OrderNo",OrderNo);
-        conditionMap.put("PayOrderNo",PayOrderNo);
-        conditionMap.put("Type",Type);
+        conditionMap.clear();
+        conditionMap.put("Token", Token);
+        conditionMap.put("FacilityID", FacilityID);
+        conditionMap.put("Minutes",Minutes);
+        conditionMap.put("Cost",Cost);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
+                LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    p3PayDao = JsonUtil.arrayFormJson(s,P3PayDao[].class).get(0);
+                    dao = JsonUtil.objectFromJson(s,PayingAppointOrderDao.class);
                 }
                 handler.sendEmptyMessage(msg);
             }
@@ -59,4 +61,5 @@ public class P3PayDaoImpl extends BaseImpl{
             }
         });
     }
+
 }

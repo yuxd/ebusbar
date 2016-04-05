@@ -4,46 +4,45 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.ebusbar.dao.PositionListItemDao;
-import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.dao.NearbyStationDao;
 import com.ebusbar.param.NetParam;
+import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.utils.LogUtil;
 import com.jellycai.service.ResponseResultHandler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Jelly on 2016/3/7.
  */
-public class PositionDaoImpl extends BaseImpl{
+public class NearbyStationDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public List<PositionListItemDao> positionDaoList = new ArrayList<PositionListItemDao>();
+    public List<NearbyStationDao> daos;
 
-    public PositionDaoImpl(Context context, Handler handler, int msg) {
+    public NearbyStationDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
         execmode = "evc.stations.get";
     }
 
-    public PositionDaoImpl(Context context) {
+    public NearbyStationDaoImpl(Context context) {
         super(context);
     }
 
-    public void getNetPositionListDao(String position){
-        if(TextUtils.isEmpty(position)) return;
+    public void getDaos(String adCode){
+        if(TextUtils.isEmpty(adCode)) return;
         timestamp = NetParam.getTime();
-        conditionMap.put("Position",position);
+        conditionMap.put("Position",adCode);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode,mode,timestamp,"1",sign_method,sign,execmode,fields,condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String json) {
-                Log.v("jsonPostion",json.trim());
+                LogUtil.v("jsonPostion", json.trim());
                 if(NetParam.isSuccess(b,json)){
-                    positionDaoList = JsonUtil.arrayFormJson(json, PositionListItemDao[].class);
+                    daos = JsonUtil.arrayFormJson(json, NearbyStationDao[].class);
                 };
                 handler.sendEmptyMessage(msg);
             }

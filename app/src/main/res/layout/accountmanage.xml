@@ -62,7 +62,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/accountmanage_item_bg"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:onClick="nickName"
+                >
 
                 <TextView
                     android:id="@+id/nickname_title"
@@ -130,7 +132,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/accountmanage_item_bg"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:visibility="gone"
+                >
 
                 <TextView
                     android:id="@+id/age_title"

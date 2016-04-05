@@ -6,11 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.amap.api.maps.AMapUtils;
 import com.ebusbar.utils.DialogUtil;
 import com.ebusbar.utils.ErrorParamUtil;
 import com.ebusbar.utils.PopupWindowUtil;
 import com.ebusbar.utils.ResourceUtil;
+import com.ebusbar.utils.SPCacheUtil;
 import com.ebusbar.utils.ToastUtil;
 import com.ebusbar.utils.WindowUtil;
 
@@ -31,10 +31,6 @@ public abstract class UtilFragment extends SimpleFragment{
      */
     public WindowUtil windowUtil = WindowUtil.getInstance();
     /**
-     * 地图操作工具
-     */
-    public AMapUtils aMapUtils = new AMapUtils();
-    /**
      * 错误码操作工具
      */
     public ErrorParamUtil errorParamUtil = ErrorParamUtil.getInstance();
@@ -46,6 +42,10 @@ public abstract class UtilFragment extends SimpleFragment{
      * Dialog操作工具
      */
     public DialogUtil dialogUtil = DialogUtil.getInstance();
+    /**
+     * SharePreference缓存操作工具
+     */
+    public SPCacheUtil spCacheUtil = SPCacheUtil.getInstance();
 
     @Nullable
     @Override

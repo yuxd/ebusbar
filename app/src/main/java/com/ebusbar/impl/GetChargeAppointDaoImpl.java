@@ -4,11 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ebusbar.dao.GetChargeAppointDao;
-import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
+import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.utils.LogUtil;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
@@ -42,7 +42,7 @@ public class GetChargeAppointDaoImpl extends BaseImpl{
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("jsonGetAppoint",s.trim());
+                LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)) {
                     getChargeAppointDao = JsonUtil.arrayFormJson(s,GetChargeAppointDao[].class).get(0);
                 }

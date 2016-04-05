@@ -8,7 +8,7 @@ public class DefaultParam {
     /**
      * 默认的地图缩放比例
      */
-    public static final int ZOOM = 14;
+    public static final float ZOOM = 13.5f;
     /**
      * 获取验证码的倒计时
      */

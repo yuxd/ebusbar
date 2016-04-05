@@ -3,54 +3,49 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.util.Log;
 
-import com.ebusbar.dao.BalancePayDao;
-import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.dao.CancelAppointPayDao;
 import com.ebusbar.param.NetParam;
+import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.utils.LogUtil;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
- * 余额支付
- * Created by Jelly on 2016/3/23.
+ * Created by Jelly on 2016/4/1.
  */
-public class BalancePayDaoImpl extends BaseImpl{
+public class CancelAppointPayDaoImpl extends BaseImpl{
 
-    /**
-     * 操作数据
-     */
-    public BalancePayDao balancePayDao;
+    public CancelAppointPayDao dao;
 
-    public BalancePayDaoImpl(Context context, Handler handler, int msg) {
+    public CancelAppointPayDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "evc.order.pay";
+        execmode = "evc.planorder.cancel";
     }
 
-    public BalancePayDaoImpl(Context context) {
+    public CancelAppointPayDaoImpl(Context context) {
         super(context);
     }
 
     /**
      * 获得数据
      */
-    public void getBalancePayDao(String Token,String OrderNo,String PayPassword,String custid){
-        if(NetParam.isEmpty(Token,OrderNo,custid)){
+    public void getDao(String Token,String custid,String OrderNo){
+        if(NetParam.isEmpty(Token,custid,OrderNo)){
+            LogUtil.v(TAG,"参数为空");
             return;
         }
-        conditionMap.clear();
         timestamp = NetParam.getTime();
-        conditionMap.put("Token",Token);
-        conditionMap.put("OrderNo",OrderNo);
-        conditionMap.put("Type","1");
-        conditionMap.put("PayPassword",PayPassword);
+        conditionMap.clear();
+        conditionMap.put("Token", Token);
+        conditionMap.put("OrderNo", OrderNo);
         condition = NetParam.spliceCondition(conditionMap);
         param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                Log.v("jsonpay",s.trim());
+                LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    balancePayDao = JsonUtil.arrayFormJson(s, BalancePayDao[].class).get(0);
+                    dao = JsonUtil.objectFromJson(s,CancelAppointPayDao.class);
                 }
                 handler.sendEmptyMessage(msg);
             }
@@ -61,4 +56,5 @@ public class BalancePayDaoImpl extends BaseImpl{
             }
         });
     }
+
 }

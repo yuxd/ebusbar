@@ -14,11 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
+import com.ebusbar.dao.AppointCostDao;
 import com.ebusbar.dao.ErrorDao;
 import com.ebusbar.dao.LoginDao;
+import com.ebusbar.dao.PayingAppointOrderDao;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
+import com.ebusbar.impl.AppointCostDaoImpl;
 import com.ebusbar.impl.AppointDaoImpl;
+import com.ebusbar.impl.CancelAppointPayDaoImpl;
 import com.ebusbar.impl.OrderInfoDaoImpl;
+import com.ebusbar.impl.PayingAppointOrderDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.jellycai.service.ThreadManage;
 
@@ -119,6 +124,34 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
      * 失败
      */
     public static final int FAILURE = 0x005;
+    /**
+     * AppointCostDaoImpl
+     */
+    private AppointCostDaoImpl appointCostDao;
+    /**
+     * 获取预约金额的消息
+     */
+    private final int msgAppointCost = 0x006;
+    /**
+     * PayingAppointOrderDaoImpl
+     */
+    private PayingAppointOrderDaoImpl payingAppointOrderDao;
+    /**
+     * 生成待支付的预约订单
+     */
+    private final int msgPayingAppoint = 0x007;
+    /**
+     * 支付请求
+     */
+    public static final int PAYREQUEST = 0x008;
+    /**
+     * 取消预约支付
+     */
+    private CancelAppointPayDaoImpl cancelAppointPayDao;
+    /**
+     * 取消预约支付
+     */
+    private final int msgCancelAppointPay = 0x009;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,6 +182,9 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
         application = (MyApplication) getApplication();
         appointDao = new AppointDaoImpl(this,handler,msgAppoint);
         orderInfoDao = new OrderInfoDaoImpl(this,handler,msgInfo);
+        appointCostDao = new AppointCostDaoImpl(this,handler,msgAppointCost);
+        payingAppointOrderDao = new PayingAppointOrderDaoImpl(this,handler,msgPayingAppoint);
+        cancelAppointPayDao = new CancelAppointPayDaoImpl(this,handler,msgCancelAppointPay);
     }
 
     @Override
@@ -181,21 +217,20 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        LoginDao.DataEntity entity = application.getLoginDao().getData();
         TextView time = (TextView) v;
         //暂时不设定预约金额
         if(time == time15){
             selectTime(time);
-            //appoint_price.setText("¥0.8");
         }else if(time == time30){
             selectTime(time);
-            //appoint_price.setText("¥1.2");
         }else if(time == time45){
             selectTime(time);
-            //appoint_price.setText("¥1.5");
         }else if(time == time60){
             selectTime(time);
-            //appoint_price.setText("¥2.0");
         }
+        appoint.setEnabled(false);
+        appointCostDao.getDao(entity.getToken(),entity.getCustID(),selectTime.getText().toString().replace("分钟", ""));
     }
 
 
@@ -219,8 +254,8 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
             Toast.makeText(this,"请选择预约时间",Toast.LENGTH_SHORT).show();
             return view;
         }
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-        appointDao.getAppointDao(intent.getStringExtra("FacilityID"), entity.getToken(), selectTime.getText().toString().replace("分钟", ""), entity.getCustID());
+        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        payingAppointOrderDao.getDao(entity.getToken(),entity.getCustID(),intent.getStringExtra("FacilityID"),selectTime.getText().toString().replace("分钟", ""),appoint_price.getText().toString().replace("¥", ""));
         appoint.setEnabled(false);
         return view;
     }
@@ -230,14 +265,14 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgAppoint:
-                    if(appointDao.appointDao == null || TextUtils.equals(appointDao.appointDao.getEvc_order_set().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(appointDao.appointDao.getEvc_order_set().getReturnStatus());
+                    if(TextUtils.equals(appointDao.dao.getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(appointDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         setResult(FAILURE);
                         ActivityControl.finishAct(AppointActivity.this);
                         return;
                     }
-                    loading = popupWindowUtil.startLoading(AppointActivity.this,appoint,"正在排队");
+                    loading = popupWindowUtil.startLoading(AppointActivity.this,appoint,"预约中");
                     ThreadManage.start(new Runnable() {
                         @Override
                         public void run() {
@@ -256,8 +291,8 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                     });
                     break;
                 case msgLoading:
-                    LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
-                    orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), appointDao.appointDao.getEvc_order_set().getOrderNo(), entity.getCustID());
+                    LoginDao.DataEntity entity = application.getLoginDao().getData();
+                    orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), appointDao.dao.getData().getOrderNo(), entity.getCustID());
                     break;
                 case msgInfo:
                     if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
@@ -279,6 +314,35 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                         appointSuccess();
                     }
                     break;
+                case msgAppointCost: //获取预约金额
+                    if(TextUtils.equals(appointCostDao.dao.getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(appointCostDao.dao.getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
+                        return;
+                    }
+                    AppointCostDao.DataEntity dataEntity = appointCostDao.dao.getData();
+                    appoint_price.setText("¥" + dataEntity.getCost());
+                    appoint.setEnabled(true);
+                    break;
+                case msgPayingAppoint:
+                    if(TextUtils.equals(payingAppointOrderDao.dao.getIsSuccess(),"N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(payingAppointOrderDao.dao.getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
+                        appoint.setEnabled(true);
+                        return;
+                    }
+                    PayingAppointOrderDao.DataEntity dataEntity1 = payingAppointOrderDao.dao.getData();
+                    PayActivity.startPayActivity(context,dataEntity1.getOrderNo(),PayActivity.CHARGE,PAYREQUEST);
+                    break;
+                case msgCancelAppointPay:
+                    if(TextUtils.equals(cancelAppointPayDao.dao.getIsSuccess(), "N")){
+                        ErrorDao errorDao = errorParamUtil.checkReturnState(cancelAppointPayDao.dao.getReturnStatus());
+                        toastUtil.toastError(context,errorDao,null);
+                        return;
+                    }
+                    Toast.makeText(AppointActivity.this,"成功取消预约支付",Toast.LENGTH_SHORT).show();
+                    ActivityControl.finishAct(AppointActivity.this);
+                    break;
             }
         }
     };
@@ -295,6 +359,22 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
         ActivityControl.finishAct(AppointActivity.this); //杀掉当前界面
         if(loading.isShowing() && !isPause){
             loading.dismiss();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case PAYREQUEST:
+                LoginDao.DataEntity entity = application.getLoginDao().getData();
+                if(resultCode == PayActivity.SUCCESS){ //支付成功
+                    Toast.makeText(context,"付款成功,正在预约中，请不要退出界面",Toast.LENGTH_SHORT).show();
+                    appointDao.getAppointDao(entity.getToken(),data.getStringExtra("OrderNo"), entity.getCustID());
+                }else if(resultCode == PayActivity.FAILURE){ //支付失败
+                    cancelAppointPayDao.getDao(entity.getToken(),entity.getCustID(),data.getStringExtra("OrderNo"));
+                }
+                break;
+
         }
     }
 

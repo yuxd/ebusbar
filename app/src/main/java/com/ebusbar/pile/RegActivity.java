@@ -176,7 +176,7 @@ public class RegActivity extends UtilActivity {
      */
     public View getRegCode(View view){
         String phone = reg_phone_et.getText().toString();
-        if(!RegExpUtil.RegPhone(phone)){
+        if(!RegExpUtil.regPhone(phone)){
             Log.v(TAG,"手机号码错误");
             Toast.makeText(this,"手机号码格式错误",Toast.LENGTH_SHORT).show();
             return view;
@@ -194,7 +194,7 @@ public class RegActivity extends UtilActivity {
         String phone = reg_phone_et.getText().toString();
         String password = reg_pwd_et.getText().toString();
         String code = reg_code_et.getText().toString();
-        if(!RegExpUtil.RegPhone(phone)){
+        if(!RegExpUtil.regPhone(phone)){
             Toast.makeText(this,"手机号码格式错误",Toast.LENGTH_SHORT).show();
             reg_phone_et.setText("");
             return view;

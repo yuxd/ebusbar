@@ -99,7 +99,7 @@ public class PendingOrderFrag extends UtilFragment {
     @Override
     public void setFragView() {
         loading = popupWindowUtil.startLoading(context,root,"加载中");
-        LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
+        LoginDao.DataEntity data = application.getLoginDao().getData();
         pendingOrder.getNetPendingOrderList(data.getToken(), data.getCustID());
     }
 

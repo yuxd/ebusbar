@@ -3,50 +3,52 @@ package com.ebusbar.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.text.TextUtils;
 
-import com.ebusbar.dao.AppointDao;
+import com.ebusbar.dao.AppointCostDao;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
 import com.jellycai.service.ResponseResultHandler;
 
 /**
- * 预约订单
- * Created by Jelly on 2016/3/9.
+ * 预约花费
+ * Created by Jelly on 2016/3/31.
  */
-public class AppointDaoImpl extends BaseImpl{
+public class AppointCostDaoImpl extends BaseImpl{
     /**
-     * 操作对象
+     * 操作数据
      */
-    public AppointDao dao;
+    public AppointCostDao dao;
 
-    public AppointDaoImpl(Context context, Handler handler, int msg) {
+    public AppointCostDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
-        execmode = "evc.planorder.change";
+        execmode = "evc.plancost.get";
     }
 
-    public AppointDaoImpl(Context context) {
+    public AppointCostDaoImpl(Context context) {
         super(context);
     }
 
-
-    public void getAppointDao(String Token,String OrderNo,String custid){
-        if(TextUtils.isEmpty(Token) || TextUtils.isEmpty(OrderNo) ||TextUtils.isEmpty(custid)){
+    /**
+     * 获得数据
+     */
+    public void getDao(String Token,String custid,String Minutes){
+        if(NetParam.isEmpty(Token,custid)){
+            LogUtil.v(TAG,"参数为空");
             return;
         }
         conditionMap.clear();
         timestamp = NetParam.getTime();
-        conditionMap.put("Token", Token);
-        conditionMap.put("OrderNo",OrderNo);
+        conditionMap.put("Token",Token);
+        conditionMap.put("Minutes",Minutes);
         condition = NetParam.spliceCondition(conditionMap);
-        param = NetParam.getParamMap(trancode,mode,timestamp,custid,sign_method,sign,execmode,fields,condition);
+        param = NetParam.getParamMap(trancode, mode, timestamp, custid, sign_method, sign, execmode, fields, condition);
         service.doPost(path, param, new ResponseResultHandler() {
             @Override
             public void response(boolean b, String s) {
-                LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    dao = JsonUtil.objectFromJson(s,AppointDao.class);
+                    LogUtil.v(TAG,s.trim());
+                    dao = JsonUtil.objectFromJson(s,AppointCostDao.class);
                 }
                 handler.sendEmptyMessage(msg);
             }

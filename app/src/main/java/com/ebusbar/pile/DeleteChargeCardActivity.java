@@ -117,7 +117,7 @@ public class DeleteChargeCardActivity extends UtilActivity implements NetErrorHa
                     Toast.makeText(DeleteChargeCardActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                LoginDao.DataEntity entity = application.getLoginDao().getData();
                 deleteChargeCardDao.getDeleteChargeCardDao(entity.getToken(), dao.getCrm_accounts_get().getAccountID(), pwds, entity.getCustID());
             }
         });

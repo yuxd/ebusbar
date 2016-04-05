@@ -70,6 +70,10 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
      * 注销消息
      */
     private final int msgLogout = 0x002;
+    /**
+     * 修改昵称
+     */
+    public static final int nickName = 0x003;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,20 +109,29 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
     @Override
     public void setActivityView() {
         LoginDao loginDao = application.getLoginDao();
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getUsericon())){
-            bitmap.getBitmap(loginDao.getCrm_login().getUsericon());
+        if(!TextUtils.isEmpty(loginDao.getData().getUsericon())){
+            bitmap.getBitmap(loginDao.getData().getUsericon());
         }
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){
-            nickname_text.setText(loginDao.getCrm_login().getCustName());
+        if(!TextUtils.isEmpty(loginDao.getData().getCustName())){
+            nickname_text.setText(loginDao.getData().getCustName());
         }
-        sex_text.setText(loginDao.getCrm_login().getSex());
-        age_text.setText(loginDao.getCrm_login().getAge());
-        phone_text.setText(loginDao.getCrm_login().getMobile());
-        if(TextUtils.equals(loginDao.getCrm_login().getVerified(),"1")){
+        sex_text.setText(loginDao.getData().getSex());
+        phone_text.setText(loginDao.getData().getMobile());
+        if(TextUtils.equals(loginDao.getData().getVerified(),"1")){
             certification_text.setText("是");
         }else{
             certification_text.setText("否");
         }
+    }
+
+    /**
+     * 进入修改昵称界面
+     * @param view
+     * @return
+     */
+    public View nickName(View view){
+        ModCustNameActivity.startAppActivity(context,nickName);
+        return view;
     }
 
     /**
@@ -129,7 +142,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+                LoginDao.DataEntity entity = application.getLoginDao().getData();
                 logoutDao.getLogoutDao(entity.getToken(), entity.getCustID());
             }
         });

@@ -3,6 +3,7 @@ package com.ebusbar.utils;
 import android.content.Context;
 
 import com.amap.api.maps.model.LatLng;
+import com.ebusbar.map.MyLocation;
 import com.ebusbar.param.SParam;
 
 /**
@@ -36,6 +37,26 @@ public class SPCacheUtil {
      */
     public static SPCacheUtil getInstance(){
         return spCacheUtil;
+    }
+
+
+    /**
+     * 缓存当前位置的对象
+     * @param context
+     * @param location
+     */
+    public void cacheMyLocation(Context context,MyLocation location){
+        sharedPreferencesUtil.saveObject(context,location);
+    }
+
+    /**
+     * 读取缓存中的位置对象
+     * @param context
+     */
+    public MyLocation getMyLocation(Context context){
+        LogUtil.v("fileName",MyLocation.class.getName());
+        MyLocation location = (MyLocation) sharedPreferencesUtil.readObject(context, MyLocation.class.getName());
+        return  location;
     }
 
     /**

@@ -62,7 +62,7 @@ public class BalanceActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+        LoginDao.DataEntity entity = application.getLoginDao().getData();
         if(!TextUtils.isEmpty(entity.getBalanceAmt())){
             money.setText("¥" + entity.getBalanceAmt());
         }

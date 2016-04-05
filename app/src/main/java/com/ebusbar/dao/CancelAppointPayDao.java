@@ -1,23 +1,22 @@
 package com.ebusbar.dao;
 
 /**
- * 预约订单
- * Created by Jelly on 2016/3/9.
+ * Created by Jelly on 2016/4/1.
  */
-public class AppointDao {
+public class CancelAppointPayDao {
 
     /**
-     * interfaceName : evc_planorder_change
+     * interfaceName : evc_planorder_cancel
      * returnStatus : 100
      * isSuccess : Y
-     * data : {"OrderNo":"O-20160401-00395"}
+     * data : {"OrderNo":"O-20160401-00405"}
      */
 
     private String interfaceName;
     private String returnStatus;
     private String isSuccess;
     /**
-     * OrderNo : O-20160401-00395
+     * OrderNo : O-20160401-00405
      */
 
     private DataEntity data;

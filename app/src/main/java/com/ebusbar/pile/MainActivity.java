@@ -31,16 +31,15 @@ import com.ebusbar.impl.BitmapImpl;
  * 主框架界面
  * Created by Jelly on 2016/2/25.
  */
-public class FragmentTabHostActivity extends UtilActivity {
+public class MainActivity extends UtilActivity {
     /**
      * TAG
      */
-    public String TAG="FragmentTabHostActivity";
+    public String TAG="MainActivity";
     /**
      * STAG
      */
-    public static String STAG = "FragmentTabHostActivity";
-
+    public static String STAG = "MainActivity";
     /**
      * 下方的菜单栏
      */
@@ -172,18 +171,18 @@ public class FragmentTabHostActivity extends UtilActivity {
             return;
         }
         LoginDao loginDao = application.getLoginDao();
-        if(TextUtils.isEmpty(loginDao.getCrm_login().getCustName())){ //昵称
+        if(TextUtils.isEmpty(loginDao.getData().getCustName())){ //昵称
             draw_user_name.setText("昵称");
         }else{
-            draw_user_name.setText(loginDao.getCrm_login().getCustName());
+            draw_user_name.setText(loginDao.getData().getCustName());
         }
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getBalanceAmt())){ //余额
-            money.setText("¥"+loginDao.getCrm_login().getBalanceAmt());
+        if(!TextUtils.isEmpty(loginDao.getData().getBalanceAmt())){ //余额
+            money.setText("¥"+loginDao.getData().getBalanceAmt());
         }
-        draw_user_phone.setText(loginDao.getCrm_login().getMobile());
+        draw_user_phone.setText(loginDao.getData().getMobile());
         bitmapImpl = new BitmapImpl(this,handler,msgIcon);
-        if(!TextUtils.isEmpty(loginDao.getCrm_login().getUsericon())) {
-            bitmapImpl.getBitmap(loginDao.getCrm_login().getUsericon());
+        if(!TextUtils.isEmpty(loginDao.getData().getUsericon())) {
+            bitmapImpl.getBitmap(loginDao.getData().getUsericon());
         }
     }
 
@@ -254,12 +253,12 @@ public class FragmentTabHostActivity extends UtilActivity {
      */
     public View login(View view){
         if (application.isLogin()) { //已经登录,进入用户详情
-            AccountManageActivity.startAppActivity(FragmentTabHostActivity.this);
+            AccountManageActivity.startAppActivity(MainActivity.this);
             return view;
         }
         //没有登录
         Log.v(TAG, "用户没有登录，直接进入登录界面");
-        LoginActivity.startAppActivity(FragmentTabHostActivity.this);
+        LoginActivity.startAppActivity(MainActivity.this);
         return view;
     }
 
@@ -270,10 +269,10 @@ public class FragmentTabHostActivity extends UtilActivity {
      */
     public View myAppoint(View view){
         if(!application.isLogin()){ //用户没有登录，进入登录界面
-            LoginActivity.startAppActivity(FragmentTabHostActivity.this);
+            LoginActivity.startAppActivity(MainActivity.this);
             return view;
         }
-        MyAppointActivity.startAppActivity(FragmentTabHostActivity.this);
+        MyAppointActivity.startAppActivity(MainActivity.this);
         return view;
     }
 
@@ -284,7 +283,7 @@ public class FragmentTabHostActivity extends UtilActivity {
      */
     public View myWallet(View view){
         if(!application.isLogin()){ //用户没有登录，进入登录界面
-            LoginActivity.startAppActivity(FragmentTabHostActivity.this);
+            LoginActivity.startAppActivity(MainActivity.this);
             return view;
         }
         MyWalletActivity.staticAppActivity(this);
@@ -298,10 +297,10 @@ public class FragmentTabHostActivity extends UtilActivity {
      */
     public View myOrder(View view){
         if(!application.isLogin()){ //用户没有登录，进入登录界面
-            LoginActivity.startAppActivity(FragmentTabHostActivity.this);
+            LoginActivity.startAppActivity(MainActivity.this);
             return view;
         }
-        MyOrderActivity.startAppActivity(FragmentTabHostActivity.this);
+        MyOrderActivity.startAppActivity(MainActivity.this);
         return view;
     }
 
@@ -328,7 +327,7 @@ public class FragmentTabHostActivity extends UtilActivity {
      * 开启界面
      */
     public static void startFragmentTabHostActivity(Context context){
-        Intent intent = new Intent(context,FragmentTabHostActivity.class);
+        Intent intent = new Intent(context,MainActivity.class);
         context.startActivity(intent);
     }
 

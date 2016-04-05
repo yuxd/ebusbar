@@ -117,7 +117,7 @@ public class AllOrderListAdapter extends BaseAdapter{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        LoginDao.CrmLoginEntity entity = loginDao.getCrm_login();
+                        LoginDao.DataEntity entity = loginDao.getData();
                         deletePosition = position;
                         deleteOrderDao.getDeleteOrderDao(entity.getToken(), data.getOrderNo(), entity.getCustID());
                     }

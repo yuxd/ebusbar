@@ -234,7 +234,7 @@ public class SetPayPwdActivity extends UtilActivity implements View.OnClickListe
             payPassword = "";
             reInputEt();
         }else{ //确认支付密码
-            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            LoginDao.DataEntity entity = application.getLoginDao().getData();
             setPayPasswordDao.getSetPasswordDao(entity.getToken(),payPassword,entity.getCustID());
         }
         return view;
@@ -252,7 +252,7 @@ public class SetPayPwdActivity extends UtilActivity implements View.OnClickListe
                         setResult(FAILURE);
                         return;
                     }
-                    application.getLoginDao().getCrm_login().setExistsPayPassword("1");
+                    application.getLoginDao().getData().setExistsPayPassword("1");
                     application.cacheLogin();
                     setResult(SUCCESS);
                     Toast.makeText(SetPayPwdActivity.this,"支付密码设置成功",Toast.LENGTH_SHORT).show();

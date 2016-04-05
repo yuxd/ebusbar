@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,20 +16,21 @@ import android.widget.TextView;
 
 import com.ebusbar.adpater.NearbyListItemAdapter;
 import com.ebusbar.fragments.UtilFragment;
-import com.ebusbar.impl.PositionDaoImpl;
-import com.ebusbar.pile.FragmentTabHostActivity;
+import com.ebusbar.impl.NearbyStationDaoImpl;
+import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.utils.LogUtil;
 
 /**
  * 附近电桩
  * Created by Jelly on 2016/3/24.
  */
-public class NearbyFrag extends UtilFragment {
+public class NearbyStationFragment extends UtilFragment {
     /**
      * TAG
      */
-    public String TAG = "NearbyFrag";
+    public String TAG = "NearbyStationFragment";
     /**
      * 上下文
      */
@@ -54,7 +54,7 @@ public class NearbyFrag extends UtilFragment {
     /**
      * PositionDaoImpl
      */
-    private PositionDaoImpl positionDao;
+    private NearbyStationDaoImpl nearbyStationDao;
     /**
      * 获取电桩位置集合消息
      */
@@ -97,7 +97,7 @@ public class NearbyFrag extends UtilFragment {
     public void loadObjectAttribute() {
         context = getContext();
         application = (MyApplication) getActivity().getApplication();
-        positionDao = new PositionDaoImpl(context,handler,msgPositionList);
+        nearbyStationDao = new NearbyStationDaoImpl(context,handler,msgPositionList);
     }
 
     @Override
@@ -108,10 +108,11 @@ public class NearbyFrag extends UtilFragment {
 
     @Override
     public void setFragView() {
-        if(!TextUtils.isEmpty(application.getAdCode())){
-            String adCode = application.getAdCode();
+        if(application.getLocation() != null){
+            String adCode = application.getLocation().getAdCode();
             adCode = adCode.substring(0,adCode.length()-2) + "00";
-            positionDao.getNetPositionListDao(adCode);
+            LogUtil.v(TAG,adCode);
+            nearbyStationDao.getDaos(adCode);
         }
     }
 
@@ -122,7 +123,7 @@ public class NearbyFrag extends UtilFragment {
         member.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTabHostActivity activity = (FragmentTabHostActivity) getActivity();
+                MainActivity activity = (MainActivity) getActivity();
                 activity.drawerLayout.openDrawer(Gravity.LEFT); //打开左边抽屉
             }
         });
@@ -136,8 +137,8 @@ public class NearbyFrag extends UtilFragment {
             @Override
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.remove(NearbyFrag.this);
-                ft.add(R.id.content, new DianZhuanFrag());
+                ft.remove(NearbyStationFragment.this);
+                ft.add(R.id.content, new AllStationFragment());
                 ft.commit();
             }
         });
@@ -148,10 +149,10 @@ public class NearbyFrag extends UtilFragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgPositionList:
-                    if(positionDao.positionDaoList.size() == 0){
+                    if(nearbyStationDao.daos == null){
                         return;
                     }
-                    adapter = new NearbyListItemAdapter(context,positionDao.positionDaoList);
+                    adapter = new NearbyListItemAdapter(context, nearbyStationDao.daos);
                     list.setAdapter(adapter);
                     break;
             }

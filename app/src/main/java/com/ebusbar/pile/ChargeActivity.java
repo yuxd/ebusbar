@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -102,7 +101,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
     /**
      * 请求码，支付
      */
-    private final int payResquest = 0x001;
+    private final int PAYREQUEST = 0x001;
     /**
      * PileInfoDaoImpl
      */
@@ -216,7 +215,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
             pileInfoDao.getPileInfoDao(intent.getStringExtra("QRId"));
             return;
         }else{
-            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            LoginDao.DataEntity entity = application.getLoginDao().getData();
             startOrderInfoDao.getOrderInfoDaoImpl(entity.getToken(),intent.getStringExtra("OrderNo"),entity.getCustID());
         }
         position_text.setText(intent.getStringExtra("OrgName"));
@@ -243,13 +242,13 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
             if(TextUtils.isEmpty(FacilityID)){
                 return view;
             }
-            LoginDao.CrmLoginEntity entity = application.getLoginDao().getCrm_login();
+            LoginDao.DataEntity entity = application.getLoginDao().getData();
             chargeOrderDao.getChargeOrderDao(FacilityID,entity.getToken(),entity.getCustID());
         } else if (TextUtils.equals(chargeState, CHARGEING)) { //充电桩正在充电，结束充电
             dialogUtil.showSureListenerDialog(this, "是否结束本次充电！", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    LoginDao.CrmLoginEntity data = application.getLoginDao().getCrm_login();
+                    LoginDao.DataEntity data = application.getLoginDao().getData();
                     if(!TextUtils.isEmpty(OrderNo)){
                         finishChargeDao.getFinishChargeDao(data.getToken(),OrderNo,data.getCustID());
                     }
@@ -257,7 +256,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                 }
             });
         } else if (TextUtils.equals(chargeState, FINISHCHARGE)) { //已经完成充电等待支付
-            PayActivity.startPayActivity(ChargeActivity.this,intent.getStringExtra("OrderNo"));
+            PayActivity.startPayActivity(ChargeActivity.this,intent.getStringExtra("OrderNo"),PayActivity.CHARGE,PAYREQUEST);
         }
         return view;
     }
@@ -317,7 +316,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                     FacilityID = entity.getFacilityID();
                     break;
                 case msgLoading:
-                    LoginDao.CrmLoginEntity loginEntity = application.getLoginDao().getCrm_login();
+                    LoginDao.DataEntity loginEntity = application.getLoginDao().getData();
                     orderInfoDao.getOrderInfoDaoImpl(loginEntity.getToken(),finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),loginEntity.getCustID());
                     break;
                 case msgInfo:
@@ -350,7 +349,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                     chargeState = FINISHCHARGE;
                     charge_btn.setImageResource(R.drawable.click_pay);
 //                    充电完成后跳到支付界面
-                    PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
+                    PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),PayActivity.CHARGE,PAYREQUEST);
                     break;
                 case startOrderInfo:
                     if(startOrderInfoDao.orderInfoDao == null || TextUtils.equals(startOrderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
@@ -392,8 +391,16 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v("request", requestCode + "");
-        Log.v("result", resultCode + "");
+        switch (requestCode){
+            case PAYREQUEST:
+                if(resultCode == PayActivity.SUCCESS){
+                    chargeState = FINISHPAY;
+                    charge_btn.setImageResource(R.drawable.finishpay);
+                }else if(resultCode == PayActivity.FAILURE){
+
+                }
+                break;
+        }
     }
 
     /**

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.ebusbar.dao.LoginDao;
-import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
+import com.ebusbar.utils.JsonUtil;
+import com.ebusbar.utils.LogUtil;
 import com.ebusbar.utils.SharedPreferencesUtil;
 import com.jellycai.service.ResponseResultHandler;
 
@@ -20,7 +20,7 @@ public class LoginDaoImpl extends BaseImpl{
     /**
      * LoginDao
      */
-    public  LoginDao loginDao;
+    public  LoginDao dao;
 
     private SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getInstance();
 
@@ -30,13 +30,13 @@ public class LoginDaoImpl extends BaseImpl{
      */
     public LoginDaoImpl(Context context,Handler handler,int msg){
         super(context,handler,msg);
-        loginDao = new LoginDao();
+        dao = new LoginDao();
         execmode = "crm.login";
     }
 
     public LoginDaoImpl(Context context){
         super(context);
-        loginDao  = new LoginDao();
+        dao  = new LoginDao();
     }
 
     /**
@@ -58,9 +58,9 @@ public class LoginDaoImpl extends BaseImpl{
             service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
-                    Log.v("jsonLogin",json.trim());
+                    LogUtil.v(TAG,json.trim());
                     if(NetParam.isSuccess(b,json)){
-                        loginDao = JsonUtil.arrayFormJson(json,LoginDao[].class).get(0);
+                        dao = JsonUtil.objectFromJson(json,LoginDao.class);
                     }
                     handler.sendEmptyMessage(msg);
                 }
@@ -79,13 +79,10 @@ public class LoginDaoImpl extends BaseImpl{
             service.doPost(path, param, new ResponseResultHandler() {
                 @Override
                 public void response(boolean b, String json) {
-                    Log.v("jsonLogin",json.trim());
-                    if (b || TextUtils.isEmpty(json)) return;
-                    try {
-                        loginDao = JsonUtil.arrayFormJson(json, LoginDao[].class).get(0);
+                    LogUtil.v(TAG,json.trim());
+                    if(NetParam.isSuccess(b,json)){
+                        dao = JsonUtil.objectFromJson(json,LoginDao.class);
                         handler.sendEmptyMessage(msg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
 
@@ -109,17 +106,17 @@ public class LoginDaoImpl extends BaseImpl{
      * @return
      */
     public LoginDao getCacheObject(){
-        loginDao = (LoginDao) sharedPreferencesUtil.readObject(context,loginDao.getClass().getName());
-        if(loginDao == null){
+        dao = (LoginDao) sharedPreferencesUtil.readObject(context,dao.getClass().getName());
+        if(dao == null){
             return null;
         }
-        return loginDao;
+        return dao;
     }
 
     /**
      * 清除缓存
      */
     public void clearCache(){
-        sharedPreferencesUtil.clearObject(context,loginDao.getClass().getName());
+        sharedPreferencesUtil.clearObject(context,dao.getClass().getName());
     }
 }

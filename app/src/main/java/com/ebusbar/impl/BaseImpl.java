@@ -14,6 +14,11 @@ import java.util.Map;
  * Created by Jelly on 2016/3/3.
  */
 public abstract class BaseImpl {
+    /**
+     * TAG
+     */
+    public static String TAG = "BaseImpl";
+
     protected Context context;
     /**
      * 网络访问操作

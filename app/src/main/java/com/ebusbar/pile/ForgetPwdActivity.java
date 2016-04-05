@@ -130,7 +130,7 @@ public class ForgetPwdActivity extends UtilActivity {
      */
     public View getForgetCode(View view){
         String phone = forget_pwd_phone_et.getText().toString();
-        if(TextUtils.isEmpty(phone) || !RegExpUtil.RegPhone(phone)){
+        if(TextUtils.isEmpty(phone) || !RegExpUtil.regPhone(phone)){
             Log.v(TAG,"手机号码输入有误");
             return view;
         }
@@ -145,7 +145,7 @@ public class ForgetPwdActivity extends UtilActivity {
     public View nextTip(View view){
         String phone = forget_pwd_phone_et.getText().toString();
         String code = forget_pwd_code_et.getText().toString();
-        if(TextUtils.isEmpty(phone) || !RegExpUtil.RegPhone(phone)){
+        if(TextUtils.isEmpty(phone) || !RegExpUtil.regPhone(phone)){
             Log.v(TAG,"手机号码输入错误");
             return view;
         }

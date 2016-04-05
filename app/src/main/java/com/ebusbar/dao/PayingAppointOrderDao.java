@@ -1,18 +1,25 @@
 package com.ebusbar.dao;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * Created by Jelly on 2016/3/31.
  */
-public class GetChargeAppointDao {
-
+public class PayingAppointOrderDao {
     /**
+     * interfaceName : evc_planorder_set
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : O-20160331-00384
+     * data : {"OrderNo":"O-20160331-00382","OrderStatus":"0","OrderType":"EVCP","CompanyID":"C01","CustID":"86201603290000000665","OrgID":"GZ0000001","OrgName":"红花岗1站","FacilityID":"0755300000000033","Longitude":"106.910680","Latitude":"27.602907","ChargingAmt":"0.00","ServiceAmt":"0.00","ChargingQty":"0.00","ChargingTime":"0","PlanCost":"3.00","PlanBeginDateTime":"2016-03-31 17:23:23","PlanEndDateTime":"2016-03-31 17:53:23","Tel":"0755-82891087"}
+     */
+
+    private String interfaceName;
+    private String returnStatus;
+    private String isSuccess;
+    /**
+     * OrderNo : O-20160331-00382
      * OrderStatus : 0
      * OrderType : EVCP
      * CompanyID : C01
-     * CustID : 86201603290000000667
+     * CustID : 86201603290000000665
      * OrgID : GZ0000001
      * OrgName : 红花岗1站
      * FacilityID : 0755300000000033
@@ -22,26 +29,47 @@ public class GetChargeAppointDao {
      * ServiceAmt : 0.00
      * ChargingQty : 0.00
      * ChargingTime : 0
-     * PlanCost : 1.50
-     * PlanCostPayed : 0
-     * PlanBeginDateTime : 2016-03-31 17:52:01
-     * PlanEndDateTime : 2016-03-31 18:07:01
+     * PlanCost : 3.00
+     * PlanBeginDateTime : 2016-03-31 17:23:23
+     * PlanEndDateTime : 2016-03-31 17:53:23
      * Tel : 0755-82891087
      */
 
-    private EvcOrdersGetEntity evc_orders_get;
+    private DataEntity data;
 
-    public EvcOrdersGetEntity getEvc_orders_get() {
-        return evc_orders_get;
+    public String getInterfaceName() {
+        return interfaceName;
     }
 
-    public void setEvc_orders_get(EvcOrdersGetEntity evc_orders_get) {
-        this.evc_orders_get = evc_orders_get;
+    public void setInterfaceName(String interfaceName) {
+        this.interfaceName = interfaceName;
     }
 
-    public static class EvcOrdersGetEntity {
-        private String returnStatus;
-        private String isSuccess;
+    public String getReturnStatus() {
+        return returnStatus;
+    }
+
+    public void setReturnStatus(String returnStatus) {
+        this.returnStatus = returnStatus;
+    }
+
+    public String getIsSuccess() {
+        return isSuccess;
+    }
+
+    public void setIsSuccess(String isSuccess) {
+        this.isSuccess = isSuccess;
+    }
+
+    public DataEntity getData() {
+        return data;
+    }
+
+    public void setData(DataEntity data) {
+        this.data = data;
+    }
+
+    public static class DataEntity {
         private String OrderNo;
         private String OrderStatus;
         private String OrderType;
@@ -57,26 +85,9 @@ public class GetChargeAppointDao {
         private String ChargingQty;
         private String ChargingTime;
         private String PlanCost;
-        private String PlanCostPayed;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
         private String Tel;
-
-        public String getReturnStatus() {
-            return returnStatus;
-        }
-
-        public void setReturnStatus(String returnStatus) {
-            this.returnStatus = returnStatus;
-        }
-
-        public String getIsSuccess() {
-            return isSuccess;
-        }
-
-        public void setIsSuccess(String isSuccess) {
-            this.isSuccess = isSuccess;
-        }
 
         public String getOrderNo() {
             return OrderNo;
@@ -196,14 +207,6 @@ public class GetChargeAppointDao {
 
         public void setPlanCost(String PlanCost) {
             this.PlanCost = PlanCost;
-        }
-
-        public String getPlanCostPayed() {
-            return PlanCostPayed;
-        }
-
-        public void setPlanCostPayed(String PlanCostPayed) {
-            this.PlanCostPayed = PlanCostPayed;
         }
 
         public String getPlanBeginDateTime() {

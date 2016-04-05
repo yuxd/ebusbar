@@ -2,6 +2,7 @@ package com.ebusbar.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -15,6 +16,8 @@ import java.io.ObjectOutputStream;
  * Created by Jelly on 2016/3/3.
  */
 public class SharedPreferencesUtil {
+
+    private static String TAG = "SharedPreferencesUtil";
 
     private static SharedPreferencesUtil sharedPreferencesUtil =  new SharedPreferencesUtil();
 
@@ -31,6 +34,7 @@ public class SharedPreferencesUtil {
      */
     public void saveObject(Context context,Object object){
         try {
+            Log.v(TAG,object.getClass().getName());
             SharedPreferences sharedPreferences = context.getSharedPreferences(object.getClass().getName(), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();//获取编辑器
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -40,6 +44,7 @@ public class SharedPreferencesUtil {
             editor.putString(object.getClass().getName(),objectBase64);
             editor.commit();//提交修改
         } catch (IOException e) {
+            Log.v(TAG,"缓存失败");
             e.printStackTrace();
         }
     }
@@ -94,7 +99,7 @@ public class SharedPreferencesUtil {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return object;
+        return null;
     }
 
     /**

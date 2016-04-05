@@ -285,7 +285,7 @@ public class LoginActivity extends UtilActivity {
     public View normalLogin(View view){
         String phone = normal_phone_et.getText().toString();
         String password = normal_password_et.getText().toString();
-        if(!RegExpUtil.RegPhone(phone)){
+        if(!RegExpUtil.regPhone(phone)){
             Toast.makeText(this,"手机号码格式错误，请重新输入",Toast.LENGTH_SHORT).show();
             normal_phone_et.setText("");
             return view;
@@ -302,7 +302,7 @@ public class LoginActivity extends UtilActivity {
      */
     public View getQuickCode(View view){
         String phone = quick_phone_et.getText().toString();
-        if(!RegExpUtil.RegPhone(phone)){
+        if(!RegExpUtil.regPhone(phone)){
             Toast.makeText(this,"手机号码格式错误，请重新输入",Toast.LENGTH_SHORT).show();
             quick_phone_et.setText("");
             return view;
@@ -320,7 +320,7 @@ public class LoginActivity extends UtilActivity {
         Log.v(TAG,"快速登录");
         String phone = quick_phone_et.getText().toString();
         String code = quick_code_et.getText().toString();
-        if(!RegExpUtil.RegPhone(phone)){
+        if(!RegExpUtil.regPhone(phone)){
             Toast.makeText(this,"手机号码格式错误",Toast.LENGTH_SHORT).show();
             quick_phone_et.setText("");
             return view;
@@ -344,14 +344,14 @@ public class LoginActivity extends UtilActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what == msgLogin){
-                if(loginDao.loginDao == null || TextUtils.equals(loginDao.loginDao.getCrm_login().getIsSuccess(),"N")){
-                    ErrorDao errorDao = errorParamUtil.checkReturnState(loginDao.loginDao.getCrm_login().getReturnStatus());
+                if(TextUtils.equals(loginDao.dao.getIsSuccess(),"N")){
+                    ErrorDao errorDao = errorParamUtil.checkReturnState(loginDao.dao.getReturnStatus());
                     toastUtil.toastError(context,errorDao,null);
                     return;
                 }
-                application.setLoginDao(loginDao.loginDao);
-                loginDao.cacheObject(loginDao.loginDao);
-                ActivityControl.finishExcept(FragmentTabHostActivity.STAG);
+                application.setLoginDao(loginDao.dao);
+                loginDao.cacheObject(loginDao.dao);
+                ActivityControl.finishExcept(MainActivity.STAG);
             }else if(msg.what == msgSmsCode){ //获取验证码
                 quick_code_btn.setEnabled(false);
                 countDown();
