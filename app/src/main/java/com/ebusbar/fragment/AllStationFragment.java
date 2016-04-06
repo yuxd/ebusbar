@@ -395,7 +395,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     public void setSwitchListener(){
         LinearLayout use_layout = (LinearLayout) screenPw.getContentView().findViewById(R.id.use_layout);
         final SlideSwitch use_ss = (SlideSwitch) screenPw.getContentView().findViewById(R.id.use_switch);
-        use_ss.setSlide(false);
+        use_ss.setEnabled(false);
         if(isUse){
             use_ss.changeSwitchStatus();
         }
@@ -421,7 +421,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         });
         LinearLayout enough_layout = (LinearLayout) screenPw.getContentView().findViewById(R.id.enough_layout);
         final SlideSwitch enough_ss = (SlideSwitch) screenPw.getContentView().findViewById(R.id.enough_switch);
-        enough_ss.setSlide(false);
+        enough_ss.setEnabled(false);
         enough_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

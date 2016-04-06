@@ -68,9 +68,14 @@ public class NearbyStationFragment extends UtilFragment {
      * 筛选
      */
     private RelativeLayout screen;
-
+    /**
+     * 箭头
+     */
+    private ImageView arrow;
+    /**
+     * ActionBar
+     */
     private RelativeLayout actionBar_layout;
-
     /**
      * PositionDaoImpl
      */
@@ -129,6 +134,7 @@ public class NearbyStationFragment extends UtilFragment {
         search = (TextView) root.findViewById(R.id.search);
         screen = (RelativeLayout) root.findViewById(R.id.screen);
         actionBar_layout = (RelativeLayout) root.findViewById(R.id.actionBar_layout);
+        arrow = (ImageView) root.findViewById(R.id.arrow);
     }
 
     @Override
@@ -179,10 +185,12 @@ public class NearbyStationFragment extends UtilFragment {
             public void onClick(View v) {
                 if(screenPw != null && isShow){
                     screenPw.dismiss();
+                    arrow.setImageResource(R.drawable.down);
                     isShow = false;
                     return;
                 }else if(screenPw != null && !isShow){
                     screenPw.showAsDropDown(v);
+                    arrow.setImageResource(R.drawable.up);
                     isShow = true;
                     return;
                 }
@@ -242,6 +250,7 @@ public class NearbyStationFragment extends UtilFragment {
                 });
                 screenPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) - actionBar_layout.getHeight() - screen.getHeight() - windowUtil.getStateBarHeight(context));
                 screenPw.showAsDropDown(v);
+                arrow.setImageResource(R.drawable.up);
                 isShow = true;
             }
         });
