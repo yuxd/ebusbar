@@ -98,7 +98,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
                 android:background="@color/accountmanage_item_bg"
-                android:padding="10dp">
+                android:padding="10dp"
+                android:onClick="sex"
+                >
 
                 <TextView
                     android:id="@+id/sex_title"
@@ -125,43 +127,6 @@
                     android:layout_toLeftOf="@id/sex_arrow"
                     android:text="男" />
             </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/age_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
-                android:background="@color/accountmanage_item_bg"
-                android:padding="10dp"
-                android:visibility="gone"
-                >
-
-                <TextView
-                    android:id="@+id/age_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/age_title" />
-
-                <ImageView
-                    android:id="@+id/age_arrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
-
-                <TextView
-                    android:id="@+id/age_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginRight="15dp"
-                    android:layout_toLeftOf="@id/age_arrow"
-                    android:text="15" />
-            </RelativeLayout>
-
             <RelativeLayout
                 android:id="@+id/phone_layout"
                 android:layout_width="match_parent"

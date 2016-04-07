@@ -19,7 +19,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Login;
 import com.ebusbar.fragment.CarFrag;
 import com.ebusbar.fragment.FixFrag;
 import com.ebusbar.fragment.ShopFrag;
@@ -170,7 +170,7 @@ public class MainActivity extends UtilActivity {
             money.setText("¥0.00");
             return;
         }
-        LoginDao loginDao = application.getLoginDao();
+        Login loginDao = application.getLoginDao();
         if(TextUtils.isEmpty(loginDao.getData().getCustName())){ //昵称
             draw_user_name.setText("昵称");
         }else{

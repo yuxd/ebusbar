@@ -12,8 +12,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ebusbar.dao.CompleteOrderDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.CompleteOrder;
+import com.ebusbar.bean.Login;
 import com.ebusbar.impl.DeleteOrderDaoImpl;
 import com.ebusbar.pile.R;
 import com.ebusbar.utils.DialogUtil;
@@ -21,13 +21,14 @@ import com.ebusbar.utils.DialogUtil;
 import java.util.List;
 
 /**
+ * 已完成订单
  * Created by Jelly on 2016/3/10.
  */
 public class AllOrderListAdapter extends BaseAdapter{
     /**
      * 数据集合
      */
-    private List<CompleteOrderDao> list;
+    private List<CompleteOrder> list;
     /**
      * Context
      */
@@ -43,7 +44,7 @@ public class AllOrderListAdapter extends BaseAdapter{
     /**
      * 登录记录
      */
-    private LoginDao loginDao;
+    private Login loginDao;
     /**
      * 当前需要删除的数据
      */
@@ -53,7 +54,7 @@ public class AllOrderListAdapter extends BaseAdapter{
      */
     private DialogUtil dialogUtil = DialogUtil.getInstance();
 
-    public AllOrderListAdapter(Context context,List<CompleteOrderDao> list,LoginDao loginDao) {
+    public AllOrderListAdapter(Context context,List<CompleteOrder> list,Login loginDao) {
         this.context = context;
         this.list = list;
         this.loginDao = loginDao;
@@ -100,7 +101,7 @@ public class AllOrderListAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        final CompleteOrderDao.EvcOrdersGetEntity data = ((CompleteOrderDao)getItem(position)).getEvc_orders_get();
+        final CompleteOrder.EvcOrdersGetEntity data = ((CompleteOrder)getItem(position)).getEvc_orders_get();
         if(TextUtils.equals(data.getOrderStatus(),"8")){
             viewHolder.state_text.setText("充电完成");
         }else{
@@ -117,7 +118,7 @@ public class AllOrderListAdapter extends BaseAdapter{
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        LoginDao.DataEntity entity = loginDao.getData();
+                        Login.DataEntity entity = loginDao.getData();
                         deletePosition = position;
                         deleteOrderDao.getDeleteOrderDao(entity.getToken(), data.getOrderNo(), entity.getCustID());
                     }

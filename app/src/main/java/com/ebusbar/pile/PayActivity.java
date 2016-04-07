@@ -20,10 +20,10 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
-import com.ebusbar.dao.OrderInfoDao;
-import com.ebusbar.dao.PayResult;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
+import com.ebusbar.bean.OrderInfo;
+import com.ebusbar.bean.PayResult;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.OrderInfoDaoImpl;
 import com.ebusbar.impl.PayDaoImpl;
@@ -201,7 +201,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
 
     @Override
     public void setActivityView() {
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         if(TextUtils.equals(intent.getStringExtra("type"),CHARGE)){
             orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), intent.getStringExtra("OrderNo"), entity.getCustID());
         }
@@ -320,7 +320,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
             api.sendReq(request);
         }else if(selectPay.getId() == R.id.tran_btn){ //余额支付
             //模拟没有设置支付密码
-            LoginDao.DataEntity entity = application.getLoginDao().getData();
+            Login.DataEntity entity = application.getLoginDao().getData();
             if(TextUtils.equals(entity.getExistsPayPassword(),"0")) { //0 :未设置 1：已经设置
                 dialogUtil.showSureListenerDialog(this, "您还没有设置支付密码，是否前往设置?", new DialogInterface.OnClickListener() {
                     @Override
@@ -407,7 +407,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                 reInputEt(payPassword);
                 if(payPassword.length() == 6){ //如果是最后一位输入6位，直接支付
                     isBalance = true;
-                    LoginDao.DataEntity entity = application.getLoginDao().getData();
+                    Login.DataEntity entity = application.getLoginDao().getData();
                     if(payType == APPOINTPAY){
                         payDao.getDao(entity.getToken(),intent.getStringExtra("OrderNo"),"0",payPassword,PayDaoImpl.BALANCEPAY,PayDaoImpl.APPOINTPAY,entity.getCustID());
                     }else if(payType == CHARGEPAY){
@@ -469,7 +469,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     String resultStatus = payResult.getResultStatus();
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        LoginDao.DataEntity entity = application.getLoginDao().getData();
+                        Login.DataEntity entity = application.getLoginDao().getData();
                         if(payType == APPOINTPAY)
                             payDao.getDao(entity.getToken(),intent.getStringExtra("OrderNo"),tradeNo,"0",PayDaoImpl.ALIPAY,PayDaoImpl.APPOINTPAY,entity.getCustID());
                         else if (payType == CHARGEPAY)
@@ -488,12 +488,12 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     break;
                 case msgInfo:
                     if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context, errorDao, null);
                         ActivityControl.finishAct(PayActivity.this);
                         return;
                     }
-                    OrderInfoDao.EvcOrderGetEntity entity = orderInfoDao.orderInfoDao.getEvc_order_get();
+                    OrderInfo.EvcOrderGetEntity entity = orderInfoDao.orderInfoDao.getEvc_order_get();
                     if(TextUtils.equals(entity.getOrderStatus(),"4")){
                         price = DoubleUtil.add(entity.getChargingAmt(),entity.getServiceAmt());
                         payType_text.setText("电桩充电");
@@ -510,7 +510,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     if(TextUtils.equals(payDao.dao.getIsSuccess(),"N")){
                         intent.putExtra("OrderNo", intent.getStringExtra("OrderNo"));
                         setResult(FAILURE,intent);
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(payDao.dao.getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(payDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,PayActivity.this);
                         return;
                     }

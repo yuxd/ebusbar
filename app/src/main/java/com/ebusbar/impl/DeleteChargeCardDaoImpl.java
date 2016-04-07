@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.DeleteChargeCardDao;
+import com.ebusbar.bean.DeleteChargeCard;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/24.
  */
-public class DeleteChargeCardDaoImpl extends BaseImpl{
+public class DeleteChargeCardDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public DeleteChargeCardDao deleteChargeCardDao;
+    public DeleteChargeCard deleteChargeCardDao;
 
     public DeleteChargeCardDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -49,7 +49,7 @@ public class DeleteChargeCardDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonDelete",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    deleteChargeCardDao = JsonUtil.arrayFormJson(s,DeleteChargeCardDao[].class).get(0);
+                    deleteChargeCardDao = JsonUtil.arrayFormJson(s,DeleteChargeCard[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

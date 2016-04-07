@@ -32,14 +32,14 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
-import com.ebusbar.dao.AllStationDao;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.NearbyStationDao;
+import com.ebusbar.bean.AllStation;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.NearbyStation;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.AllStationDaoImpl;
 import com.ebusbar.impl.NearbyStationDaoImpl;
 import com.ebusbar.map.MyLocation;
-import com.ebusbar.myview.SlideSwitch;
+import com.ebusbar.view.SlideSwitch;
 import com.ebusbar.param.DefaultParam;
 import com.ebusbar.pile.LoginActivity;
 import com.ebusbar.pile.MainActivity;
@@ -156,7 +156,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      */
     private boolean isUse = false;
 
-    private List<AllStationDao> dismissList = new ArrayList<>();
+    private List<AllStation> dismissList = new ArrayList<>();
 
 
     @Nullable
@@ -274,11 +274,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置地图上设置电桩位置
      */
-    public void setNearbyStationOnMap(List<NearbyStationDao> dao){
+    public void setNearbyStationOnMap(List<NearbyStation> dao){
         markers.clear();
         LogUtil.v(TAG, "此次获取到了：" + dao.size());
         MarkerOptions markerOptions = null;
-        for(NearbyStationDao positionDao : dao){
+        for(NearbyStation positionDao : dao){
             markerOptions = new MarkerOptions();
             if(TextUtils.equals(positionDao.getEvc_stations_get().getIsAvailable(),"1")) { //可用
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
@@ -294,12 +294,12 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置地图上所有电桩的位置
      */
-    public void setAllStationOnMap(List<AllStationDao> daos){
+    public void setAllStationOnMap(List<AllStation> daos){
         markers.clear();
         aMap.clear(true);
         LogUtil.v(TAG, "此次获取到了：" + daos.size());
         MarkerOptions markerOptions = null;
-        for(AllStationDao dao : daos){
+        for(AllStation dao : daos){
             markerOptions = new MarkerOptions();
             if(TextUtils.equals(dao.getEvc_stations_getall().getIsAvailable(),"1")) { //可用
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
@@ -322,7 +322,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                     Toast.makeText(context, "对不起，暂无数据，无法搜索！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SearchActivity.startAppActivity(context, (ArrayList<AllStationDao>) allStationDao.daos);
+                SearchActivity.startAppActivity(context, (ArrayList<AllStation>) allStationDao.daos);
             }
         });
     }
@@ -376,9 +376,9 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
        });
     }
 
-    public List<AllStationDao> screenUse(List<AllStationDao> list){
+    public List<AllStation> screenUse(List<AllStation> list){
         dismissList.clear();
-        List<AllStationDao> show = new ArrayList<>();
+        List<AllStation> show = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             if(TextUtils.equals("1", list.get(i).getEvc_stations_getall().getIsAvailable())){
                 show.add(list.get(i));
@@ -474,7 +474,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      * @param v
      * @param dao
      */
-    public void showAllStationPw(View v, final AllStationDao dao){
+    public void showAllStationPw(View v, final AllStation dao){
         View root = getActivity().getLayoutInflater().inflate(R.layout.dianzhuanpw_layout,null);
         TextView dianzhuan_name = (TextView) root.findViewById(R.id.dianzhuan_name);
         TextView free_text = (TextView) root.findViewById(R.id.free_text);
@@ -484,7 +484,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
         TextView price = (TextView) root.findViewById(R.id.price);
         TextView distance_text = (TextView) root.findViewById(R.id.distance_text);
-        final AllStationDao.EvcStationsGetallEntity entity = dao.getEvc_stations_getall();
+        final AllStation.EvcStationsGetallEntity entity = dao.getEvc_stations_getall();
         LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()));
         LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
         distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
@@ -529,7 +529,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 显示电桩PW
      */
-    public void showDianZhuanPw(View v, final NearbyStationDao positionDao){
+    public void showDianZhuanPw(View v, final NearbyStation positionDao){
         View root = getActivity().getLayoutInflater().inflate(R.layout.dianzhuanpw_layout,null);
         TextView dianzhuan_name = (TextView) root.findViewById(R.id.dianzhuan_name);
         TextView free_text = (TextView) root.findViewById(R.id.free_text);
@@ -539,7 +539,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
         TextView price = (TextView) root.findViewById(R.id.price);
         TextView distance_text = (TextView) root.findViewById(R.id.distance_text);
-        NearbyStationDao.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
+        NearbyStation.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
         LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()));
         LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
         distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
@@ -699,7 +699,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                         return;
                     }
                     if(TextUtils.equals(nearbyStationDao.daos.get(0).getEvc_stations_get().getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(nearbyStationDao.daos.get(0).getEvc_stations_get().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(nearbyStationDao.daos.get(0).getEvc_stations_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
@@ -710,7 +710,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                         return;
                     }
                     if(TextUtils.equals(allStationDao.daos.get(0).getEvc_stations_getall().getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(allStationDao.daos.get(0).getEvc_stations_getall().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(allStationDao.daos.get(0).getEvc_stations_getall().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }

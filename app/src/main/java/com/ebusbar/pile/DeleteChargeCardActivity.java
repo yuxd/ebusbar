@@ -15,9 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ChargeCardItemDao;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.ChargeCardItem;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.DeleteChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -39,7 +39,7 @@ public class DeleteChargeCardActivity extends UtilActivity implements NetErrorHa
     /**
      * 列表数据
      */
-    private ChargeCardItemDao dao;
+    private ChargeCardItem dao;
     /**
      * 密码输入框
      */
@@ -117,7 +117,7 @@ public class DeleteChargeCardActivity extends UtilActivity implements NetErrorHa
                     Toast.makeText(DeleteChargeCardActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                LoginDao.DataEntity entity = application.getLoginDao().getData();
+                Login.DataEntity entity = application.getLoginDao().getData();
                 deleteChargeCardDao.getDeleteChargeCardDao(entity.getToken(), dao.getCrm_accounts_get().getAccountID(), pwds, entity.getCustID());
             }
         });
@@ -129,7 +129,7 @@ public class DeleteChargeCardActivity extends UtilActivity implements NetErrorHa
             switch (msg.what){
                 case msgDelete:
                     if(deleteChargeCardDao.deleteChargeCardDao == null || TextUtils.equals(deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete().getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(deleteChargeCardDao.deleteChargeCardDao.getCrm_accounts_delete().getReturnStatus());
                         if(toastUtil.toastError(context,errorDao,DeleteChargeCardActivity.this)){
                             return;
                         }
@@ -155,7 +155,7 @@ public class DeleteChargeCardActivity extends UtilActivity implements NetErrorHa
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context,ChargeCardItemDao dao,int resquestCode){
+    public static void startAppActivity(Context context,ChargeCardItem dao,int resquestCode){
         Intent intent = new Intent(context, DeleteChargeCardActivity.class);
         intent.putExtra("ChargeCardItemDao", dao);
         Activity activity = (Activity) context;

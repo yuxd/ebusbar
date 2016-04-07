@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.OrderInfoDao;
+import com.ebusbar.bean.OrderInfo;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 获取电桩详情
  * Created by Jelly on 2016/3/23.
  */
-public class OrderInfoDaoImpl extends BaseImpl{
+public class OrderInfoDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public OrderInfoDao orderInfoDao;
+    public OrderInfo orderInfoDao;
 
     public OrderInfoDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -47,7 +47,7 @@ public class OrderInfoDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("json12312321",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    orderInfoDao = JsonUtil.arrayFormJson(s,OrderInfoDao[].class).get(0);
+                    orderInfoDao = JsonUtil.arrayFormJson(s,OrderInfo[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

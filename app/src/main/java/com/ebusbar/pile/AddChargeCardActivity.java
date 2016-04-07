@@ -14,9 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.AddChargeCardDao;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.AddChargeCard;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.AddChargeCardDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -104,7 +104,7 @@ public class AddChargeCardActivity extends UtilActivity implements NetErrorHandl
                     Toast.makeText(AddChargeCardActivity.this,"卡号和密码不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                LoginDao.DataEntity entity = application.getLoginDao().getData();
+                Login.DataEntity entity = application.getLoginDao().getData();
                 addChargeCardDao.addAddChargeCardDao(entity.getToken(),nos,pwds,entity.getCustID());
             }
         });
@@ -116,12 +116,12 @@ public class AddChargeCardActivity extends UtilActivity implements NetErrorHandl
             switch (msg.what){
                 case msgAdd:
                     if(addChargeCardDao.addChargeCardDao == null || TextUtils.equals(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(addChargeCardDao.addChargeCardDao.getCrm_accounts_insert().getReturnStatus());
                         toastUtil.toastError(context,errorDao,AddChargeCardActivity.this);
                         setResult(FAILURE);
                         return;
                     }
-                    AddChargeCardDao dao = addChargeCardDao.addChargeCardDao;
+                    AddChargeCard dao = addChargeCardDao.addChargeCardDao;
                     Intent intent = getIntent();
                     intent.putExtra("AddChargeCardDao",dao);
                     setResult(SUCCESS,intent);

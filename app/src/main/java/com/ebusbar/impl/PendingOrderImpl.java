@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.PendingOrderDao;
+import com.ebusbar.bean.PendingOrder;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by Jelly on 2016/3/10.
  */
-public class PendingOrderImpl extends BaseImpl{
+public class PendingOrderImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public List<PendingOrderDao> pendingOrderDaos = new ArrayList<PendingOrderDao>();
+    public List<PendingOrder> pendingOrderDaos = new ArrayList<PendingOrder>();
 
     public PendingOrderImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -53,7 +53,7 @@ public class PendingOrderImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("json",s.trim());
                 if (NetParam.isSuccess(b,s)) {
-                    pendingOrderDaos = JsonUtil.arrayFormJson(s, PendingOrderDao[].class);
+                    pendingOrderDaos = JsonUtil.arrayFormJson(s, PendingOrder[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }

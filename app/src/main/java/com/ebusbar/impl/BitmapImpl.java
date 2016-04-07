@@ -10,7 +10,7 @@ import com.jellycai.service.ResponseResultHandler;
  * BitmapImpl
  * Created by Jelly on 2016/3/4.
  */
-public class BitmapImpl extends BaseImpl{
+public class BitmapImpl extends BaseDaoImpl {
     /**
      * 操作对象
      */

@@ -17,9 +17,9 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
-import com.ebusbar.dao.PayResult;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
+import com.ebusbar.bean.PayResult;
 import com.ebusbar.impl.ReChargeDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.LogUtil;
@@ -323,7 +323,7 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
                     String resultStatus = payResult.getResultStatus();
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        LoginDao.DataEntity entity = application.getLoginDao().getData();
+                        Login.DataEntity entity = application.getLoginDao().getData();
                         reChargeDao.getReChargeDao(entity.getToken(),price,tradeNo,"1",entity.getCustID());
                     } else {
                         // 判断resultStatus 为非"9000"则代表可能支付失败
@@ -339,7 +339,7 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
                 }
                 case msgReCharge:
                     if(reChargeDao.reChargeDao == null || TextUtils.equals(reChargeDao.reChargeDao.getCrm_recharge().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(reChargeDao.reChargeDao.getCrm_recharge().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(reChargeDao.reChargeDao.getCrm_recharge().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         RechargeActivity.this.setResult(FAILURE);
                         ActivityControl.finishAct(RechargeActivity.this);

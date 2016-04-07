@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.CancelAppointPayDao;
+import com.ebusbar.bean.CancelAppointPay;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -13,9 +13,9 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/4/1.
  */
-public class CancelAppointPayDaoImpl extends BaseImpl{
+public class CancelAppointPayDaoImpl extends BaseDaoImpl {
 
-    public CancelAppointPayDao dao;
+    public CancelAppointPay dao;
 
     public CancelAppointPayDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -45,7 +45,7 @@ public class CancelAppointPayDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    dao = JsonUtil.objectFromJson(s,CancelAppointPayDao.class);
+                    dao = JsonUtil.objectFromJson(s,CancelAppointPay.class);
                 }
                 handler.sendEmptyMessage(msg);
             }

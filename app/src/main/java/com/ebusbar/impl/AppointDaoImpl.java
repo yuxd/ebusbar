@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.AppointDao;
+import com.ebusbar.bean.Appoint;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -15,11 +15,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 预约订单
  * Created by Jelly on 2016/3/9.
  */
-public class AppointDaoImpl extends BaseImpl{
+public class AppointDaoImpl extends BaseDaoImpl {
     /**
      * 操作对象
      */
-    public AppointDao dao;
+    public Appoint dao;
 
     public AppointDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -46,7 +46,7 @@ public class AppointDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    dao = JsonUtil.objectFromJson(s,AppointDao.class);
+                    dao = JsonUtil.objectFromJson(s,Appoint.class);
                 }
                 handler.sendEmptyMessage(msg);
             }

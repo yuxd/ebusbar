@@ -15,10 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.BaseActivity;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.GetChargeAppointDao;
-import com.ebusbar.dao.LoginDao;
-import com.ebusbar.dao.StartChargeDao;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.GetChargeAppoint;
+import com.ebusbar.bean.Login;
+import com.ebusbar.bean.StartCharge;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.FinishOrderDaoImpl;
 import com.ebusbar.impl.GetChargeAppointDaoImpl;
@@ -162,7 +162,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     @Override
     public void setFragView() {
         loading = popupWindowUtil.startLoading(context,start,"加载中");
-        LoginDao.DataEntity data = application.getLoginDao().getData();
+        Login.DataEntity data = application.getLoginDao().getData();
         getChargeAppointDao.getNetGetChargeAppointDao(data.getToken(), data.getCustID());
     }
 
@@ -174,7 +174,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
             @Override
             public void onClick(View v) {
                 MyLocation location = application.getLocation();
-                GetChargeAppointDao.EvcOrdersGetEntity entity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
+                GetChargeAppoint.EvcOrdersGetEntity entity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
                 NaviEmulatorActivity.startAppActivity(context,Double.parseDouble(location.getLatitude()),Double.parseDouble(location.getLongitude()),Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
             }
         });
@@ -190,7 +190,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        LoginDao.DataEntity entity = application.getLoginDao().getData(); //用户数据
+        Login.DataEntity entity = application.getLoginDao().getData(); //用户数据
         switch (v.getId()){
             case R.id.start:
                 //开始充电,在开始充电之前
@@ -209,7 +209,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        LoginDao.DataEntity entity = application.getLoginDao().getData();
+                        Login.DataEntity entity = application.getLoginDao().getData();
                         finishOrderDao.getFinishOrderDao(entity.getToken(),getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getOrderNo(),entity.getCustID());
                     }
                 });
@@ -221,12 +221,14 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgGetAppoint: //获得预约数据
-                    loading.dismiss();
+                    if(loading != null){
+                        loading.dismiss();
+                    }
                     if(getChargeAppointDao.getChargeAppointDao == null || TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(), "N")){
                         nodata_show.setVisibility(View.VISIBLE);
                         return;
                     }
-                    GetChargeAppointDao.EvcOrdersGetEntity entity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
+                    GetChargeAppoint.EvcOrdersGetEntity entity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
                     position_text.setText(entity.getOrgName());
                     EPId_text.setText(entity.getFacilityID());
                     appointcode_text.setText(entity.getOrderNo());
@@ -236,7 +238,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                     break;
                 case msgFinish: //结束预约
                     if(finishOrderDao.finishOrderDao == null || TextUtils.equals(finishOrderDao.finishOrderDao.getEvc_order_cancel().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(finishOrderDao.finishOrderDao.getEvc_order_cancel().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(finishOrderDao.finishOrderDao.getEvc_order_cancel().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
@@ -245,12 +247,12 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                     break;
                 case msgStart: //开始充电
                     if(startChargeDao.startChargeDao == null || TextUtils.equals(startChargeDao.startChargeDao.getEvc_order_change().getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(startChargeDao.startChargeDao.getEvc_order_change().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(startChargeDao.startChargeDao.getEvc_order_change().getReturnStatus());
                         toastUtil.toastError(context, errorDao, null);
                         return;
                     }
                     ActivityControl.finishAct((BaseActivity)getActivity());
-                    StartChargeDao.EvcOrderChangeEntity entity1 =  startChargeDao.startChargeDao.getEvc_order_change();
+                    StartCharge.EvcOrderChangeEntity entity1 =  startChargeDao.startChargeDao.getEvc_order_change();
                     ChargeActivity.startAppActivity(context, entity1.getOrgName(), entity1.getFacilityID(), entity1.getOrderStatus(), entity1.getOrderNo());
                     break;
             }

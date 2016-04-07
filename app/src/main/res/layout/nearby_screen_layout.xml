@@ -27,7 +27,7 @@
             android:textColor="#000000"
             />
 
-        <com.ebusbar.myview.SlideSwitch
+        <com.ebusbar.view.SlideSwitch
             android:id="@+id/use_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:textColor="#000000"
             />
 
-        <com.ebusbar.myview.SlideSwitch
+        <com.ebusbar.view.SlideSwitch
             android:id="@+id/enough_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

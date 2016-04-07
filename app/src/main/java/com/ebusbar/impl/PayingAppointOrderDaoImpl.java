@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.PayingAppointOrderDao;
+import com.ebusbar.bean.PayingAppointOrder;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 生成待支付的预约订单
  * Created by Jelly on 2016/3/31.
  */
-public class PayingAppointOrderDaoImpl extends BaseImpl{
+public class PayingAppointOrderDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public PayingAppointOrderDao dao;
+    public PayingAppointOrder dao;
 
     public PayingAppointOrderDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -50,7 +50,7 @@ public class PayingAppointOrderDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    dao = JsonUtil.objectFromJson(s,PayingAppointOrderDao.class);
+                    dao = JsonUtil.objectFromJson(s,PayingAppointOrder.class);
                 }
                 handler.sendEmptyMessage(msg);
             }

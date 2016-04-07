@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.DeleteOrderDao;
+import com.ebusbar.bean.DeleteOrder;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/23.
  */
-public class DeleteOrderDaoImpl extends BaseImpl{
+public class DeleteOrderDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public DeleteOrderDao deleteOrderDao;
+    public DeleteOrder deleteOrderDao;
 
     public DeleteOrderDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -46,7 +46,7 @@ public class DeleteOrderDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("json",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    deleteOrderDao = JsonUtil.arrayFormJson(s,DeleteOrderDao[].class).get(0);
+                    deleteOrderDao = JsonUtil.arrayFormJson(s,DeleteOrder[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

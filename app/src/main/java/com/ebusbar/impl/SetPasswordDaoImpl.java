@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.SetPasswordDao;
+import com.ebusbar.bean.SetPassword;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,7 +13,7 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/5.
  */
-public class SetPasswordDaoImpl extends BaseImpl{
+public class SetPasswordDaoImpl extends BaseDaoImpl {
     /**
      * 访问路径
      */
@@ -21,7 +21,7 @@ public class SetPasswordDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public SetPasswordDao setPasswordDao;
+    public SetPassword setPasswordDao;
 
     public SetPasswordDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -42,7 +42,7 @@ public class SetPasswordDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b,String json) {
                 if(NetParam.isSuccess(b,json)){
-                    setPasswordDao = JsonUtil.objectFromJson(json, SetPasswordDao.class);
+                    setPasswordDao = JsonUtil.objectFromJson(json, SetPassword.class);
                 }
                 handler.sendEmptyMessage(msg);
             }

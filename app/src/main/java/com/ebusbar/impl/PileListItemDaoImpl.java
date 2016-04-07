@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.PileListItemDao;
+import com.ebusbar.bean.PileListItem;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -17,9 +17,9 @@ import java.util.List;
 /**
  * Created by Jelly on 2016/3/21.
  */
-public class PileListItemDaoImpl extends BaseImpl{
+public class PileListItemDaoImpl extends BaseDaoImpl {
 
-    public List<PileListItemDao> piles = new ArrayList<PileListItemDao>();
+    public List<PileListItem> piles = new ArrayList<PileListItem>();
 
     public PileListItemDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -48,7 +48,7 @@ public class PileListItemDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    piles = JsonUtil.arrayFormJson(s, PileListItemDao[].class);
+                    piles = JsonUtil.arrayFormJson(s, PileListItem[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }

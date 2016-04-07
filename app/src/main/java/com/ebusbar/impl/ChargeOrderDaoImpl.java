@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ebusbar.dao.ChargeOrderDao;
+import com.ebusbar.bean.ChargeOrder;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/22.
  */
-public class ChargeOrderDaoImpl extends BaseImpl{
+public class ChargeOrderDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public ChargeOrderDao chargeOrderDao;
+    public ChargeOrder chargeOrderDao;
 
     public ChargeOrderDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -48,7 +48,7 @@ public class ChargeOrderDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("json", s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    chargeOrderDao = JsonUtil.arrayFormJson(s, ChargeOrderDao[].class).get(0);
+                    chargeOrderDao = JsonUtil.arrayFormJson(s, ChargeOrder[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

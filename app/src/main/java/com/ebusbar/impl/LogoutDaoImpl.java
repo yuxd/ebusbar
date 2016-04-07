@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.LogoutDao;
+import com.ebusbar.bean.Logout;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/25.
  */
-public class LogoutDaoImpl extends BaseImpl{
+public class LogoutDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public LogoutDao logoutDao;
+    public Logout logoutDao;
 
     public LogoutDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -45,7 +45,7 @@ public class LogoutDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonLogout",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    logoutDao = JsonUtil.arrayFormJson(s, LogoutDao[].class).get(0);
+                    logoutDao = JsonUtil.arrayFormJson(s, Logout[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.impl.SetPayPasswordDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -234,7 +234,7 @@ public class SetPayPwdActivity extends UtilActivity implements View.OnClickListe
             payPassword = "";
             reInputEt();
         }else{ //确认支付密码
-            LoginDao.DataEntity entity = application.getLoginDao().getData();
+            Login.DataEntity entity = application.getLoginDao().getData();
             setPayPasswordDao.getSetPasswordDao(entity.getToken(),payPassword,entity.getCustID());
         }
         return view;
@@ -247,7 +247,7 @@ public class SetPayPwdActivity extends UtilActivity implements View.OnClickListe
             switch (msg.what){
                 case msgSet:
                     if(setPayPasswordDao.setPayPasswordDao == null || TextUtils.equals(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(setPayPasswordDao.setPayPasswordDao.getCrm_paypassword_set().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         setResult(FAILURE);
                         return;

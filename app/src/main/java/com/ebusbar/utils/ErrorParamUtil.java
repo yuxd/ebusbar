@@ -3,7 +3,7 @@ package com.ebusbar.utils;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.bean.Error;
 import com.ebusbar.param.NetErrorEnum;
 
 /**
@@ -32,8 +32,8 @@ public class ErrorParamUtil {
      * @param returnState
      * @return
      */
-    public ErrorDao checkReturnState(String returnState){
-        ErrorDao errorDao = new ErrorDao();
+    public Error checkReturnState(String returnState){
+        Error errorDao = new Error();
         errorDao.setReturnState(returnState);
         Log.v("msg",returnState);
         for(NetErrorEnum errorEnum : NetErrorEnum.values()){ //遍历枚举集合获取msg

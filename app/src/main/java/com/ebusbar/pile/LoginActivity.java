@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.bean.Error;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -345,7 +345,7 @@ public class LoginActivity extends UtilActivity {
         public void handleMessage(Message msg) {
             if(msg.what == msgLogin){
                 if(TextUtils.equals(loginDao.dao.getIsSuccess(),"N")){
-                    ErrorDao errorDao = errorParamUtil.checkReturnState(loginDao.dao.getReturnStatus());
+                    Error errorDao = errorParamUtil.checkReturnState(loginDao.dao.getReturnStatus());
                     toastUtil.toastError(context,errorDao,null);
                     return;
                 }

@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
 import com.ebusbar.impl.BalanceDaoImpl;
 import com.ebusbar.impl.BillDaoImpl;
 import com.ebusbar.impl.BitmapImpl;
@@ -117,7 +117,7 @@ public class MyWalletActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         if(!TextUtils.isEmpty(entity.getCustName())){
             nickname_text.setText(entity.getCustName());
         }
@@ -190,7 +190,7 @@ public class MyWalletActivity extends UtilActivity {
                     break;
                 case msgBalance:
                     if(balanceDao.balanceDao == null || TextUtils.equals(balanceDao.balanceDao.getCrm_balanceamt_get().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(balanceDao.balanceDao.getCrm_balanceamt_get().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(balanceDao.balanceDao.getCrm_balanceamt_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }

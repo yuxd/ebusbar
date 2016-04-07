@@ -5,7 +5,7 @@ import android.app.Application;
 import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Login;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.map.MyLocation;
 import com.ebusbar.param.DefaultParam;
@@ -32,7 +32,7 @@ public class MyApplication extends Application{
     /**
      * 登录Dao
      */
-    private LoginDao loginDao;
+    private Login loginDao;
     /**
      * LoginDaoImpl
      */
@@ -141,11 +141,11 @@ public class MyApplication extends Application{
 
 
 
-    public LoginDao getLoginDao() {
+    public Login getLoginDao() {
         return loginDao;
     }
 
-    public void setLoginDao(LoginDao loginDao) {
+    public void setLoginDao(Login loginDao) {
         this.loginDao = loginDao;
     }
 

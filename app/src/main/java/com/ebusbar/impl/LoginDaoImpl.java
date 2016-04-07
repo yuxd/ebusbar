@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Login;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -16,11 +16,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 登录Impl
  * Created by Jelly on 2016/3/3.
  */
-public class LoginDaoImpl extends BaseImpl{
+public class LoginDaoImpl extends BaseDaoImpl {
     /**
      * LoginDao
      */
-    public  LoginDao dao;
+    public Login dao;
 
     private SharedPreferencesUtil sharedPreferencesUtil = SharedPreferencesUtil.getInstance();
 
@@ -30,13 +30,13 @@ public class LoginDaoImpl extends BaseImpl{
      */
     public LoginDaoImpl(Context context,Handler handler,int msg){
         super(context,handler,msg);
-        dao = new LoginDao();
+        dao = new Login();
         execmode = "crm.login";
     }
 
     public LoginDaoImpl(Context context){
         super(context);
-        dao  = new LoginDao();
+        dao  = new Login();
     }
 
     /**
@@ -60,7 +60,7 @@ public class LoginDaoImpl extends BaseImpl{
                 public void response(boolean b, String json) {
                     LogUtil.v(TAG,json.trim());
                     if(NetParam.isSuccess(b,json)){
-                        dao = JsonUtil.objectFromJson(json,LoginDao.class);
+                        dao = JsonUtil.objectFromJson(json,Login.class);
                     }
                     handler.sendEmptyMessage(msg);
                 }
@@ -81,7 +81,7 @@ public class LoginDaoImpl extends BaseImpl{
                 public void response(boolean b, String json) {
                     LogUtil.v(TAG,json.trim());
                     if(NetParam.isSuccess(b,json)){
-                        dao = JsonUtil.objectFromJson(json,LoginDao.class);
+                        dao = JsonUtil.objectFromJson(json,Login.class);
                         handler.sendEmptyMessage(msg);
                     }
                 }
@@ -97,7 +97,7 @@ public class LoginDaoImpl extends BaseImpl{
     /**
      * 缓存对象
      */
-    public void cacheObject(LoginDao loginDao){
+    public void cacheObject(Login loginDao){
         sharedPreferencesUtil.saveObject(context, loginDao);
     }
 
@@ -105,8 +105,8 @@ public class LoginDaoImpl extends BaseImpl{
      * 获取缓存对象
      * @return
      */
-    public LoginDao getCacheObject(){
-        dao = (LoginDao) sharedPreferencesUtil.readObject(context,dao.getClass().getName());
+    public Login getCacheObject(){
+        dao = (Login) sharedPreferencesUtil.readObject(context,dao.getClass().getName());
         if(dao == null){
             return null;
         }

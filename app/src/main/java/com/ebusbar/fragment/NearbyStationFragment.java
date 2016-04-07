@@ -18,10 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ebusbar.adpater.NearbyListItemAdapter;
-import com.ebusbar.dao.NearbyStationDao;
+import com.ebusbar.bean.NearbyStation;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.NearbyStationDaoImpl;
-import com.ebusbar.myview.SlideSwitch;
+import com.ebusbar.view.SlideSwitch;
 import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
@@ -103,7 +103,7 @@ public class NearbyStationFragment extends UtilFragment {
     /**
      * 隐藏的充电点
      */
-    private List<NearbyStationDao> dismissList = new ArrayList<>();
+    private List<NearbyStation> dismissList = new ArrayList<>();
     /**
      * 筛选可用的是否打开
      */
@@ -257,9 +257,9 @@ public class NearbyStationFragment extends UtilFragment {
     }
 
 
-    public List<NearbyStationDao> screenUse(List<NearbyStationDao> list){
+    public List<NearbyStation> screenUse(List<NearbyStation> list){
         dismissList.clear();
-        List<NearbyStationDao> show = new ArrayList<>();
+        List<NearbyStation> show = new ArrayList<>();
         for(int i=0;i<list.size();i++){
             if(TextUtils.equals("1", list.get(i).getEvc_stations_get().getIsAvailable())){
                 show.add(list.get(i));

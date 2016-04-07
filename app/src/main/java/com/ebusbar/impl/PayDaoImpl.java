@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.PayDao;
+import com.ebusbar.bean.Pay;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 订单支付
  * Created by Jelly on 2016/3/31.
  */
-public class PayDaoImpl extends BaseImpl{
+public class PayDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public PayDao dao;
+    public Pay dao;
     /**
      * 余额支付
      */
@@ -79,7 +79,7 @@ public class PayDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    dao = JsonUtil.objectFromJson(s,PayDao.class);
+                    dao = JsonUtil.objectFromJson(s,Pay.class);
                 }
                 handler.sendEmptyMessage(msg);
             }

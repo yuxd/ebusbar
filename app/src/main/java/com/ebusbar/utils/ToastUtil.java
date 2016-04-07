@@ -3,7 +3,7 @@ package com.ebusbar.utils;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.bean.Error;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 
 /**
@@ -31,7 +31,7 @@ public class ToastUtil {
      * @param errorDao
      * @return 返回是否已经提示
      */
-    public boolean toastError(Context context,ErrorDao errorDao,NetErrorHandlerListener netErrorHandlerListener){
+    public boolean toastError(Context context,Error errorDao,NetErrorHandlerListener netErrorHandlerListener){
         boolean isToast = false;
         if(errorDao.isToast()){
             isToast = true;

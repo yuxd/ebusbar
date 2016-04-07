@@ -15,8 +15,8 @@ import android.widget.ListView;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.SearchListAdapter;
-import com.ebusbar.dao.AllStationDao;
-import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.bean.AllStation;
+import com.ebusbar.bean.Error;
 import com.ebusbar.impl.AllStationDaoImpl;
 import com.ebusbar.utils.LogUtil;
 
@@ -47,11 +47,11 @@ public class SearchActivity extends UtilActivity {
     /**
      * 搜索集合
      */
-    private List<AllStationDao> daos;
+    private List<AllStation> daos;
     /**
      * 搜索出来的数据
      */
-    private List<AllStationDao> searchs;
+    private List<AllStation> searchs;
     /**
      * 适配器
      */
@@ -141,10 +141,10 @@ public class SearchActivity extends UtilActivity {
     /**
      * 设置条件
      */
-    public List<AllStationDao> setCondition(List<AllStationDao> daos){
+    public List<AllStation> setCondition(List<AllStation> daos){
         for(int i=0;i<daos.size();i++){
-            AllStationDao dao = daos.get(i);
-            AllStationDao.EvcStationsGetallEntity entity = dao.getEvc_stations_getall();
+            AllStation dao = daos.get(i);
+            AllStation.EvcStationsGetallEntity entity = dao.getEvc_stations_getall();
             dao.setCondition(entity.getOrgName() + entity.getAddr() + entity.getCity());
         }
         return daos;
@@ -157,7 +157,7 @@ public class SearchActivity extends UtilActivity {
                 return;
             }
             if(TextUtils.equals("N",allStationDao.daos.get(0).getEvc_stations_getall().getIsSuccess())){
-                ErrorDao errorDao = errorParamUtil.checkReturnState(allStationDao.daos.get(0).getEvc_stations_getall().getReturnStatus());
+                Error errorDao = errorParamUtil.checkReturnState(allStationDao.daos.get(0).getEvc_stations_getall().getReturnStatus());
                 toastUtil.toastError(context,errorDao,null);
                 return;
             }
@@ -169,7 +169,7 @@ public class SearchActivity extends UtilActivity {
      * 开启界面
      * @param context
      */
-    public static void startAppActivity(Context context,ArrayList<AllStationDao> daos){
+    public static void startAppActivity(Context context,ArrayList<AllStation> daos){
         Intent intent = new Intent(context,SearchActivity.class);
         intent.putParcelableArrayListExtra("daos",daos);
         context.startActivity(intent);

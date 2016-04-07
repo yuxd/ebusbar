@@ -58,6 +58,8 @@ public class ForgetPwdActivity extends UtilActivity {
      */
     private int msgCountDown = 0x002;
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +136,7 @@ public class ForgetPwdActivity extends UtilActivity {
             Log.v(TAG,"手机号码输入有误");
             return view;
         }
-//        codeDao.getNetCodeDao(DefaultParam.FORGETCODE, phone);
+        codeDao.getNetCodeDao(DefaultParam.FORGETCODE, phone);
         return view;
     }
 

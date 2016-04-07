@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.CompleteOrderDao;
+import com.ebusbar.bean.CompleteOrder;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by Jelly on 2016/3/22.
  */
-public class CompleteOrderDaoImpl extends BaseImpl{
+public class CompleteOrderDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public List<CompleteOrderDao> completeOrderDaos = new ArrayList<CompleteOrderDao>();
+    public List<CompleteOrder> completeOrderDaos = new ArrayList<CompleteOrder>();
 
     public CompleteOrderDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -48,7 +48,7 @@ public class CompleteOrderDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b, String s) {
                 if(NetParam.isSuccess(b,s)){
-                    completeOrderDaos = JsonUtil.arrayFormJson(s,CompleteOrderDao[].class);
+                    completeOrderDaos = JsonUtil.arrayFormJson(s,CompleteOrder[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }

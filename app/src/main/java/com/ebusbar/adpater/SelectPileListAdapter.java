@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ebusbar.dao.PileListItemDao;
+import com.ebusbar.bean.PileListItem;
 import com.ebusbar.pile.R;
 
 import java.util.List;
@@ -26,9 +26,9 @@ public class SelectPileListAdapter extends BaseAdapter{
     /**
      * 操作数据
      */
-    private List<PileListItemDao> piles;
+    private List<PileListItem> piles;
 
-    public SelectPileListAdapter(Context context,List<PileListItemDao> piles) {
+    public SelectPileListAdapter(Context context,List<PileListItem> piles) {
         this.context = context;
         this.piles = piles;
     }
@@ -71,7 +71,7 @@ public class SelectPileListAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        PileListItemDao.EvcFacilitiesGetEntity entity = ((PileListItemDao) getItem(position)).getEvc_facilities_get();
+        PileListItem.EvcFacilitiesGetEntity entity = ((PileListItem) getItem(position)).getEvc_facilities_get();
         viewHolder.facilityName.setText(entity.getFacilityName().replace("号桩","").replace("号充电桩",""));
         if(!TextUtils.isEmpty(entity.getApplicableCar())){
             viewHolder.applicableCar.setText(entity.getApplicableCar().replace("-","、"));

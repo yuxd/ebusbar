@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.StartChargeDao;
+import com.ebusbar.bean.StartCharge;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 开始充电
  * Created by Jelly on 2016/3/22.
  */
-public class StartChargeDaoImpl extends BaseImpl{
+public class StartChargeDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public StartChargeDao startChargeDao;
+    public StartCharge startChargeDao;
 
     public StartChargeDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -48,7 +48,7 @@ public class StartChargeDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonStart",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    startChargeDao = JsonUtil.arrayFormJson(s,StartChargeDao[].class).get(0);
+                    startChargeDao = JsonUtil.arrayFormJson(s,StartCharge[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

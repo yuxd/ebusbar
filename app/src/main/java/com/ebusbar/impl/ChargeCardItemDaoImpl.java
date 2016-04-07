@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.ChargeCardItemDao;
+import com.ebusbar.bean.ChargeCardItem;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -17,11 +17,11 @@ import java.util.List;
  * 充电卡列表
  * Created by Jelly on 2016/3/23.
  */
-public class ChargeCardItemDaoImpl extends BaseImpl{
+public class ChargeCardItemDaoImpl extends BaseDaoImpl {
     /**
      * 数据
      */
-    public List<ChargeCardItemDao> chargeCardItemDaos = new ArrayList<ChargeCardItemDao>();
+    public List<ChargeCardItem> chargeCardItemDaos = new ArrayList<ChargeCardItem>();
 
     public ChargeCardItemDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -51,7 +51,7 @@ public class ChargeCardItemDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonCard",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    chargeCardItemDaos = JsonUtil.arrayFormJson(s,ChargeCardItemDao[].class);
+                    chargeCardItemDaos = JsonUtil.arrayFormJson(s,ChargeCardItem[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }

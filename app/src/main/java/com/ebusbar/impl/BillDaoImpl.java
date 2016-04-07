@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.BillDao;
+import com.ebusbar.bean.Bill;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by Jelly on 2016/3/24.
  */
-public class BillDaoImpl extends BaseImpl{
+public class BillDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public List<BillDao> billDaos = new ArrayList<>();
+    public List<Bill> billDaos = new ArrayList<>();
 
     public BillDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -48,7 +48,7 @@ public class BillDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonBills",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    billDaos = JsonUtil.arrayFormJson(s,BillDao[].class);
+                    billDaos = JsonUtil.arrayFormJson(s,Bill[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }

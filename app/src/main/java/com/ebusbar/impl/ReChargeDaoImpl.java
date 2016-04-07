@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.ReChargeDao;
+import com.ebusbar.bean.ReCharge;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 余额充值
  * Created by Jelly on 2016/3/23.
  */
-public class ReChargeDaoImpl extends BaseImpl{
+public class ReChargeDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public ReChargeDao reChargeDao;
+    public ReCharge reChargeDao;
 
     public ReChargeDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -47,7 +47,7 @@ public class ReChargeDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b, String s) {
                 if(NetParam.isSuccess(b,s)){
-                    reChargeDao = JsonUtil.arrayFormJson(s, ReChargeDao[].class).get(0);
+                    reChargeDao = JsonUtil.arrayFormJson(s, ReCharge[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

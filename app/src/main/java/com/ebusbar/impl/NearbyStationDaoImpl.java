@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.NearbyStationDao;
+import com.ebusbar.bean.NearbyStation;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -16,11 +16,11 @@ import java.util.List;
 /**
  * Created by Jelly on 2016/3/7.
  */
-public class NearbyStationDaoImpl extends BaseImpl{
+public class NearbyStationDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public List<NearbyStationDao> daos;
+    public List<NearbyStation> daos;
 
     public NearbyStationDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -42,7 +42,7 @@ public class NearbyStationDaoImpl extends BaseImpl{
             public void response(boolean b, String json) {
                 LogUtil.v("jsonPostion", json.trim());
                 if(NetParam.isSuccess(b,json)){
-                    daos = JsonUtil.arrayFormJson(json, NearbyStationDao[].class);
+                    daos = JsonUtil.arrayFormJson(json, NearbyStation[].class);
                 };
                 handler.sendEmptyMessage(msg);
             }

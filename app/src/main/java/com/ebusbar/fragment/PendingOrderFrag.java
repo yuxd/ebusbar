@@ -15,9 +15,9 @@ import android.widget.PopupWindow;
 
 import com.ebusbar.activities.BaseActivity;
 import com.ebusbar.adpater.PendingOrderListAdapter;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
-import com.ebusbar.dao.PendingOrderDao;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
+import com.ebusbar.bean.PendingOrder;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.PendingOrderImpl;
 import com.ebusbar.pile.ChargeActivity;
@@ -99,7 +99,7 @@ public class PendingOrderFrag extends UtilFragment {
     @Override
     public void setFragView() {
         loading = popupWindowUtil.startLoading(context,root,"加载中");
-        LoginDao.DataEntity data = application.getLoginDao().getData();
+        Login.DataEntity data = application.getLoginDao().getData();
         pendingOrder.getNetPendingOrderList(data.getToken(), data.getCustID());
     }
 
@@ -111,7 +111,7 @@ public class PendingOrderFrag extends UtilFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ActivityControl.finishAct((BaseActivity) getActivity());
-                PendingOrderDao.EvcOrdersGetEntity data = pendingOrder.pendingOrderDaos.get(position).getEvc_orders_get();
+                PendingOrder.EvcOrdersGetEntity data = pendingOrder.pendingOrderDaos.get(position).getEvc_orders_get();
                 ChargeActivity.startAppActivity(context,data.getOrgName(),data.getFacilityID(),data.getOrderStatus(),data.getOrderNo());
             }
         });
@@ -126,7 +126,7 @@ public class PendingOrderFrag extends UtilFragment {
                     return;
                 }
                 if(TextUtils.equals(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
-                    ErrorDao errorDao = errorParamUtil.checkReturnState(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
+                    Error errorDao = errorParamUtil.checkReturnState(pendingOrder.pendingOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
                     nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }

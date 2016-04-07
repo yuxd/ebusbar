@@ -3,7 +3,7 @@ package com.ebusbar.utils;
 import android.content.Context;
 import android.content.DialogInterface;
 
-import com.ebusbar.myview.MyDialog;
+import com.ebusbar.view.MyDialog;
 
 /**
  * Created by Jelly on 2016/3/26.

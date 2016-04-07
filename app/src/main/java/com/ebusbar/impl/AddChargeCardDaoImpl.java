@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.AddChargeCardDao;
+import com.ebusbar.bean.AddChargeCard;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/23.
  */
-public class AddChargeCardDaoImpl extends BaseImpl{
+public class AddChargeCardDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public AddChargeCardDao addChargeCardDao;
+    public AddChargeCard addChargeCardDao;
 
     public AddChargeCardDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -47,7 +47,7 @@ public class AddChargeCardDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonAdd",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    addChargeCardDao = JsonUtil.arrayFormJson(s,AddChargeCardDao[].class).get(0);
+                    addChargeCardDao = JsonUtil.arrayFormJson(s,AddChargeCard[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

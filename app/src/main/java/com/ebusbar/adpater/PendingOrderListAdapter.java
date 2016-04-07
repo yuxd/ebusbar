@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.ebusbar.dao.PendingOrderDao;
+import com.ebusbar.bean.PendingOrder;
 import com.ebusbar.pile.R;
 
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.List;
  */
 public class PendingOrderListAdapter extends BaseAdapter{
 
-    private List<PendingOrderDao> list;
+    private List<PendingOrder> list;
 
     private  Context context;
 
-    public PendingOrderListAdapter(Context context,List<PendingOrderDao> list) {
+    public PendingOrderListAdapter(Context context,List<PendingOrder> list) {
         this.list = list;
         this.context = context;
     }
@@ -66,7 +66,7 @@ public class PendingOrderListAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        PendingOrderDao.EvcOrdersGetEntity data = ((PendingOrderDao) getItem(position)).getEvc_orders_get();
+        PendingOrder.EvcOrdersGetEntity data = ((PendingOrder) getItem(position)).getEvc_orders_get();
         if(TextUtils.equals(data.getOrderStatus(),"2")){
             viewHolder.state_text.setText("充电中");
         }else if(TextUtils.equals(data.getOrderStatus(),"4")){

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.FinishOrderDao;
+import com.ebusbar.bean.FinishOrder;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 结束订单
  * Created by Jelly on 2016/3/22.
  */
-public class FinishOrderDaoImpl extends BaseImpl{
+public class FinishOrderDaoImpl extends BaseDaoImpl {
     /**
      * 操作对象
      */
-    public FinishOrderDao finishOrderDao;
+    public FinishOrder finishOrderDao;
 
     public FinishOrderDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -41,7 +41,7 @@ public class FinishOrderDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b, String s) {
                 if(NetParam.isSuccess(b,s)){
-                    finishOrderDao = JsonUtil.arrayFormJson(s, FinishOrderDao[].class).get(0);
+                    finishOrderDao = JsonUtil.arrayFormJson(s, FinishOrder[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

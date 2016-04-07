@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.UpdateUserInfoDao;
+import com.ebusbar.bean.UpdateUserInfo;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -16,9 +16,9 @@ import java.util.Map;
 /**
  * Created by Jelly on 2016/4/5.
  */
-public class UpdateUserInfoDaoImpl extends BaseImpl{
+public class UpdateUserInfoDaoImpl extends BaseDaoImpl {
 
-    public UpdateUserInfoDao dao;
+    public UpdateUserInfo dao;
 
     public UpdateUserInfoDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -57,7 +57,7 @@ public class UpdateUserInfoDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    dao = JsonUtil.objectFromJson(s,UpdateUserInfoDao.class);
+                    dao = JsonUtil.objectFromJson(s,UpdateUserInfo.class);
                     handler.sendEmptyMessage(msg);
                 }
             }

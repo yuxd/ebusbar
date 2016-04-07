@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.text.TextUtils;
 
-import com.ebusbar.dao.GetChargeAppointDao;
+import com.ebusbar.bean.GetChargeAppoint;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/10.
  */
-public class GetChargeAppointDaoImpl extends BaseImpl{
+public class GetChargeAppointDaoImpl extends BaseDaoImpl {
     /**
      * 操作对象
      */
-    public GetChargeAppointDao getChargeAppointDao;
+    public GetChargeAppoint getChargeAppointDao;
 
     public GetChargeAppointDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -44,7 +44,7 @@ public class GetChargeAppointDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 LogUtil.v(TAG,s.trim());
                 if(NetParam.isSuccess(b,s)) {
-                    getChargeAppointDao = JsonUtil.arrayFormJson(s,GetChargeAppointDao[].class).get(0);
+                    getChargeAppointDao = JsonUtil.arrayFormJson(s,GetChargeAppoint[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

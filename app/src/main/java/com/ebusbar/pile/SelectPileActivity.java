@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.SelectPileListAdapter;
-import com.ebusbar.dao.PileListItemDao;
+import com.ebusbar.bean.PileListItem;
 import com.ebusbar.impl.PileListItemDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 
@@ -90,7 +90,7 @@ public class SelectPileActivity extends UtilActivity {
         pile_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PileListItemDao.EvcFacilitiesGetEntity data = pileListItemDao.piles.get(position).getEvc_facilities_get();
+                PileListItem.EvcFacilitiesGetEntity data = pileListItemDao.piles.get(position).getEvc_facilities_get();
                 if (!TextUtils.equals("0",data.getFacilityStatus())) {
                     Toast.makeText(SelectPileActivity.this,"有人正在使用，请您稍等片刻",Toast.LENGTH_SHORT).show();
                     return;

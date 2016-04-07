@@ -15,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
 import com.ebusbar.impl.UpdateUserInfoDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.LogUtil;
@@ -82,7 +82,7 @@ public class ModCustNameActivity extends UtilActivity{
 
     @Override
     public void setActivityView() {
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         custName_et.setText(entity.getCustName());
     }
 
@@ -90,7 +90,7 @@ public class ModCustNameActivity extends UtilActivity{
     @Override
     public View back(View view) {
         String custName = custName_et.getText().toString();
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         if(!TextUtils.equals(custName,entity.getCustName()) && !TextUtils.isEmpty(custName)){
             dialogUtil.showSureListenerDialog(context, "是否取消本次修改?", new DialogInterface.OnClickListener() {
                 @Override
@@ -113,7 +113,7 @@ public class ModCustNameActivity extends UtilActivity{
                 if (TextUtils.isEmpty(custName)) {
                     Toast.makeText(ModCustNameActivity.this, "昵称不能为空！", Toast.LENGTH_SHORT).show();
                 }
-                LoginDao.DataEntity entity = application.getLoginDao().getData();
+                Login.DataEntity entity = application.getLoginDao().getData();
                 updateUserInfoDao.getDao(entity.getToken(), entity.getCustID(), custName,"", "", "");
             }
         });
@@ -125,7 +125,7 @@ public class ModCustNameActivity extends UtilActivity{
             switch (msg.what){
                 case msgUpdate:
                     if(TextUtils.equals("N",updateUserInfoDao.dao.getIsSuccess())){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(updateUserInfoDao.dao.getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(updateUserInfoDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         setResult(FAILURE);
                         ActivityControl.finishAct(ModCustNameActivity.this);

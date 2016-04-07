@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.AllStationDao;
+import com.ebusbar.bean.AllStation;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -15,9 +15,9 @@ import java.util.List;
 /**
  * Created by Jelly on 2016/3/30.
  */
-public class AllStationDaoImpl extends BaseImpl{
+public class AllStationDaoImpl extends BaseDaoImpl {
 
-    public List<AllStationDao> daos;
+    public List<AllStation> daos;
 
     public AllStationDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -39,7 +39,7 @@ public class AllStationDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 if (NetParam.isSuccess(b, s)) {
                     LogUtil.v("jsonAll", s.trim());
-                    daos = JsonUtil.arrayFormJson(s, AllStationDao[].class);
+                    daos = JsonUtil.arrayFormJson(s, AllStation[].class);
                 }
                 handler.sendEmptyMessage(msg);
             }

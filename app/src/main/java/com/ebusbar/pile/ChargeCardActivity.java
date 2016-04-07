@@ -12,8 +12,8 @@ import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.ChargeCardListAdapter;
-import com.ebusbar.dao.AddChargeCardDao;
-import com.ebusbar.dao.ChargeCardItemDao;
+import com.ebusbar.bean.AddChargeCard;
+import com.ebusbar.bean.ChargeCardItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class ChargeCardActivity extends UtilActivity {
     /**
      * 充电卡数据集合
      */
-    private List<ChargeCardItemDao> daos;
+    private List<ChargeCardItem> daos;
     /**
      * 适配器
      */
@@ -115,10 +115,10 @@ public class ChargeCardActivity extends UtilActivity {
             case ADD:
                 if(resultCode == AddChargeCardActivity.SUCCESS){ //添加充电卡成功
                     Toast.makeText(ChargeCardActivity.this, "添加充电卡成功！", Toast.LENGTH_SHORT).show();
-                    AddChargeCardDao dao = data.getParcelableExtra("AddChargeCardDao");
-                    AddChargeCardDao.CrmAccountsInsertEntity insertEntity = dao.getCrm_accounts_insert();
-                    ChargeCardItemDao chargeCardItemDao = new ChargeCardItemDao();
-                    ChargeCardItemDao.CrmAccountsGetEntity entity = new ChargeCardItemDao.CrmAccountsGetEntity();
+                    AddChargeCard dao = data.getParcelableExtra("AddChargeCardDao");
+                    AddChargeCard.CrmAccountsInsertEntity insertEntity = dao.getCrm_accounts_insert();
+                    ChargeCardItem chargeCardItemDao = new ChargeCardItem();
+                    ChargeCardItem.CrmAccountsGetEntity entity = new ChargeCardItem.CrmAccountsGetEntity();
                     entity.setAccountID(insertEntity.getAccountID());
                     entity.setAccountNo(insertEntity.getAccountNo());
                     entity.setAccountType(insertEntity.getAccountType());
@@ -135,7 +135,7 @@ public class ChargeCardActivity extends UtilActivity {
             case DELETE:
                 if(resultCode == DeleteChargeCardActivity.SUCCESS){//删除充电卡成功
                     Toast.makeText(ChargeCardActivity.this,"删除充电卡成功",Toast.LENGTH_SHORT).show();
-                    ChargeCardItemDao chargeCardItemDao = data.getParcelableExtra("DeleteChargeCardDao");
+                    ChargeCardItem chargeCardItemDao = data.getParcelableExtra("DeleteChargeCardDao");
                     int index = getIndexFromList(chargeCardItemDao);
                     daos.remove(index);
                     adapter.notifyDataSetChanged();
@@ -151,7 +151,7 @@ public class ChargeCardActivity extends UtilActivity {
      * @param chargeCardItemDao
      * @return
      */
-    public int getIndexFromList(ChargeCardItemDao chargeCardItemDao){
+    public int getIndexFromList(ChargeCardItem chargeCardItemDao){
         for(int i=0;i<daos.size();i++){
             if(TextUtils.equals(daos.get(i).getCrm_accounts_get().getAccountID(),chargeCardItemDao.getCrm_accounts_get().getAccountID())){
                 return i;
@@ -163,7 +163,7 @@ public class ChargeCardActivity extends UtilActivity {
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context,ArrayList<ChargeCardItemDao> daos){
+    public static void startAppActivity(Context context,ArrayList<ChargeCardItem> daos){
         Intent intent = new Intent(context,ChargeCardActivity.class);
         intent.putParcelableArrayListExtra("daos",daos);
         context.startActivity(intent);

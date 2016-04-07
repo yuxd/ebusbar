@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.Login;
 
 /**
  * 账户余额
@@ -62,7 +62,7 @@ public class BalanceActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         if(!TextUtils.isEmpty(entity.getBalanceAmt())){
             money.setText("¥" + entity.getBalanceAmt());
         }

@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.BalanceDao;
+import com.ebusbar.bean.Balance;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/23.
  */
-public class BalanceDaoImpl extends BaseImpl{
+public class BalanceDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public BalanceDao balanceDao;
+    public Balance balanceDao;
 
     public BalanceDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -45,7 +45,7 @@ public class BalanceDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonBalance",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    balanceDao = JsonUtil.arrayFormJson(s,BalanceDao[].class).get(0);
+                    balanceDao = JsonUtil.arrayFormJson(s,Balance[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

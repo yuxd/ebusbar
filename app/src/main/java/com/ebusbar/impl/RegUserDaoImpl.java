@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ebusbar.dao.RegUserDao;
+import com.ebusbar.bean.RegUser;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -14,7 +14,7 @@ import com.jellycai.service.ResponseResultHandler;
 /**
  * Created by Jelly on 2016/3/4.
  */
-public class RegUserDaoImpl extends BaseImpl{
+public class RegUserDaoImpl extends BaseDaoImpl {
     /**
      * 访问地址
      */
@@ -22,7 +22,7 @@ public class RegUserDaoImpl extends BaseImpl{
     /**
      * 操作数据
      */
-    public RegUserDao regUserDao;
+    public RegUser regUserDao;
 
     public RegUserDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -53,7 +53,7 @@ public class RegUserDaoImpl extends BaseImpl{
                 Log.v("json",json.trim());
                 if(b || TextUtils.isEmpty(json)) return;
                 if(NetParam.isSuccess(b,json)){
-                    regUserDao = JsonUtil.arrayFormJson(json, RegUserDao[].class).get(0);
+                    regUserDao = JsonUtil.arrayFormJson(json, RegUser[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

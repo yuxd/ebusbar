@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.ebusbar.dao.NearbyStationDao;
+import com.ebusbar.bean.NearbyStation;
 import com.ebusbar.pile.LoginActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
@@ -27,9 +27,9 @@ public class NearbyListItemAdapter extends BaseAdapter{
 
     private MyApplication application;
 
-    private List<NearbyStationDao> list;
+    private List<NearbyStation> list;
 
-    public NearbyListItemAdapter(Context context,List<NearbyStationDao> list) {
+    public NearbyListItemAdapter(Context context,List<NearbyStation> list) {
         this.context = context;
         this.list = list;
         application = (MyApplication) ((Activity)context).getApplication();
@@ -73,7 +73,7 @@ public class NearbyListItemAdapter extends BaseAdapter{
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
-        final NearbyStationDao.EvcStationsGetEntity entity = ((NearbyStationDao)getItem(position)).getEvc_stations_get();
+        final NearbyStation.EvcStationsGetEntity entity = ((NearbyStation)getItem(position)).getEvc_stations_get();
         holder.name.setText(entity.getOrgName());
         holder.position_text.setText(entity.getAddr());
         if(TextUtils.equals(entity.getIsAvailable(),"1")){

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.PileInfoDao;
+import com.ebusbar.bean.PileInfo;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -13,11 +13,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 通过二维码回去电桩详情
  * Created by Jelly on 2016/3/22.
  */
-public class PileInfoDaoImpl extends BaseImpl{
+public class PileInfoDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public PileInfoDao pileInfoDao;
+    public PileInfo pileInfoDao;
 
     public PileInfoDaoImpl(Context context) {
         super(context);
@@ -45,7 +45,7 @@ public class PileInfoDaoImpl extends BaseImpl{
             @Override
             public void response(boolean b, String s) {
                 if(NetParam.isSuccess(b,s)){ //如果数据校验成功了，才会去解析数据
-                    pileInfoDao = JsonUtil.arrayFormJson(s, PileInfoDao[].class).get(0);
+                    pileInfoDao = JsonUtil.arrayFormJson(s, PileInfo[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

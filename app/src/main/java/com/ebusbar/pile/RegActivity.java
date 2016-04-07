@@ -17,7 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.ErrorDao;
+import com.ebusbar.bean.Error;
 import com.ebusbar.impl.CodeDaoImpl;
 import com.ebusbar.impl.RegUserDaoImpl;
 import com.ebusbar.utils.ActivityControl;
@@ -233,7 +233,7 @@ public class RegActivity extends UtilActivity {
                 }
             }else if(msg.what == msgReg){ //注册
                 if(TextUtils.equals(regUserDao.regUserDao.getCrm_register().getIsSuccess(), "N")){
-                    ErrorDao errorDao = errorParamUtil.checkReturnState(regUserDao.regUserDao.getCrm_register().getReturnStatus());
+                    Error errorDao = errorParamUtil.checkReturnState(regUserDao.regUserDao.getCrm_register().getReturnStatus());
                     toastUtil.toastError(context,errorDao,null);
                     return;
                 }

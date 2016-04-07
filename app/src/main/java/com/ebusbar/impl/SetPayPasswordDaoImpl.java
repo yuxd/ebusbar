@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.SetPayPasswordDao;
+import com.ebusbar.bean.SetPayPassword;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 设置支付密码
  * Created by Jelly on 2016/3/23.
  */
-public class SetPayPasswordDaoImpl extends BaseImpl{
+public class SetPayPasswordDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public SetPayPasswordDao setPayPasswordDao;
+    public SetPayPassword setPayPasswordDao;
 
     public SetPayPasswordDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -47,7 +47,7 @@ public class SetPayPasswordDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonsss",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    setPayPasswordDao = JsonUtil.arrayFormJson(s,SetPayPasswordDao[].class).get(0);
+                    setPayPasswordDao = JsonUtil.arrayFormJson(s,SetPayPassword[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

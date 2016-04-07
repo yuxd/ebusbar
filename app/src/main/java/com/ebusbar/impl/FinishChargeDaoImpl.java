@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
 
-import com.ebusbar.dao.FinishChargeDao;
+import com.ebusbar.bean.FinishCharge;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.param.NetParam;
 import com.jellycai.service.ResponseResultHandler;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 结束充电
  * Created by Jelly on 2016/3/11.
  */
-public class FinishChargeDaoImpl extends BaseImpl{
+public class FinishChargeDaoImpl extends BaseDaoImpl {
     /**
      * 操作对象
      */
-    public FinishChargeDao finishChargeDao;
+    public FinishCharge finishChargeDao;
 
 
     public FinishChargeDaoImpl(Context context, Handler handler, int msg) {
@@ -52,7 +52,7 @@ public class FinishChargeDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 Log.v("jsonFinish",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    finishChargeDao = JsonUtil.arrayFormJson(s, FinishChargeDao[].class).get(0);
+                    finishChargeDao = JsonUtil.arrayFormJson(s, FinishCharge[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

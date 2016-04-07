@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.adpater.BillListAdapter;
-import com.ebusbar.dao.BillDao;
+import com.ebusbar.bean.Bill;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class BillActivity extends UtilActivity {
     /**
      * 账单数据集合
      */
-    private List<BillDao> daos;
+    private List<Bill> daos;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,7 +70,7 @@ public class BillActivity extends UtilActivity {
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context,ArrayList<BillDao> daos){
+    public static void startAppActivity(Context context,ArrayList<Bill> daos){
         Intent intent = new Intent(context,BillActivity.class);
         intent.putParcelableArrayListExtra("daos",daos);
         context.startActivity(intent);

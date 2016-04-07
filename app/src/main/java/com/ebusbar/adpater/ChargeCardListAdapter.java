@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.ebusbar.dao.ChargeCardItemDao;
+import com.ebusbar.bean.ChargeCardItem;
 import com.ebusbar.pile.R;
 
 import java.util.List;
@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class ChargeCardListAdapter extends BaseAdapter{
 
-    private List<ChargeCardItemDao> list;
+    private List<ChargeCardItem> list;
 
     private Context context;
 
-    public ChargeCardListAdapter(Context context,List<ChargeCardItemDao> list) {
+    public ChargeCardListAdapter(Context context,List<ChargeCardItem> list) {
         this.context = context;
         this.list = list;
     }
@@ -56,7 +56,7 @@ public class ChargeCardListAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        ChargeCardItemDao dao = (ChargeCardItemDao) getItem(position);
+        ChargeCardItem dao = (ChargeCardItem) getItem(position);
         viewHolder.no.setText(dao.getCrm_accounts_get().getAccountNo());
         return convertView;
     }

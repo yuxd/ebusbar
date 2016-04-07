@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
-import com.ebusbar.dao.AllStationDao;
+import com.ebusbar.bean.AllStation;
 import com.ebusbar.map.MyLocation;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
@@ -26,13 +26,13 @@ public class SearchListAdapter extends BaseAdapter{
     /**
      * 显示的数据集合
      */
-    private List<AllStationDao> list;
+    private List<AllStation> list;
 
     private Context context;
 
     private MyApplication application;
 
-    public SearchListAdapter(Context context,MyApplication application,List<AllStationDao> list){
+    public SearchListAdapter(Context context,MyApplication application,List<AllStation> list){
         this.context = context;
         this.list = list;
         this.application = application;
@@ -74,7 +74,7 @@ public class SearchListAdapter extends BaseAdapter{
         }else{
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        AllStationDao.EvcStationsGetallEntity entity = ((AllStationDao)getItem(position)).getEvc_stations_getall();
+        AllStation.EvcStationsGetallEntity entity = ((AllStation)getItem(position)).getEvc_stations_getall();
         viewHolder.orgName.setText(entity.getOrgName());
         viewHolder.addr.setText(entity.getAddr());
         viewHolder.city.setText(entity.getCity());

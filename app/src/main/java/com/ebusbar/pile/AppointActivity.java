@@ -14,10 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.dao.AppointCostDao;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
-import com.ebusbar.dao.PayingAppointOrderDao;
+import com.ebusbar.bean.AppointCost;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
+import com.ebusbar.bean.PayingAppointOrder;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.AppointCostDaoImpl;
 import com.ebusbar.impl.AppointDaoImpl;
@@ -217,7 +217,7 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         TextView time = (TextView) v;
         //暂时不设定预约金额
         if(time == time15){
@@ -254,7 +254,7 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
             Toast.makeText(this,"请选择预约时间",Toast.LENGTH_SHORT).show();
             return view;
         }
-        LoginDao.DataEntity entity = application.getLoginDao().getData();
+        Login.DataEntity entity = application.getLoginDao().getData();
         payingAppointOrderDao.getDao(entity.getToken(),entity.getCustID(),intent.getStringExtra("FacilityID"),selectTime.getText().toString().replace("分钟", ""),appoint_price.getText().toString().replace("¥", ""));
         appoint.setEnabled(false);
         return view;
@@ -266,7 +266,7 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
             switch (msg.what){
                 case msgAppoint:
                     if(TextUtils.equals(appointDao.dao.getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(appointDao.dao.getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(appointDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         setResult(FAILURE);
                         ActivityControl.finishAct(AppointActivity.this);
@@ -291,12 +291,12 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                     });
                     break;
                 case msgLoading:
-                    LoginDao.DataEntity entity = application.getLoginDao().getData();
+                    Login.DataEntity entity = application.getLoginDao().getData();
                     orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), appointDao.dao.getData().getOrderNo(), entity.getCustID());
                     break;
                 case msgInfo:
                     if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
@@ -316,27 +316,27 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                     break;
                 case msgAppointCost: //获取预约金额
                     if(TextUtils.equals(appointCostDao.dao.getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(appointCostDao.dao.getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(appointCostDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
-                    AppointCostDao.DataEntity dataEntity = appointCostDao.dao.getData();
+                    AppointCost.DataEntity dataEntity = appointCostDao.dao.getData();
                     appoint_price.setText("¥" + dataEntity.getCost());
                     appoint.setEnabled(true);
                     break;
                 case msgPayingAppoint:
                     if(TextUtils.equals(payingAppointOrderDao.dao.getIsSuccess(),"N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(payingAppointOrderDao.dao.getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(payingAppointOrderDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         appoint.setEnabled(true);
                         return;
                     }
-                    PayingAppointOrderDao.DataEntity dataEntity1 = payingAppointOrderDao.dao.getData();
+                    PayingAppointOrder.DataEntity dataEntity1 = payingAppointOrderDao.dao.getData();
                     PayActivity.startPayActivity(context,dataEntity1.getOrderNo(),PayActivity.CHARGE,PAYREQUEST);
                     break;
                 case msgCancelAppointPay:
                     if(TextUtils.equals(cancelAppointPayDao.dao.getIsSuccess(), "N")){
-                        ErrorDao errorDao = errorParamUtil.checkReturnState(cancelAppointPayDao.dao.getReturnStatus());
+                        Error errorDao = errorParamUtil.checkReturnState(cancelAppointPayDao.dao.getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
@@ -366,7 +366,7 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case PAYREQUEST:
-                LoginDao.DataEntity entity = application.getLoginDao().getData();
+                Login.DataEntity entity = application.getLoginDao().getData();
                 if(resultCode == PayActivity.SUCCESS){ //支付成功
                     Toast.makeText(context,"付款成功,正在预约中，请不要退出界面",Toast.LENGTH_SHORT).show();
                     appointDao.getAppointDao(entity.getToken(),data.getStringExtra("OrderNo"), entity.getCustID());

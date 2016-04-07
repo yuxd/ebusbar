@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.ebusbar.dao.BillDao;
+import com.ebusbar.bean.Bill;
 import com.ebusbar.pile.R;
 
 import java.util.List;
@@ -23,9 +23,9 @@ public class BillListAdapter extends BaseAdapter{
     /**
      * 数据集合
      */
-    private List<BillDao> list;
+    private List<Bill> list;
 
-    public BillListAdapter(Context context,List<BillDao> list){
+    public BillListAdapter(Context context,List<Bill> list){
         this.context = context;
         this.list = list;
     }
@@ -67,7 +67,7 @@ public class BillListAdapter extends BaseAdapter{
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
-        BillDao.CrmBalancelogGetEntity entity = ((BillDao)getItem(position)).getCrm_balancelog_get();
+        Bill.CrmBalancelogGetEntity entity = ((Bill)getItem(position)).getCrm_balancelog_get();
         switch (entity.getLogType()){
             case "1":
                 holder.type.setText("支付宝充值");

@@ -14,9 +14,9 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 
 import com.ebusbar.adpater.AllOrderListAdapter;
-import com.ebusbar.dao.CompleteOrderDao;
-import com.ebusbar.dao.ErrorDao;
-import com.ebusbar.dao.LoginDao;
+import com.ebusbar.bean.CompleteOrder;
+import com.ebusbar.bean.Error;
+import com.ebusbar.bean.Login;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.CompleteOrderDaoImpl;
 import com.ebusbar.pile.MyApplication;
@@ -112,7 +112,7 @@ public class FinishOrderFrag extends UtilFragment {
     @Override
     public void setFragView() {
         loading = popupWindowUtil.startLoading(context,root,"加载中");
-        LoginDao.DataEntity data = application.getLoginDao().getData();
+        Login.DataEntity data = application.getLoginDao().getData();
         completeOrderDao.getCompleteOrderDaos(data.getToken(), data.getCustID());
     }
 
@@ -127,12 +127,12 @@ public class FinishOrderFrag extends UtilFragment {
                     return;
                 }
                 if(TextUtils.equals(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
-                    ErrorDao errorDao = errorParamUtil.checkReturnState(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
+                    Error errorDao = errorParamUtil.checkReturnState(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
                     toastUtil.toastError(context,errorDao,null);
                     nodata_show.setVisibility(View.VISIBLE);
                     return;
                 }
-                ArrayList<CompleteOrderDao> arrayList = new ArrayList<CompleteOrderDao>();
+                ArrayList<CompleteOrder> arrayList = new ArrayList<CompleteOrder>();
                 arrayList.addAll(completeOrderDao.completeOrderDaos);
                 adapter = new AllOrderListAdapter(context,arrayList,application.getLoginDao());
                 finish_list.setAdapter(adapter);

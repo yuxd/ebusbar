@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.ebusbar.dao.AppointCostDao;
+import com.ebusbar.bean.AppointCost;
 import com.ebusbar.param.NetParam;
 import com.ebusbar.utils.JsonUtil;
 import com.ebusbar.utils.LogUtil;
@@ -14,11 +14,11 @@ import com.jellycai.service.ResponseResultHandler;
  * 预约花费
  * Created by Jelly on 2016/3/31.
  */
-public class AppointCostDaoImpl extends BaseImpl{
+public class AppointCostDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public AppointCostDao dao;
+    public AppointCost dao;
 
     public AppointCostDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -48,7 +48,7 @@ public class AppointCostDaoImpl extends BaseImpl{
             public void response(boolean b, String s) {
                 if(NetParam.isSuccess(b,s)){
                     LogUtil.v(TAG,s.trim());
-                    dao = JsonUtil.objectFromJson(s,AppointCostDao.class);
+                    dao = JsonUtil.objectFromJson(s,AppointCost.class);
                 }
                 handler.sendEmptyMessage(msg);
             }
