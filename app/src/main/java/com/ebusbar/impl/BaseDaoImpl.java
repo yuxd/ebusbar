@@ -17,7 +17,7 @@ public abstract class BaseDaoImpl {
     /**
      * TAG
      */
-    public static String TAG = "BaseImpl";
+    public static String TAG = "BaseDaoImpl";
 
     protected Context context;
     /**

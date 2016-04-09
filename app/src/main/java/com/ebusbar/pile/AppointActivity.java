@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.ebusbar.bean.AppointCost;
 import com.ebusbar.bean.Error;
 import com.ebusbar.bean.Login;
 import com.ebusbar.bean.PayingAppointOrder;
+import com.ebusbar.bean.PileListItem;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.AppointCostDaoImpl;
 import com.ebusbar.impl.AppointDaoImpl;
@@ -43,43 +45,54 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
     /**
      * 15
      */
-    TextView time15;
+    private TextView time15;
     /**
      * 30
      */
-    TextView time30;
+    private TextView time30;
     /**
      * 45
      */
-    TextView time45;
+    private TextView time45;
     /**
      * 60
      */
-    TextView time60;
+    private TextView time60;
     /**
-     * 当前选择的时间
+     * 充电点名称
      */
-    TextView selectTime;
+    private TextView orgName;
     /**
-     * 预约价格
+     * 地址
      */
-    TextView appoint_price;
-    /**
-     * 充电点
-     */
-    TextView position_text;
-    /**
-     * 充电桩
-     */
-    TextView EPid_text;
+    private TextView addr;
     /**
      * 电桩名称
      */
-    TextView name;
+    private TextView facilityName;
     /**
-     * 预约
+     * 电桩类型
      */
-    TextView appoint;
+    private TextView facilityType;
+    /**
+     * 电桩模式
+     */
+    private TextView facilityMode;
+    /**
+     * 使用
+     */
+    private TextView applicableCar;
+    /**
+     * 预约按钮
+     */
+    private Button appoint;
+    /**
+     * 选择的时间
+     */
+    private TextView selectTime;
+
+    private TextView appoint_price;
+
     /**
      * AppointDaoImpl
      */
@@ -169,11 +182,14 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
         time30 = (TextView) this.findViewById(R.id.time30);
         time45 = (TextView) this.findViewById(R.id.time45);
         time60 = (TextView) this.findViewById(R.id.time60);
+        orgName = (TextView) this.findViewById(R.id.orgName);
+        addr = (TextView) this.findViewById(R.id.addr);
+        facilityName = (TextView) this.findViewById(R.id.facilityName);
+        facilityType = (TextView) this.findViewById(R.id.facilityType);
+        facilityMode = (TextView) this.findViewById(R.id.facilityMode);
+        applicableCar = (TextView) this.findViewById(R.id.applicableCar);
+        appoint = (Button) this.findViewById(R.id.appoint);
         appoint_price = (TextView) this.findViewById(R.id.appoint_price);
-        position_text = (TextView) this.findViewById(R.id.position_text);
-        EPid_text = (TextView) this.findViewById(R.id.EPid_text);
-        name = (TextView) this.findViewById(R.id.name);
-        appoint = (TextView) this.findViewById(R.id.appoint);
     }
 
     @Override
@@ -194,9 +210,16 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
 
     @Override
     public void setActivityView() {
-        position_text.setText(intent.getStringExtra("OrgName"));
-        EPid_text.setText(intent.getStringExtra("FacilityID"));
-        name.setText(intent.getStringExtra("FacilityName").replace("号充电桩", ""));
+        PileListItem.EvcFacilitiesGetEntity entity = intent.getParcelableExtra("Entity");
+        orgName.setText(entity.getOrgName());
+        addr.setText(intent.getStringExtra("Addr"));
+        facilityName.setText(entity.getFacilityName());
+        if(TextUtils.equals("1",entity.getFacilityType())){
+            facilityType.setText("直流桩");
+        }else if(TextUtils.equals("0",entity.getFacilityType())){
+            facilityType.setText("交流桩");
+        }
+        applicableCar.setText(entity.getApplicableCar());
     }
 
     @Override
@@ -255,7 +278,8 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
             return view;
         }
         Login.DataEntity entity = application.getLoginDao().getData();
-        payingAppointOrderDao.getDao(entity.getToken(),entity.getCustID(),intent.getStringExtra("FacilityID"),selectTime.getText().toString().replace("分钟", ""),appoint_price.getText().toString().replace("¥", ""));
+        PileListItem.EvcFacilitiesGetEntity entity1 = intent.getParcelableExtra("Entity");
+        payingAppointOrderDao.getDao(entity.getToken(),entity.getCustID(),entity1.getFacilityID(),selectTime.getText().toString().replace("分钟", ""),appoint_price.getText().toString().replace("¥", ""));
         appoint.setEnabled(false);
         return view;
     }
@@ -381,11 +405,10 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
     /**
      * 启动界面
      */
-    public static void startAppActivity(Context context,String OrgName,String FacilityID,String FacilityName,int requestCode){
+    public static void startAppActivity(Context context, PileListItem.EvcFacilitiesGetEntity entity,String addr,int requestCode){
         Intent intent = new Intent(context,AppointActivity.class);
-        intent.putExtra("OrgName",OrgName);
-        intent.putExtra("FacilityID",FacilityID);
-        intent.putExtra("FacilityName", FacilityName);
+        intent.putExtra("Entity",entity);
+        intent.putExtra("Addr",addr);
         Activity activity = (Activity) context;
         activity.startActivityForResult(intent,requestCode);
     }

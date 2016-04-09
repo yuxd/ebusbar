@@ -39,7 +39,6 @@ import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.AllStationDaoImpl;
 import com.ebusbar.impl.NearbyStationDaoImpl;
 import com.ebusbar.map.MyLocation;
-import com.ebusbar.view.SlideSwitch;
 import com.ebusbar.param.DefaultParam;
 import com.ebusbar.pile.LoginActivity;
 import com.ebusbar.pile.MainActivity;
@@ -50,6 +49,7 @@ import com.ebusbar.pile.SearchActivity;
 import com.ebusbar.pile.SelectPileActivity;
 import com.ebusbar.utils.FloatUtil;
 import com.ebusbar.utils.LogUtil;
+import com.ebusbar.view.SlideSwitch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -304,6 +304,9 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             if(TextUtils.equals(dao.getEvc_stations_getall().getIsAvailable(),"1")) { //可用
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
             }else{
+                LogUtil.v("错误充电点",dao.getEvc_stations_getall().getOrgName());
+                LogUtil.v("纬度",dao.getEvc_stations_getall().getLatitude());
+                LogUtil.v("经度",dao.getEvc_stations_getall().getLongitude());
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.red_marker));
             }
             markers.add(aMap.addMarker(markerOptions));
@@ -517,7 +520,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                 if(!application.isLogin()){
                     LoginActivity.startAppActivity(context);
                 }else {
-                    SelectPileActivity.startAppActivity(context, entity.getOrgId());
+                    SelectPileActivity.startAppActivity(context, entity.getOrgId(),entity.getAddr());
                 }
             }
         });
@@ -572,7 +575,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                 if(!application.isLogin()){
                     LoginActivity.startAppActivity(context);
                 }else {
-                    SelectPileActivity.startAppActivity(context, positionDao.getEvc_stations_get().getOrgId());
+                    SelectPileActivity.startAppActivity(context, positionDao.getEvc_stations_get().getOrgId(),positionDao.getEvc_stations_get().getAddr());
                 }
             }
         });

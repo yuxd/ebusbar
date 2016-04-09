@@ -35,6 +35,16 @@ public class PileInfo {
         private String FacilityName;
         private String FacilityModel;
         private String FacilityStatus;
+        private String FacilityType;
+
+        public String getFacilityType() {
+            return FacilityType;
+        }
+
+        public void setFacilityType(String facilityType) {
+            FacilityType = facilityType;
+        }
+
         private String Price;
         private String FacilityNo;
         private String OrgID;

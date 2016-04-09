@@ -18,7 +18,9 @@ import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.bean.Error;
 import com.ebusbar.bean.Login;
 import com.ebusbar.bean.OrderInfo;
+import com.ebusbar.bean.PendingOrder;
 import com.ebusbar.bean.PileInfo;
+import com.ebusbar.bean.StartCharge;
 import com.ebusbar.handlerinterface.NetErrorHandlerListener;
 import com.ebusbar.impl.ChargeOrderDaoImpl;
 import com.ebusbar.impl.FinishChargeDaoImpl;
@@ -39,13 +41,25 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
      */
     public String TAG="ChargeActivity";
     /**
-     * 充电点
+     * 充电点名称
      */
-    private TextView position_text;
+    private TextView orgName;
+    /**
+     * 电桩类型
+     */
+    private TextView facilityType;
     /**
      * 电桩ID
      */
-    private TextView EPid_text;
+    private TextView facilityId;
+    /**
+     * 电桩模式
+     */
+    private TextView facilityMode;
+    /**
+     * 电桩号
+     */
+    private TextView facilityName;
     /**
      * 充电时间
      */
@@ -58,10 +72,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
      * 充电花费
      */
     private TextView charge_money_text;
-    /**
-     * 电桩号
-     */
-    private TextView facilityName;
+
     /**
      * 开始充电按钮
      */
@@ -168,7 +179,6 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
      */
     private boolean isFinish = false;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,14 +198,16 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
 
     @Override
     public void init() {
-        position_text = (TextView) this.findViewById(R.id.position_text);
-        EPid_text = (TextView) this.findViewById(R.id.EPid_text);
         charge_time_text = (TextView) this.findViewById(R.id.charge_time_text);
         charge_degress_text = (TextView) this.findViewById(R.id.charge_degress_text);
         charge_money_text = (TextView) this.findViewById(R.id.charge_money_text);
         charge_btn = (ImageView) this.findViewById(R.id.charge_btn);
         title = (TextView) this.findViewById(R.id.title);
         facilityName = (TextView) this.findViewById(R.id.facilityName);
+        orgName = (TextView) this.findViewById(R.id.orgName);
+        facilityType = (TextView) this.findViewById(R.id.facilityType);
+        facilityId = (TextView) this.findViewById(R.id.facilityId);
+        facilityMode = (TextView) this.findViewById(R.id.facilityMode);
     }
 
     @Override
@@ -207,7 +219,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
         orderInfoDao = new OrderInfoDaoImpl(this,handler,msgInfo);
         startOrderInfoDao = new OrderInfoDaoImpl(this,handler,startOrderInfo);
         application = (MyApplication) getApplication();
-        OrderNo = intent.getStringExtra("OrderNo");
+        pileInfoDao = new PileInfoDaoImpl(this,handler,msgPileInfo);
     }
 
     @Override
@@ -217,14 +229,24 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
     @Override
     public void setActivityView() {
         if(!TextUtils.isEmpty(intent.getStringExtra("QRId"))){ //读取二维码数据
-            pileInfoDao.getPileInfoDao(intent.getStringExtra("QRId"));
+            pileInfoDao.getPileInfoDao(intent.getStringExtra("QRId"),PileInfoDaoImpl.QRCODE);
             return;
         }else{
             Login.DataEntity entity = application.getLoginDao().getData();
             startOrderInfoDao.getOrderInfoDaoImpl(entity.getToken(),intent.getStringExtra("OrderNo"),entity.getCustID());
         }
-        position_text.setText(intent.getStringExtra("OrgName"));
-        EPid_text.setText(intent.getStringExtra("FacilityID"));
+        if(intent.getParcelableExtra("Entity") instanceof PendingOrder.EvcOrdersGetEntity){
+            PendingOrder.EvcOrdersGetEntity entity = intent.getParcelableExtra("Entity");
+            pileInfoDao.getPileInfoDao(entity.getFacilityID(),PileInfoDaoImpl.FACILITYID);
+            OrderNo = entity.getOrderNo();
+        }else if(intent.getParcelableExtra("Entity") instanceof StartCharge.EvcOrderChangeEntity){
+            StartCharge.EvcOrderChangeEntity entity = intent.getParcelableExtra("Entity");
+            pileInfoDao.getPileInfoDao(entity.getFacilityID(),PileInfoDaoImpl.FACILITYID);
+            OrderNo = entity.getOrderNo();
+        }
+        title.setText("充电中");
+        chargeState = CHARGEING;
+        charge_btn.setImageResource(R.drawable.click_finish);
         if(TextUtils.equals(intent.getStringExtra("OrderStatus"), "2")){ //充电中
             title.setText("充电中");
             chargeState = CHARGEING;
@@ -308,7 +330,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                         }
                     });
                     break;
-                case msgPileInfo: //扫码二维码进入充电界面
+                case msgPileInfo: //根据二维码或者电桩id获取电桩详情
                     if(pileInfoDao.pileInfoDao == null || TextUtils.equals(pileInfoDao.pileInfoDao.getEvc_facility_get().getIsSuccess(),"N")){
                         Error errorDao = errorParamUtil.checkReturnState(pileInfoDao.pileInfoDao.getEvc_facility_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
@@ -316,9 +338,14 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                         return;
                     }
                     PileInfo.EvcFacilityGetEntity entity = pileInfoDao.pileInfoDao.getEvc_facility_get();
-                    facilityName.setText(entity.getFacilityName().replace("号桩","").replace("号电桩",""));
-                    position_text.setText(entity.getOrgName());
-                    EPid_text.setText(entity.getFacilityID());
+                    orgName.setText(entity.getOrgName());
+                    facilityName.setText(entity.getFacilityName());
+                    facilityId.setText(entity.getFacilityID());
+                    if(TextUtils.equals("1",entity.getFacilityType())){
+                        facilityType.setText("直流桩");
+                    }else if(TextUtils.equals("2",entity.getFacilityType())){
+                        facilityType.setText("交流桩");
+                    }
                     FacilityID = entity.getFacilityID();
                     break;
                 case msgLoading:
@@ -413,15 +440,22 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
     /**
      * 开启充电界面
      * @param context
-     * @param OrgName 充电点
-     * @param FacilityID 电桩号
+     * @param entity
      */
-    public static void startAppActivity(Context context,String OrgName,String FacilityID,String OrderStatus,String OrderNo){
+    public static void startAppActivity(Context context, StartCharge.EvcOrderChangeEntity entity){
         Intent intent = new Intent(context,ChargeActivity.class);
-        intent.putExtra("OrgName",OrgName);
-        intent.putExtra("FacilityID", FacilityID);
-        intent.putExtra("OrderStatus",OrderStatus);
-        intent.putExtra("OrderNo",OrderNo);
+        intent.putExtra("Entity",entity);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 开启充电界面
+     * @param context
+     * @param entity
+     */
+    public static void startAppActivity(Context context, PendingOrder.EvcOrdersGetEntity entity){
+        Intent intent = new Intent(context,ChargeActivity.class);
+        intent.putExtra("Entity",entity);
         context.startActivity(intent);
     }
 

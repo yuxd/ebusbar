@@ -95,7 +95,7 @@ public class SelectPileActivity extends UtilActivity {
                     Toast.makeText(SelectPileActivity.this,"有人正在使用，请您稍等片刻",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                AppointActivity.startAppActivity(SelectPileActivity.this, data.getOrgName(), data.getFacilityID(), data.getFacilityName(), APPOINT);
+                AppointActivity.startAppActivity(SelectPileActivity.this,data,intent.getStringExtra("Addr"),APPOINT);
             }
         });
     }
@@ -131,9 +131,10 @@ public class SelectPileActivity extends UtilActivity {
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context,String OrgId){
+    public static void startAppActivity(Context context,String OrgId,String addr){
         Intent intent = new Intent(context,SelectPileActivity.class);
         intent.putExtra("OrgId",OrgId);
+        intent.putExtra("Addr",addr);
         context.startActivity(intent);
     }
 

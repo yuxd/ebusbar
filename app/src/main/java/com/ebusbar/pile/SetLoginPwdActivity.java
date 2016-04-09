@@ -13,20 +13,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.impl.SetPasswordDaoImpl;
-import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.impl.ResetLoginPwdDaoImpl;
 
 /**
  * 设置密码
  * Created by Jelly on 2016/3/1.
  */
-public class SetPwdActivity extends UtilActivity {
+public class SetLoginPwdActivity extends UtilActivity {
     /**
      * TAG
      */
-    public String TAG = "SetPwdActivity";
+    public String TAG = "SetLoginPwdActivity";
     /**
      * 密码输入框1
      */
@@ -46,15 +46,19 @@ public class SetPwdActivity extends UtilActivity {
     /**
      * SetPasswordDaoImpl
      */
-    private SetPasswordDaoImpl setPasswordDao;
+    private ResetLoginPwdDaoImpl resetLoginPwdDao;
     /**
      * 设置密码消息
      */
-    private int msgSetPwd=0x001;
+    private final int msgSetPwd=0x001;
     /**
      * 需要修改密码的手机号
      */
     private String phone;
+    /**
+     * 验证码
+     */
+    private String code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,8 +71,9 @@ public class SetPwdActivity extends UtilActivity {
 
     @Override
     public void loadObjectAttribute() {
-        setPasswordDao = new SetPasswordDaoImpl(this,handler,msgSetPwd);
+        resetLoginPwdDao = new ResetLoginPwdDaoImpl(this,handler,msgSetPwd);
         phone = getIntent().getStringExtra("phone");
+        code = getIntent().getStringExtra("code");
     }
 
     @Override
@@ -163,20 +168,23 @@ public class SetPwdActivity extends UtilActivity {
         if(TextUtils.equals(password1,password2)){
             Log.v(TAG,"两次输入的密码有错误");
         }
-        setPasswordDao.getNetSetPasswordDao(phone, password1);
+        resetLoginPwdDao.getData(phone,code,password1);
         return view;
     }
 
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgSetPwd){
-                if(setPasswordDao == null || !TextUtils.equals(setPasswordDao.setPasswordDao.getMessage(),"1")){
-
-                    return;
-                }
-                ActivityControl.finishAct(SetPwdActivity.this);
-                LoginActivity.startAppActivity(SetPwdActivity.this);
+            switch (msg.what){
+                case msgSetPwd:
+                    if(TextUtils.equals("N",resetLoginPwdDao.bean.getIsSuccess())){
+                        com.ebusbar.bean.Error error = errorParamUtil.checkReturnState(resetLoginPwdDao.bean.getReturnStatus());
+                        toastUtil.toastError(context,error,null);
+                        return;
+                    }
+                    Toast.makeText(SetLoginPwdActivity.this,"重置密码成功",Toast.LENGTH_SHORT).show();
+                    LoginActivity.startAppActivity(context);
+                    break;
             }
         }
     };
@@ -185,9 +193,10 @@ public class SetPwdActivity extends UtilActivity {
      * 打开SetPwdActivity
      * @param context
      */
-    public static void startSetPwdActivity(Context context,String phone){
-        Intent intent = new Intent(context,SetPwdActivity.class);
-        intent.putExtra("phone", phone);
+    public static void startSetPwdActivity(Context context,String phone,String code){
+        Intent intent = new Intent(context,SetLoginPwdActivity.class);
+        intent.putExtra("phone",phone);
+        intent.putExtra("code",code);
         context.startActivity(intent);
     }
 

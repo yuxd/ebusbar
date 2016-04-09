@@ -3,13 +3,13 @@ package com.ebusbar.bean;
 /**
  * Created by Jelly on 2016/4/7.
  */
-public class CheckCode {
+public class ResetLoginPwd {
 
     /**
-     * interfaceName : crm_chkcode
+     * interfaceName : crm_pwd_reset
      * returnStatus : 100
      * isSuccess : Y
-     * data : {"Mobile":"18617050557","Code":"34986"}
+     * data : {"Mobile":"18617050557","Code":"91750"}
      */
 
     private String interfaceName;
@@ -17,7 +17,7 @@ public class CheckCode {
     private String isSuccess;
     /**
      * Mobile : 18617050557
-     * Code : 34986
+     * Code : 91750
      */
 
     private DataEntity data;

@@ -18,7 +18,7 @@ import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.bean.Error;
-import com.ebusbar.impl.CodeDaoImpl;
+import com.ebusbar.impl.CodeDao;
 import com.ebusbar.impl.RegUserDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.CountDownUtil;
@@ -57,7 +57,7 @@ public class RegActivity extends UtilActivity {
     /**
      * CodeDaoImpl
      */
-    private CodeDaoImpl codeDao;
+    private CodeDao codeDao;
     /**
      * regUserDaoImpl
      */
@@ -87,7 +87,7 @@ public class RegActivity extends UtilActivity {
     @Override
     public void loadObjectAttribute() {
         regUserDao = new RegUserDaoImpl(this,handler,msgReg);
-        codeDao = new CodeDaoImpl(this,handler,msgCode);
+        codeDao = new CodeDao(this,handler,msgCode);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class RegActivity extends UtilActivity {
                 }
             }else if(msg.what == msgCountDown){ //验证码倒计时结束
                 int count = (int) msg.obj;
-                reg_code_btn.setText(count+"");
+                reg_code_btn.setText("等待" + count + "秒");
                 if(count == 0){
                     reg_code_btn.setEnabled(true);
                     reg_code_btn.setText("获取验证码");

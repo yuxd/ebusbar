@@ -16,9 +16,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.impl.CodeDaoImpl;
-import com.ebusbar.utils.CountDownUtil;
+import com.ebusbar.impl.CheckCodeDaoImpl;
+import com.ebusbar.impl.CodeDao;
 import com.ebusbar.param.DefaultParam;
+import com.ebusbar.utils.CountDownUtil;
 import com.ebusbar.utils.RegExpUtil;
 
 /**
@@ -48,31 +49,39 @@ public class ForgetPwdActivity extends UtilActivity {
     /**
      * CodeDaoImpl
      */
-    private CodeDaoImpl codeDao;
+    private CodeDao codeDao;
     /**
      * 获取验证码消息
      */
-    private int msgCode = 0x001;
+    private final int msgCode = 0x001;
     /**
      * 倒计时消息
      */
-    private int msgCountDown = 0x002;
+    private final int msgCountDown = 0x002;
+    /**
+     * 校验验证码
+     */
+    private CheckCodeDaoImpl checkCodeDao;
+    /**
+     * 校验验证码消息
+     */
+    private final int msgCheckCode = 0x003;
 
+    private String phone;
 
+    private String code;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.forget_pwd);
-        loadObjectAttribute();
+
         init();
+        loadObjectAttribute();
         setListener();
+        setActivityView();
     }
 
-    @Override
-    public void loadObjectAttribute() {
-        codeDao = new CodeDaoImpl(this,handler,msgCode);
-    }
 
     @Override
     public void init(){
@@ -80,6 +89,12 @@ public class ForgetPwdActivity extends UtilActivity {
         forget_pwd_phone_et = (EditText) this.findViewById(R.id.forget_pwd_phone_et);
         forget_pwd_code_et = (EditText) this.findViewById(R.id.forget_pwd_code_et);
         forget_pwd_code_clear = (ImageView) this.findViewById(R.id.forget_pwd_code_clear);
+    }
+
+    @Override
+    public void loadObjectAttribute() {
+        codeDao = new CodeDao(this,handler,msgCode);
+        checkCodeDao = new CheckCodeDaoImpl(this,handler,msgCheckCode);
     }
 
     @Override
@@ -131,7 +146,7 @@ public class ForgetPwdActivity extends UtilActivity {
      * @return
      */
     public View getForgetCode(View view){
-        String phone = forget_pwd_phone_et.getText().toString();
+        phone = forget_pwd_phone_et.getText().toString();
         if(TextUtils.isEmpty(phone) || !RegExpUtil.regPhone(phone)){
             Log.v(TAG,"手机号码输入有误");
             return view;
@@ -145,13 +160,13 @@ public class ForgetPwdActivity extends UtilActivity {
      * @param view
      */
     public View nextTip(View view){
-        String phone = forget_pwd_phone_et.getText().toString();
-        String code = forget_pwd_code_et.getText().toString();
+        phone = forget_pwd_phone_et.getText().toString();
+        code = forget_pwd_code_et.getText().toString();
         if(TextUtils.isEmpty(phone) || !RegExpUtil.regPhone(phone)){
             Log.v(TAG,"手机号码输入错误");
             return view;
         }
-//        checkCodeDao.getNetCheckCodeDao(DefaultParam.FORGETCHECKCODE, phone, code);
+        checkCodeDao.getData(phone, code, CheckCodeDaoImpl.LOGIN);
         return view;
     }
 
@@ -166,16 +181,27 @@ public class ForgetPwdActivity extends UtilActivity {
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgCode){
-                forget_pwd_code_btn.setEnabled(false);
-                countDown();
-            }else if(msg.what == msgCountDown){
-                int count = (int) msg.obj;
-                forget_pwd_code_btn.setText(count + "");
-                if(count == 0){
-                    forget_pwd_code_btn.setEnabled(true);
-                    forget_pwd_code_btn.setText("获取验证码");
-                }
+            switch (msg.what){
+                case msgCode:
+                    forget_pwd_code_btn.setEnabled(false);
+                    countDown();
+                    break;
+                case msgCountDown:
+                    int count = (int) msg.obj;
+                    forget_pwd_code_btn.setText("等待" + count + "秒");
+                    if(count == 0){
+                        forget_pwd_code_btn.setEnabled(true);
+                        forget_pwd_code_btn.setText("获取验证码");
+                    }
+                    break;
+                case msgCheckCode:
+                    if(TextUtils.equals("N",checkCodeDao.bean.getIsSuccess())){
+                        com.ebusbar.bean.Error error = errorParamUtil.checkReturnState(checkCodeDao.bean.getReturnStatus());
+                        toastUtil.toastError(context,error,null);
+                        return;
+                    }
+                    SetLoginPwdActivity.startSetPwdActivity(context,phone,code);
+                    break;
             }
         }
     };

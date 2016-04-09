@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.bean.Error;
-import com.ebusbar.impl.CodeDaoImpl;
+import com.ebusbar.impl.CodeDao;
 import com.ebusbar.impl.LoginDaoImpl;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.CountDownUtil;
@@ -37,6 +37,10 @@ public class LoginActivity extends UtilActivity {
      * TAG
      */
     public String TAG = "LoginActivity";
+    /**
+     * STAG
+     */
+    public static String STAG = "LoginActivity";
     /**
      * 普通登录
      */
@@ -100,7 +104,7 @@ public class LoginActivity extends UtilActivity {
     /**
      * CodeDaoImpl
      */
-    private CodeDaoImpl codeDao;
+    private CodeDao codeDao;
 
     /**
      * 获取验证码对的消息
@@ -142,7 +146,7 @@ public class LoginActivity extends UtilActivity {
     @Override
     public void loadObjectAttribute(){
         loginDao = new LoginDaoImpl(this,handler,msgLogin);
-        codeDao = new CodeDaoImpl(this,handler,msgSmsCode);
+        codeDao = new CodeDao(this,handler,msgSmsCode);
     }
 
     @Override
@@ -361,7 +365,7 @@ public class LoginActivity extends UtilActivity {
                 }
             }else if(msg.what == msgCountDown){
                 int count = (int) msg.obj;
-                quick_code_btn.setText(count+"");
+                quick_code_btn.setText("等待"+count+"秒");
                 if(count == 0){
                     quick_code_btn.setEnabled(true);
                     quick_code_btn.setText("获取验证码");

@@ -1,5 +1,8 @@
 package com.ebusbar.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Jelly on 2016/3/10.
  */
@@ -34,7 +37,7 @@ public class PendingOrder {
         this.evc_orders_get = evc_orders_get;
     }
 
-    public static class EvcOrdersGetEntity {
+    public static class EvcOrdersGetEntity implements Parcelable {
         private String returnStatus;
         private String isSuccess;
         private String OrderNo;
@@ -179,5 +182,64 @@ public class PendingOrder {
         public void setTel(String Tel) {
             this.Tel = Tel;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.returnStatus);
+            dest.writeString(this.isSuccess);
+            dest.writeString(this.OrderNo);
+            dest.writeString(this.OrderStatus);
+            dest.writeString(this.OrderType);
+            dest.writeString(this.CompanyID);
+            dest.writeString(this.CustID);
+            dest.writeString(this.OrgID);
+            dest.writeString(this.OrgName);
+            dest.writeString(this.FacilityID);
+            dest.writeString(this.ChargingAmt);
+            dest.writeString(this.ServiceAmt);
+            dest.writeString(this.ChargingQty);
+            dest.writeString(this.PlanBeginDateTime);
+            dest.writeString(this.PlanEndDateTime);
+            dest.writeString(this.Tel);
+        }
+
+        public EvcOrdersGetEntity() {
+        }
+
+        protected EvcOrdersGetEntity(Parcel in) {
+            this.returnStatus = in.readString();
+            this.isSuccess = in.readString();
+            this.OrderNo = in.readString();
+            this.OrderStatus = in.readString();
+            this.OrderType = in.readString();
+            this.CompanyID = in.readString();
+            this.CustID = in.readString();
+            this.OrgID = in.readString();
+            this.OrgName = in.readString();
+            this.FacilityID = in.readString();
+            this.ChargingAmt = in.readString();
+            this.ServiceAmt = in.readString();
+            this.ChargingQty = in.readString();
+            this.PlanBeginDateTime = in.readString();
+            this.PlanEndDateTime = in.readString();
+            this.Tel = in.readString();
+        }
+
+        public static final Parcelable.Creator<EvcOrdersGetEntity> CREATOR = new Parcelable.Creator<EvcOrdersGetEntity>() {
+            @Override
+            public EvcOrdersGetEntity createFromParcel(Parcel source) {
+                return new EvcOrdersGetEntity(source);
+            }
+
+            @Override
+            public EvcOrdersGetEntity[] newArray(int size) {
+                return new EvcOrdersGetEntity[size];
+            }
+        };
     }
 }

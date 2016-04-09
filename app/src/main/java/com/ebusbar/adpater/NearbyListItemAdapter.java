@@ -87,7 +87,7 @@ public class NearbyListItemAdapter extends BaseAdapter{
                     if(!application.isLogin()){
                         LoginActivity.startAppActivity(context);
                     }else{
-                        SelectPileActivity.startAppActivity(context, entity.getOrgId());
+                        SelectPileActivity.startAppActivity(context, entity.getOrgId(),entity.getAddr());
                     }
                 }
             });

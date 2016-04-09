@@ -13,115 +13,173 @@
         ></include>
 
     <LinearLayout
-        android:id="@+id/appoint_info_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
         android:padding="10dp"
         android:background="#FFFFFF"
         >
+        <TextView
+            android:id="@+id/orgName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="天明科技大厦"
+            android:textSize="20sp"
+            android:textColor="@color/actionbar_bg"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:gravity="center_vertical"
+        android:background="#FFFFFF"
+        >
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/charge_location"
+            />
+
+        <TextView
+            android:id="@+id/addr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="广州省深圳市南山区滨海大道"
+            android:layout_marginLeft="5dp"
+            />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="10dp"
+
+        >
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/facilityName_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="12"
-                android:textSize="20sp"
-                android:textColor="#009b4c"
-                />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="号电桩"
-                android:textSize="20sp"
-                />
+                android:text="电桩：" />
+
+            <TextView
+                android:id="@+id/facilityName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12号"
+                android:textColor="#000000" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/facilityType_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            >
-
-            <ImageView
-                android:id="@+id/position_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/charge_location"
-                />
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/position_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="充电点："
-                />
+                android:text="设备：" />
 
             <TextView
-                android:id="@+id/position_text"
+                android:id="@+id/facilityType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:text="天明科技大厦"
-                />
+                android:text="直流桩"
+                android:textColor="#000000" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="10dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/facilityId_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="预约码：" />
+
+            <TextView
+                android:id="@+id/orderNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="未预约"
+                android:textColor="#000000" />
+
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/facilityMode_layout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            >
-            <ImageView
-                android:id="@+id/did_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/charge_dianzhuan"
-                />
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/did_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="电桩号："
-                />
+                android:text="速率：" />
 
             <TextView
-                android:id="@+id/EPid_text"
+                android:id="@+id/facilityMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:text="000000"
-                />
+                android:text="快充"
+                android:textColor="#000000" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-        android:text="选择预约时间"
-        />
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:background="#FFFFFF"
+        android:layout_marginTop="1dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="适合车型："
+            />
+
+        <TextView
+            android:id="@+id/applicableCar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="国标、特斯拉"
+            android:textColor="#000000"
+            />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/time_layout"
@@ -129,6 +187,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#FFFFFF"
+        android:layout_marginTop="10dp"
         >
 
         <TextView

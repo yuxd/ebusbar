@@ -60,7 +60,7 @@
             android:launchMode="singleTask"></activity>
 
         <activity
-            android:name="com.ebusbar.pile.SetPwdActivity"
+            android:name=".SetLoginPwdActivity"
             android:launchMode="singleTask"></activity>
 
         <activity

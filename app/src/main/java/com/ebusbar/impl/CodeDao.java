@@ -15,7 +15,7 @@ import com.jellycai.service.ResponseResultHandler;
  * 获取验证码
  * Created by Jelly on 2016/3/5.
  */
-public class CodeDaoImpl extends BaseDaoImpl {
+public class CodeDao extends BaseDaoImpl {
 
     /**
      * 访问地址,暂时的本地服务器地址
@@ -27,12 +27,12 @@ public class CodeDaoImpl extends BaseDaoImpl {
      */
     public Code codeDao;
 
-    public CodeDaoImpl(Context context, Handler handler, int msg) {
+    public CodeDao(Context context, Handler handler, int msg) {
         super(context, handler, msg);
         execmode = "crm.validation";
     }
 
-    public CodeDaoImpl(Context context) {
+    public CodeDao(Context context) {
         super(context);
     }
 

@@ -112,7 +112,7 @@ public class PendingOrderFrag extends UtilFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ActivityControl.finishAct((BaseActivity) getActivity());
                 PendingOrder.EvcOrdersGetEntity data = pendingOrder.pendingOrderDaos.get(position).getEvc_orders_get();
-                ChargeActivity.startAppActivity(context,data.getOrgName(),data.getFacilityID(),data.getOrderStatus(),data.getOrderNo());
+                ChargeActivity.startAppActivity(context,data);
             }
         });
     }
