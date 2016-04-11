@@ -2,18 +2,24 @@ package com.ebusbar.pile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.adpater.MyAppointPageAdapter;
+import com.ebusbar.adpater.ViewPageAdapter;
+import com.ebusbar.fragment.CarAppointFragment;
+import com.ebusbar.fragment.ChargeAppointFragment;
+import com.ebusbar.fragment.FixAppointFragment;
+import com.ebusbar.fragments.BaseFragment;
+import com.ebusbar.utils.AnimationUtil;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Jelly on 2016/3/10.
@@ -22,40 +28,37 @@ public class MyAppointActivity extends UtilActivity {
     /**
      * TAG
      */
-    public String TAG="MyAppointActivity";
-    /**
-     * 充电预约
-     */
-    private TextView charge_appoint_btn;
-    /**
-     * 租车预约
-     */
-    private TextView car_appoint_btn;
-    /**
-     * 售后预约
-     */
-    private TextView fix_appoint_btn;
-    /**
-     * 指示线条
-     */
-    private ImageView tab_line;
-    /**
-     * 页面
-     */
-    private ViewPager myappoint_vp;
+    public String TAG = "MyAppointActivity";
+    @Bind(R.id.charge_appoint_btn)
+    TextView chargeAppointBtn;
+    @Bind(R.id.car_appoint_btn)
+    TextView carAppointBtn;
+    @Bind(R.id.fix_appoint_btn)
+    TextView fixAppointBtn;
+    @Bind(R.id.tab_line)
+    ImageView tabLine;
+    @Bind(R.id.myappoint_vp)
+    ViewPager myappointVp;
     /**
      * 加载页面的Adapter
      */
-    private MyAppointPageAdapter pageAdapter;
+    private ViewPageAdapter pageAdapter;
     /**
      * 线条移动的位置
      */
     private int previousPosition;
+    /**
+     * 添加到ViewPage中的Fragment
+     */
+    private BaseFragment[] fragments;
+    /**
+     * 当前标签
+     */
+    private TextView currText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.myappoint);
         init();
         loadObjectAttribute();
         setListener();
@@ -64,16 +67,15 @@ public class MyAppointActivity extends UtilActivity {
 
     @Override
     public void init() {
-        charge_appoint_btn = (TextView) this.findViewById(R.id.charge_appoint_btn);
-        car_appoint_btn = (TextView) this.findViewById(R.id.car_appoint_btn);
-        fix_appoint_btn = (TextView) this.findViewById(R.id.fix_appoint_btn);
-        tab_line = (ImageView) this.findViewById(R.id.tab_line);
-        myappoint_vp = (ViewPager) this.findViewById(R.id.myappoint_vp);
+        this.setContentView(R.layout.myappoint);
+        ButterKnife.bind(this);
     }
 
     @Override
     public void loadObjectAttribute() {
-        pageAdapter = new MyAppointPageAdapter(getSupportFragmentManager());
+        fragments = new BaseFragment[]{new ChargeAppointFragment(), new CarAppointFragment(), new FixAppointFragment()};
+        pageAdapter = new ViewPageAdapter(getSupportFragmentManager(),fragments);
+        currText = chargeAppointBtn;
     }
 
     @Override
@@ -84,15 +86,15 @@ public class MyAppointActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        tab_line.getLayoutParams().width = windowUtil.getScreenWidth(this)/3; //设置线条指示器的宽度
-        myappoint_vp.setAdapter(pageAdapter);
+        tabLine.getLayoutParams().width = windowUtil.getScreenWidth(this) / 3; //设置线条指示器的宽度
+        myappointVp.setAdapter(pageAdapter);
     }
 
     /**
      * 设置ViewPage的页面改变事件
      */
-    public void setPageSelectListener(){
-        myappoint_vp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    public void setPageSelectListener() {
+        myappointVp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -100,7 +102,25 @@ public class MyAppointActivity extends UtilActivity {
 
             @Override
             public void onPageSelected(int position) {
-                selectTab(position);
+                if (currText != null) {
+                    currText.setTextColor(resourceUtil.getResourceColor(context, R.color.defaultTabColor));
+                }
+                switch (position) {
+                    case 0:
+                        currText = chargeAppointBtn;
+                        break;
+                    case 1:
+                        currText = carAppointBtn;
+                        break;
+                    case 2:
+                        currText = fixAppointBtn;
+                        break;
+                }
+                currText.setTextColor(resourceUtil.getResourceColor(context, R.color.tab_select_color));
+                //设置线条移动的动画
+                Animation animation = AnimationUtil.startTabLineAnimation(windowUtil, MyAppointActivity.this, previousPosition, position, fragments.length);
+                tabLine.startAnimation(animation);
+                previousPosition = position * windowUtil.getScreenWidth(MyAppointActivity.this) / fragments.length;
             }
 
             @Override
@@ -111,65 +131,40 @@ public class MyAppointActivity extends UtilActivity {
     }
 
 
-
     /**
      * 设置Tab的点击事件
      */
-    public void setTabChangeListener(){
-        charge_appoint_btn.setOnClickListener(new View.OnClickListener() {
+    public void setTabChangeListener() {
+        chargeAppointBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myappoint_vp.setCurrentItem(0);
+                myappointVp.setCurrentItem(0);
             }
         });
 
-        car_appoint_btn.setOnClickListener(new View.OnClickListener() {
+        carAppointBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myappoint_vp.setCurrentItem(1);
+                myappointVp.setCurrentItem(1);
             }
         });
 
-        fix_appoint_btn.setOnClickListener(new View.OnClickListener() {
+        fixAppointBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myappoint_vp.setCurrentItem(2);
+                myappointVp.setCurrentItem(2);
             }
         });
     }
 
-    public void selectTab(int position){
-        Resources resources = getResources();
-        if (position == 0) {
-            charge_appoint_btn.setTextColor(resources.getColor(R.color.tab_select_color));
-            car_appoint_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-            fix_appoint_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-        } else if (position == 1) {
-            charge_appoint_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-            car_appoint_btn.setTextColor(resources.getColor(R.color.tab_select_color));
-            fix_appoint_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-        } else if (position == 2) {
-            charge_appoint_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-            car_appoint_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-            fix_appoint_btn.setTextColor(resources.getColor(R.color.tab_select_color));
-        }
-        //设置线条移动的动画
-        int screenWidth = windowUtil.getScreenWidth(this);
-        TranslateAnimation ta = new TranslateAnimation(previousPosition,position*screenWidth/3,0,0);
-        ta.setDuration(200);
-        ta.setFillAfter(true);
-        ta.setInterpolator(new LinearInterpolator());
-        tab_line.startAnimation(ta);
-        previousPosition = position*screenWidth/3;
-
-    }
 
     /**
      * 开启我的预约界面
+     *
      * @param context
      */
-    public static void startAppActivity(Context context){
-        Intent intent = new Intent(context,MyAppointActivity.class);
+    public static void startAppActivity(Context context) {
+        Intent intent = new Intent(context, MyAppointActivity.class);
         context.startActivity(intent);
     }
 

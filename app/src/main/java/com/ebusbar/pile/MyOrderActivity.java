@@ -2,18 +2,23 @@ package com.ebusbar.pile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
-import com.ebusbar.adpater.MyOrderPageAdapter;
+import com.ebusbar.adpater.ViewPageAdapter;
+import com.ebusbar.fragment.FinishOrderFragment;
+import com.ebusbar.fragment.PendingOrderFragment;
+import com.ebusbar.fragments.BaseFragment;
+import com.ebusbar.utils.AnimationUtil;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Jelly on 2016/3/10.
@@ -23,35 +28,34 @@ public class MyOrderActivity extends UtilActivity {
      * TAG
      */
     public String TAG = "MyOrderActivity";
-    /**
-     * 待处理
-     */
-    private TextView pending_btn;
-    /**
-     * 已完成
-     */
-    private TextView finish_btn;
-    /**
-     * 线条指示器
-     */
-    private ImageView tab_line;
-    /**
-     * 页面
-     */
-    private ViewPager myorder_vp;
+    @Bind(R.id.pending_btn)
+    TextView pendingBtn;
+    @Bind(R.id.finish_btn)
+    TextView finishBtn;
+    @Bind(R.id.tab_line)
+    ImageView tabLine;
+    @Bind(R.id.myorder_vp)
+    ViewPager myorderVp;
     /**
      * 页面适配器
      */
-    private MyOrderPageAdapter pageAdapter;
+    private ViewPageAdapter pageAdapter;
     /**
      * 指示器的位置
      */
     private int previousPosition;
+    /**
+     * 添加的Fragment
+     */
+    private BaseFragment[] fragments;
+    /**
+     * 当前标签
+     */
+    private TextView currText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.myorder);
         init();
         loadObjectAttribute();
         setListener();
@@ -60,15 +64,14 @@ public class MyOrderActivity extends UtilActivity {
 
     @Override
     public void init() {
-        pending_btn = (TextView) this.findViewById(R.id.pending_btn);
-        finish_btn = (TextView) this.findViewById(R.id.finish_btn);
-        tab_line = (ImageView) this.findViewById(R.id.tab_line);
-        myorder_vp = (ViewPager) this.findViewById(R.id.myorder_vp);
+        this.setContentView(R.layout.myorder);
+        ButterKnife.bind(this);
     }
 
     @Override
     public void loadObjectAttribute() {
-        pageAdapter = new MyOrderPageAdapter(getSupportFragmentManager());
+        fragments = new BaseFragment[]{new PendingOrderFragment(), new FinishOrderFragment()};
+        pageAdapter = new ViewPageAdapter(getSupportFragmentManager(), fragments);
     }
 
     @Override
@@ -79,17 +82,17 @@ public class MyOrderActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        tab_line.getLayoutParams().width = windowUtil.getScreenWidth(this)/2; //设置线条指示器的宽度
-        myorder_vp.setAdapter(pageAdapter);
+        tabLine.getLayoutParams().width = windowUtil.getScreenWidth(this) / fragments.length; //设置线条指示器的宽度
+        myorderVp.setAdapter(pageAdapter);
+        currText = pendingBtn;
     }
-
 
 
     /**
      * 设置ViewPage的页面改变事件
      */
-    public void setPageSelectListener(){
-        myorder_vp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    public void setPageSelectListener() {
+        myorderVp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -97,7 +100,22 @@ public class MyOrderActivity extends UtilActivity {
 
             @Override
             public void onPageSelected(int position) {
-                selectTab(position);
+                if (currText != null) {
+                    currText.setTextColor(resourceUtil.getResourceColor(context, R.color.defaultTabColor));
+                }
+                switch (position) {
+                    case 0:
+                        currText = pendingBtn;
+                        break;
+                    case 1:
+                        currText = finishBtn;
+                        break;
+                }
+                currText.setTextColor(resourceUtil.getResourceColor(context, R.color.tab_select_color));
+                //设置线条移动的动画
+                Animation animation = AnimationUtil.startTabLineAnimation(windowUtil, MyOrderActivity.this, previousPosition, position, fragments.length);
+                tabLine.startAnimation(animation);
+                previousPosition = position * windowUtil.getScreenWidth(MyOrderActivity.this) / fragments.length;
             }
 
             @Override
@@ -110,46 +128,28 @@ public class MyOrderActivity extends UtilActivity {
     /**
      * 设置Tab的点击事件
      */
-    public void setTabChangeListener(){
-        pending_btn.setOnClickListener(new View.OnClickListener() {
+    public void setTabChangeListener() {
+        pendingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myorder_vp.setCurrentItem(0);
+                myorderVp.setCurrentItem(0);
             }
         });
 
-        finish_btn.setOnClickListener(new View.OnClickListener() {
+        finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myorder_vp.setCurrentItem(1);
+                myorderVp.setCurrentItem(1);
             }
         });
     }
 
-    public void selectTab(int position){
-        Resources resources = getResources();
-        if (position == 0) {
-            pending_btn.setTextColor(resources.getColor(R.color.tab_select_color));
-            finish_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-        } else if (position == 1) {
-            pending_btn.setTextColor(resources.getColor(R.color.defaultTabColor));
-            finish_btn.setTextColor(resources.getColor(R.color.tab_select_color));
-        }
-        //设置线条移动的动画
-        TranslateAnimation ta = new TranslateAnimation(previousPosition,position*windowUtil.getScreenWidth(this)/2,0,0);
-        ta.setDuration(200);
-        ta.setFillAfter(true);
-        ta.setInterpolator(new LinearInterpolator());
-        tab_line.startAnimation(ta);
-        previousPosition = position*windowUtil.getScreenWidth(this)/2;
-
-    }
 
     /**
      * 开启界面
      */
-    public static void startAppActivity(Context context){
-        Intent intent = new Intent(context,MyOrderActivity.class);
+    public static void startAppActivity(Context context) {
+        Intent intent = new Intent(context, MyOrderActivity.class);
         context.startActivity(intent);
     }
 

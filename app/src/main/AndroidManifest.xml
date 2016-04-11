@@ -47,47 +47,46 @@
 
         <activity
             android:name="com.ebusbar.pile.LoginActivity"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
 
         <activity
             android:name="com.ebusbar.pile.RegActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
 
         <activity
             android:name="com.ebusbar.pile.ForgetPwdActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name=".SetLoginPwdActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name="com.ebusbar.pile.AccountManageActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name="com.ebusbar.pile.NaviEmulatorActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name="com.ebusbar.pile.QRActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name="com.ebusbar.pile.ChargeActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity android:name="com.ebusbar.pile.AppointActivity"></activity>
 
         <activity
             android:name="com.ebusbar.pile.MyAppointActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name="com.ebusbar.pile.MyOrderActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity android:name="com.ebusbar.pile.PayActivity"></activity>
 
@@ -96,37 +95,44 @@
 
         <activity
             android:name=".SelectPileActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name=".MyWalletActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
+
 
         <activity
             android:name=".BalanceActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity android:name=".RechargeActivity"></activity>
 
         <activity
             android:name=".ChargeCardActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity android:name=".AddChargeCardActivity"></activity>
 
         <activity
             android:name=".BillActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity android:name=".DeleteChargeCardActivity"></activity>
 
         <activity
             android:name=".SearchActivity"
-            android:launchMode="singleTask"></activity>
+            ></activity>
 
         <activity
             android:name=".ModCustNameActivity"
             ></activity>
+
+        <activity
+            android:name=".OrderInfoActivity"
+            ></activity>
+
+        <activity android:name=".StationInfoActivity"></activity>
 
         <!-- alipay sdk begin -->
         <activity

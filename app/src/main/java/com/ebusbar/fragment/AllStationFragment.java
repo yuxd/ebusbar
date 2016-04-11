@@ -34,10 +34,8 @@ import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.ebusbar.bean.AllStation;
 import com.ebusbar.bean.Error;
-import com.ebusbar.bean.NearbyStation;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.AllStationDaoImpl;
-import com.ebusbar.impl.NearbyStationDaoImpl;
 import com.ebusbar.map.MyLocation;
 import com.ebusbar.param.DefaultParam;
 import com.ebusbar.pile.LoginActivity;
@@ -47,6 +45,7 @@ import com.ebusbar.pile.QRActivity;
 import com.ebusbar.pile.R;
 import com.ebusbar.pile.SearchActivity;
 import com.ebusbar.pile.SelectPileActivity;
+import com.ebusbar.pile.StationInfoActivity;
 import com.ebusbar.utils.FloatUtil;
 import com.ebusbar.utils.LogUtil;
 import com.ebusbar.view.SlideSwitch;
@@ -63,10 +62,6 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      * TAG
      */
     private String TAG = "AllStationFragment";
-    /**
-     * 返回的界面
-     */
-    private View root;
     /**
      * 地图
      */
@@ -120,7 +115,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      */
     private PopupWindow screenPw;
     /**
-     * 充电点位=位置集合
+     * 充电点位置集合
      */
     private List<Marker> markers = new ArrayList<Marker>();
     /**
@@ -128,17 +123,9 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      */
     private boolean isFirst = true;
     /**
-     * 附近电桩
-     */
-    private NearbyStationDaoImpl nearbyStationDao;
-    /**
      * AllPositionListImpl
      */
     private AllStationDaoImpl allStationDao;
-    /**
-     * 获取电桩位置集合消息
-     */
-    private final int msgNearbyStation = 0x001;
     /**
      * 获取所有电桩集合
      */
@@ -237,7 +224,6 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
 
     @Override
     public void loadObjectAttribute() {
-        nearbyStationDao = new NearbyStationDaoImpl(context,handler, msgNearbyStation);
         allStationDao = new AllStationDaoImpl(context,handler, msgAllStation);
     }
 
@@ -266,28 +252,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             String adCode = application.getLocation().getAdCode();
             LogUtil.v(TAG,"获取充电点："+adCode);
             adCode = adCode.substring(0,adCode.length()-2) + "00";
-//            positionDao.getNetPositionListDao(adCode);
             allStationDao.getDaos();
         }
     }
 
-    /**
-     * 设置地图上设置电桩位置
-     */
-    public void setNearbyStationOnMap(List<NearbyStation> dao){
-        markers.clear();
-        LogUtil.v(TAG, "此次获取到了：" + dao.size());
-        MarkerOptions markerOptions = null;
-        for(NearbyStation positionDao : dao){
-            markerOptions = new MarkerOptions();
-            if(TextUtils.equals(positionDao.getEvc_stations_get().getIsAvailable(),"1")) { //可用
-                markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
-            }else{
-                markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.red_marker));
-            }
-            markers.add(aMap.addMarker(markerOptions));
-        }
-    }
+
 
 
 
@@ -304,9 +273,6 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             if(TextUtils.equals(dao.getEvc_stations_getall().getIsAvailable(),"1")) { //可用
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
             }else{
-                LogUtil.v("错误充电点",dao.getEvc_stations_getall().getOrgName());
-                LogUtil.v("纬度",dao.getEvc_stations_getall().getLatitude());
-                LogUtil.v("经度",dao.getEvc_stations_getall().getLongitude());
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.red_marker));
             }
             markers.add(aMap.addMarker(markerOptions));
@@ -478,45 +444,65 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      * @param dao
      */
     public void showAllStationPw(View v, final AllStation dao){
-        View root = getActivity().getLayoutInflater().inflate(R.layout.dianzhuanpw_layout,null);
-        TextView dianzhuan_name = (TextView) root.findViewById(R.id.dianzhuan_name);
-        TextView free_text = (TextView) root.findViewById(R.id.free_text);
-        TextView open_text = (TextView) root.findViewById(R.id.open_text);
-        TextView duanzhuan_position = (TextView) root.findViewById(R.id.duanzhuan_position);
-        TextView sum_text = (TextView) root.findViewById(R.id.sum_text);
-        TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
-        TextView price = (TextView) root.findViewById(R.id.price);
-        TextView distance_text = (TextView) root.findViewById(R.id.distance_text);
+        ViewHolder viewHolder = null;
+        View pwRoot = null;
+        if(markerPw != null){
+            pwRoot = markerPw.getContentView();
+            viewHolder = (ViewHolder) pwRoot.getTag();
+        }else{
+            viewHolder = new ViewHolder();
+            pwRoot = getActivity().getLayoutInflater().inflate(R.layout.stationpw_layout,null);
+            viewHolder.orgName = (TextView) pwRoot.findViewById(R.id.orgName);
+            viewHolder.open_text = (TextView) pwRoot.findViewById(R.id.open_text);
+            viewHolder.addr = (TextView) pwRoot.findViewById(R.id.addr);
+            viewHolder.sum_text = (TextView) pwRoot.findViewById(R.id.sum_text);
+            viewHolder.spare_text = (TextView) pwRoot.findViewById(R.id.spare_text);
+            viewHolder.distance_text = (TextView) pwRoot.findViewById(R.id.distance_text);
+            viewHolder.nav_layout = (LinearLayout) pwRoot.findViewById(R.id.nav_layout);
+            viewHolder.appoint_layout = (LinearLayout) pwRoot.findViewById(R.id.appoint_layout);
+            markerPw = popupWindowUtil.getPopupWindow(context, pwRoot, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) / 3);
+            pwRoot.setTag(viewHolder);
+        }
+
         final AllStation.EvcStationsGetallEntity entity = dao.getEvc_stations_getall();
+
         LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()));
         LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
-        distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
-        dianzhuan_name.setText(entity.getOrgName());
+        viewHolder.distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
+
+        viewHolder.orgName.setText(entity.getOrgName());
+
         if(TextUtils.equals(entity.getIsAvailable(),"1")){
-            open_text.setText("有空闲");
+            viewHolder.open_text.setText("有空闲");
+        }else{
+            viewHolder.open_text.setText("繁忙中");
         }
-        duanzhuan_position.setText(entity.getAddr());
+
+        viewHolder.addr.setText(entity.getAddr());
+
         String sum = "0";
-        if(!TextUtils.isEmpty(entity.getAvailableNum()) || !TextUtils.isEmpty(entity.getUnavailableNum())){
+        if(!TextUtils.isEmpty(entity.getAvailableNum()) && !TextUtils.isEmpty(entity.getUnavailableNum())){
             sum = Integer.parseInt(entity.getAvailableNum()) + Integer.parseInt(entity.getUnavailableNum())+"";
         }
-        sum_text.setText(sum);
+        viewHolder.sum_text.setText(sum);
         if(!TextUtils.equals(sum,"0")){
-            spare_text.setText(entity.getAvailableNum());
+            viewHolder.spare_text.setText(entity.getAvailableNum());
+        }else{
+            viewHolder.spare_text.setText("0");
         }
-        LinearLayout nav_layout = (LinearLayout) root.findViewById(R.id.nav_layout);
-        nav_layout.setOnClickListener(new View.OnClickListener() { //导航
+
+        viewHolder.nav_layout.setOnClickListener(new View.OnClickListener() { //导航
             @Override
             public void onClick(View v) {
-                markerPw.dismiss();
+                popupWindowUtil.dismissPopupWindow(markerPw);
                 NaviEmulatorActivity.startAppActivity(context, aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), Double.parseDouble(entity.getLatitude()), Double.parseDouble(entity.getLongitude()));
             }
         });
-        LinearLayout appoint_layout = (LinearLayout) root.findViewById(R.id.appoint_layout);
-        appoint_layout.setOnClickListener(new View.OnClickListener() {
+
+        viewHolder.appoint_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { //预约
-                markerPw.dismiss();
+                popupWindowUtil.dismissPopupWindow(markerPw);
                 if(!application.isLogin()){
                     LoginActivity.startAppActivity(context);
                 }else {
@@ -524,62 +510,15 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                 }
             }
         });
-        markerPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) / 3);
-        markerPw.setAnimationStyle(R.style.markerpw_anim);
-        markerPw.showAtLocation(v, Gravity.BOTTOM, 0, 0);
-    }
 
-    /**
-     * 显示电桩PW
-     */
-    public void showDianZhuanPw(View v, final NearbyStation positionDao){
-        View root = getActivity().getLayoutInflater().inflate(R.layout.dianzhuanpw_layout,null);
-        TextView dianzhuan_name = (TextView) root.findViewById(R.id.dianzhuan_name);
-        TextView free_text = (TextView) root.findViewById(R.id.free_text);
-        TextView open_text = (TextView) root.findViewById(R.id.open_text);
-        TextView duanzhuan_position = (TextView) root.findViewById(R.id.duanzhuan_position);
-        TextView sum_text = (TextView) root.findViewById(R.id.sum_text);
-        TextView spare_text = (TextView) root.findViewById(R.id.spare_text);
-        TextView price = (TextView) root.findViewById(R.id.price);
-        TextView distance_text = (TextView) root.findViewById(R.id.distance_text);
-        NearbyStation.EvcStationsGetEntity entity = positionDao.getEvc_stations_get();
-        LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()));
-        LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
-        distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
-        dianzhuan_name.setText(entity.getOrgName());
-        if(TextUtils.equals(entity.getIsAvailable(),"1")){
-            open_text.setText("有空闲");
-        }
-        duanzhuan_position.setText(entity.getAddr());
-        String sum = "0";
-        if(!TextUtils.isEmpty(entity.getAvailableNum()) || !TextUtils.isEmpty(entity.getUnavailableNum())){
-            sum = Integer.parseInt(entity.getAvailableNum()) + Integer.parseInt(entity.getUnavailableNum())+"";
-        }
-        sum_text.setText(sum);
-        if(!TextUtils.equals(sum,"0")){
-            spare_text.setText(entity.getAvailableNum());
-        }
-        LinearLayout nav_layout = (LinearLayout) root.findViewById(R.id.nav_layout);
-        nav_layout.setOnClickListener(new View.OnClickListener() { //导航
+        pwRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                markerPw.dismiss();
-                NaviEmulatorActivity.startAppActivity(context, aMap.getMyLocation().getLatitude(), aMap.getMyLocation().getLongitude(), Double.parseDouble(positionDao.getEvc_stations_get().getLatitude()), Double.parseDouble(positionDao.getEvc_stations_get().getLongitude()));
+                popupWindowUtil.dismissPopupWindow(markerPw);
+                StationInfoActivity.startActivity(context);
             }
         });
-        LinearLayout appoint_layout = (LinearLayout) root.findViewById(R.id.appoint_layout);
-        appoint_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { //预约
-                markerPw.dismiss();
-                if(!application.isLogin()){
-                    LoginActivity.startAppActivity(context);
-                }else {
-                    SelectPileActivity.startAppActivity(context, positionDao.getEvc_stations_get().getOrgId(),positionDao.getEvc_stations_get().getAddr());
-                }
-            }
-        });
-        markerPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) / 3);
+
         markerPw.setAnimationStyle(R.style.markerpw_anim);
         markerPw.showAtLocation(v, Gravity.BOTTOM, 0, 0);
     }
@@ -697,17 +636,6 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case msgNearbyStation:
-                    if(nearbyStationDao.daos == null){
-                        return;
-                    }
-                    if(TextUtils.equals(nearbyStationDao.daos.get(0).getEvc_stations_get().getIsSuccess(), "N")){
-                        Error errorDao = errorParamUtil.checkReturnState(nearbyStationDao.daos.get(0).getEvc_stations_get().getReturnStatus());
-                        toastUtil.toastError(context,errorDao,null);
-                        return;
-                    }
-                    setNearbyStationOnMap(nearbyStationDao.daos);
-                    break;
                 case msgAllStation:
                     if(allStationDao.daos == null){
                         return;
@@ -727,5 +655,19 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     @Override
     public String getTAG() {
         return TAG;
+    }
+
+    /**
+     * 用于缓存PopupWindow中的控件
+     */
+    private class ViewHolder{
+        TextView orgName;
+        TextView open_text;
+        TextView addr;
+        TextView sum_text;
+        TextView spare_text;
+        TextView distance_text;
+        LinearLayout nav_layout;
+        LinearLayout appoint_layout;
     }
 }

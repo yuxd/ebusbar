@@ -1,6 +1,7 @@
 package com.ebusbar.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -21,6 +22,10 @@ public abstract class SimpleActivity extends BaseActivity {
      * Application
      */
     public MyApplication application;
+    /**
+     * Intent
+     */
+    public Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,6 +38,7 @@ public abstract class SimpleActivity extends BaseActivity {
     public void initActivity(){
         context = this; //在这里把上This转换为Context
         application = (MyApplication) getApplication();
+        intent = getIntent();
     }
 
     /**

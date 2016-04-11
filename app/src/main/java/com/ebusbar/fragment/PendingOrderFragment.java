@@ -28,15 +28,11 @@ import com.ebusbar.utils.ActivityControl;
  * 未完成订单
  * Created by Jelly on 2016/3/10.
  */
-public class PendingOrderFrag extends UtilFragment {
+public class PendingOrderFragment extends UtilFragment {
     /**
      * TAG
      */
-    public String TAG = "PendingOrderFrag";
-    /**
-     * 根布局
-     */
-    private View root;
+    public String TAG = "PendingOrderFragment";
     /**
      * 待处理的List
      */

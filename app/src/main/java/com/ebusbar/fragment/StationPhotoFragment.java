@@ -10,30 +10,26 @@ import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.pile.R;
 
 /**
- * 租车模块
- * Created by Jelly on 2016/2/25.
+ * 电站图片
+ * Created by Jelly on 2016/4/10.
  */
-public class CarFrag extends UtilFragment {
-    /**
-     * TAG
-     */
-    public String TAG="CarFrag";
-    /**
-     * 返回的界面
-     */
-    private View root;
+public class StationPhotoFragment extends UtilFragment{
+
+    public String TAG = "StationPhotoFragment";
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater,container,savedInstanceState);
-        root = inflater.inflate(R.layout.car,container,false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        init(inflater,container);
+        loadObjectAttribute();
+        setListener();
+        setFragView();
         return root;
     }
 
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
-
+        root = inflater.inflate(R.layout.station_photo_fragment,container,false);
     }
 
     @Override

@@ -16,6 +16,14 @@ public class WindowUtil {
      * 窗体操作工具对象
      */
     private static WindowUtil windowUtil = new WindowUtil();
+    /**
+     * 屏幕宽度
+     */
+    private int screenWidth;
+    /**
+     * 屏幕宽度
+     */
+    private int screenHeight;
 
     /**
      * 获得单例对象
@@ -37,9 +45,13 @@ public class WindowUtil {
         if(context == null){
             return 0;
         }
+        if(screenWidth != 0){
+            return screenWidth;
+        }
         DisplayMetrics dm = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.widthPixels;
+        screenWidth = dm.widthPixels;
+        return screenWidth;
     }
 
     /**
@@ -51,9 +63,13 @@ public class WindowUtil {
         if(context == null){
             return 0;
         }
+        if(screenHeight != 0){
+            return  screenHeight;
+        }
         DisplayMetrics dm = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return dm.heightPixels;
+        screenHeight = dm.heightPixels;
+        return screenHeight;
     }
 
     /**

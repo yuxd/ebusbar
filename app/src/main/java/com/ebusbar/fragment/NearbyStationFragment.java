@@ -45,10 +45,6 @@ public class NearbyStationFragment extends UtilFragment {
      */
     private Context context;
     /**
-     * 根布局
-     */
-    private View root;
-    /**
      * 充电点的列表
      */
     private ListView list;

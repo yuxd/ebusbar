@@ -10,6 +10,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        //Instrumentation测试配置
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -21,13 +23,23 @@ android {
     dexOptions {
         incremental true
     }
+
+    //Instrumentation测试配置
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+    sourceSets { main { java.srcDirs = ['src/main/java', 'src/androidTest/test'] } }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    //junitTest
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:design:23.1.1'
+    //InstrumentationTest
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:design:23.0.1'
     compile files('libs/AMap_Location_v2.3.0_20160112.jar')
     compile files('libs/AMap_Navi_v1.7.0.1_20160203.jar')
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'

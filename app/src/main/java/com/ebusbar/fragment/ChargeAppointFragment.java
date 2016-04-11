@@ -9,10 +9,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +30,7 @@ import com.ebusbar.pile.ChargeActivity;
 import com.ebusbar.pile.NaviEmulatorActivity;
 import com.ebusbar.pile.R;
 import com.ebusbar.utils.ActivityControl;
+import com.ebusbar.utils.DateUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,52 +47,32 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     public String TAG = "ChargeAppointFrag";
     @Bind(R.id.orgName)
     TextView orgName;
-    @Bind(R.id.icon)
-    ImageView icon;
     @Bind(R.id.addr)
     TextView addr;
     @Bind(R.id.facilityName)
     TextView facilityName;
-    @Bind(R.id.facilityName_layout)
-    LinearLayout facilityNameLayout;
     @Bind(R.id.facilityType)
     TextView facilityType;
-    @Bind(R.id.facilityType_layout)
-    LinearLayout facilityTypeLayout;
     @Bind(R.id.orderNo)
     TextView orderNo;
-    @Bind(R.id.facilityId_layout)
-    LinearLayout facilityIdLayout;
     @Bind(R.id.facilityMode)
     TextView facilityMode;
-    @Bind(R.id.facilityMode_layout)
-    LinearLayout facilityModeLayout;
-    @Bind(R.id.appoint_price_title)
-    TextView appointPriceTitle;
     @Bind(R.id.appoint_price_text)
     TextView appointPriceText;
-    @Bind(R.id.appoint_price)
-    RelativeLayout appointPrice;
     @Bind(R.id.phone_title)
     TextView phoneTitle;
     @Bind(R.id.phone_text)
     TextView phoneText;
-    @Bind(R.id.phone_btn)
-    LinearLayout phoneBtn;
-    @Bind(R.id.phone_price)
-    RelativeLayout phonePrice;
     @Bind(R.id.start)
     TextView start;
-    @Bind(R.id.cancel)
-    TextView cancel;
-    @Bind(R.id.navigation)
-    LinearLayout navigation;
     @Bind(R.id.nodata_show)
     LinearLayout nodataShow;
-    /**
-     * 显示的根界面
-     */
-    private View root;
+    @Bind(R.id.time)
+    TextView time;
+    @Bind(R.id.startTime)
+    TextView startTime;
+    @Bind(R.id.endTime)
+    TextView endTime;
     /**
      * GetChargeAppointDaoImpl
      */
@@ -122,10 +101,6 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
      * 加载数据PopupWindow
      */
     private PopupWindow loading;
-    /**
-     * 请求支付
-     */
-    private static final int requestPay = 0x004;
     /**
      * 电桩详情
      */
@@ -177,8 +152,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     }
 
 
-
-    @OnClick({R.id.start, R.id.cancel , R.id.navigation})
+    @OnClick({R.id.start, R.id.cancel, R.id.navigation})
     public void onClick(View view) {
         Login.DataEntity entity = application.getLoginDao().getData(); //用户数据
         switch (view.getId()) {
@@ -220,7 +194,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                 case msgGetAppoint: //获得预约数据
                     if (getChargeAppointDao.getChargeAppointDao == null || TextUtils.equals(getChargeAppointDao.getChargeAppointDao.getEvc_orders_get().getIsSuccess(), "N")) {
                         nodataShow.setVisibility(View.VISIBLE);
-                        if(loading != null){
+                        if (loading != null) {
                             loading.dismiss();
                         }
                         return;
@@ -230,6 +204,9 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                     phoneText.setText(entity.getTel());
                     appointPriceText.setText("¥" + entity.getPlanCost());
                     pileInfoDao.getPileInfoDao(entity.getFacilityID(), PileInfoDaoImpl.FACILITYID);
+                    startTime.setText(DateUtil.getSdfDate(entity.getPlanBeginDateTime(),"HH:mm"));
+                    endTime.setText(DateUtil.getSdfDate(entity.getPlanEndDateTime(),"HH:mm"));
+                    time.setText(DateUtil.DifferDate(entity.getPlanEndDateTime(),entity.getPlanBeginDateTime()));
                     break;
                 case msgFinish: //结束预约
                     if (finishOrderDao.finishOrderDao == null) {
@@ -285,7 +262,6 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
-
 
 
 }

@@ -6,28 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.ebusbar.fragments.SimpleFragment;
+import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.pile.R;
 
 /**
- * 商店模块
+ * 服务模块
  * Created by Jelly on 2016/2/25.
  */
-public class ShopFrag extends SimpleFragment {
+public class FixFragment extends UtilFragment {
     /**
      * TAG
      */
-    private String TAG = "ShopFrag";
-    /**
-     * 返回的界面
-     */
-    private View root;
+    private String TAG = "FixFragment";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        root = inflater.inflate(R.layout.shop,container,false);
+        root = inflater.inflate(R.layout.fix,container,false);
         return root;
     }
 

@@ -1,11 +1,11 @@
 package com.ebusbar.utils;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
 /**
  * Created by Jelly on 2016/4/7.
  */
-public class RegExpUtilTest extends TestCase {
+public class RegExpUtilTest extends AndroidTestCase {
 
     public void setUp() throws Exception {
         super.setUp();

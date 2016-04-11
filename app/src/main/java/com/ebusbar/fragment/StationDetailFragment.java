@@ -10,23 +10,16 @@ import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.pile.R;
 
 /**
- * 租车预约
- * Created by Jelly on 2016/3/10.
+ * 电站详情
+ * Created by Jelly on 2016/4/10.
  */
-public class CarAppointFrag extends UtilFragment {
-    /**
-     * TAG
-     */
-    public String TAG = "CarAppointFrag";
-    /**
-     * 根界面
-     */
-    private View root;
+public class StationDetailFragment extends UtilFragment{
+
+    public String TAG = "StationDetailFragment";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater,container,savedInstanceState);
         init(inflater,container);
         loadObjectAttribute();
         setListener();
@@ -34,10 +27,9 @@ public class CarAppointFrag extends UtilFragment {
         return root;
     }
 
-
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.carappoint,container,false);
+        root = inflater.inflate(R.layout.station_detail_fragment,container,false);
     }
 
     @Override

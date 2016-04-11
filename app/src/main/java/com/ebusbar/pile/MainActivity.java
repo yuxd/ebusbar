@@ -20,9 +20,8 @@ import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.bean.Login;
-import com.ebusbar.fragment.CarFrag;
-import com.ebusbar.fragment.FixFrag;
-import com.ebusbar.fragment.ShopFrag;
+import com.ebusbar.fragment.CarFragment;
+import com.ebusbar.fragment.FixFragment;
 import com.ebusbar.fragment.Tab1Fragment;
 import com.ebusbar.impl.BitmapImpl;
 
@@ -48,20 +47,20 @@ public class MainActivity extends UtilActivity {
      * 栏目标题
      */
     private String[] lables = new String[]{
-            "电桩","租车","服务","商城"
+            "电桩","租车","服务"
     };
     /**
      * 图标
      */
-    private int[] icons = new int[]{R.drawable.dianzhuan,R.drawable.car,R.drawable.fix,R.drawable.shop};
+    private int[] icons = new int[]{R.drawable.dianzhuan,R.drawable.car,R.drawable.fix};
     /**
      * 当前的模块的图标
      */
-    private int[] onicons = new int[]{R.drawable.ondianzhuan,R.drawable.oncar,R.drawable.onfix,R.drawable.onshop};
+    private int[] onicons = new int[]{R.drawable.ondianzhuan,R.drawable.oncar,R.drawable.onfix};
     /**
      * 内容区
      */
-    private Fragment[] contents = new Fragment[]{new Tab1Fragment(),new CarFrag(),new FixFrag(),new ShopFrag()};
+    private Fragment[] contents = new Fragment[]{new Tab1Fragment(),new CarFragment(),new FixFragment()};
     /**
      * 侧滑栏,设为public是为了在Fragment中能够直接调用
      */
@@ -120,7 +119,6 @@ public class MainActivity extends UtilActivity {
 
     @Override
     public void loadObjectAttribute() {
-        application = (MyApplication) this.getApplication();
     }
 
     @Override

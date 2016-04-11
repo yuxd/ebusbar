@@ -24,6 +24,7 @@
             android:padding="10dp"
             android:gravity="center"
             android:text="充电预约"
+            android:textColor="#FF0000"
             />
 
         <TextView

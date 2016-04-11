@@ -10,32 +10,26 @@ import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.pile.R;
 
 /**
- * Created by Jelly on 2016/3/10.
+ * 租车模块
+ * Created by Jelly on 2016/2/25.
  */
-public class FixAppointFrag extends UtilFragment {
+public class CarFragment extends UtilFragment {
     /**
      * TAG
      */
-    public String TAG = "FixAppointFrag";
-    /**
-     * 根界面
-     */
-    private View root;
+    public String TAG="CarFragment";
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        init(inflater,container);
-        loadObjectAttribute();
-        setListener();
-        setFragView();
+        root = inflater.inflate(R.layout.car,container,false);
         return root;
     }
 
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.fixappoint,container,false);
+
     }
 
     @Override
@@ -51,5 +45,10 @@ public class FixAppointFrag extends UtilFragment {
     @Override
     public void setFragView() {
 
+    }
+
+    @Override
+    public String getTAG() {
+        return TAG;
     }
 }

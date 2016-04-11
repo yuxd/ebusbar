@@ -1,6 +1,5 @@
 package com.ebusbar.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -19,33 +19,27 @@ import com.ebusbar.bean.Error;
 import com.ebusbar.bean.Login;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.CompleteOrderDaoImpl;
-import com.ebusbar.pile.MyApplication;
+import com.ebusbar.pile.OrderInfoActivity;
 import com.ebusbar.pile.R;
-import com.ebusbar.utils.PopupWindowUtil;
 
 import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * 已完成订单
  * Created by Jelly on 2016/3/10.
  */
-public class FinishOrderFrag extends UtilFragment {
+public class FinishOrderFragment extends UtilFragment {
     /**
      * TAG
      */
-    public String TAG = "FinishOrderFrag";
-    /**
-     * 根界面
-     */
-    private View root;
-    /**
-     * 列表
-     */
-    private ListView finish_list;
-    /**
-     * 没有数据时显示
-     */
-    private LinearLayout nodata_show;
+    public String TAG = "FinishOrderFragment";
+    @Bind(R.id.nodata_show)
+    LinearLayout nodataShow;
+    @Bind(R.id.finish_list)
+    ListView finishList;
     /**
      *
      */
@@ -59,18 +53,6 @@ public class FinishOrderFrag extends UtilFragment {
      */
     private int msgOrder = 0x001;
     /**
-     * Context
-     */
-    private Context context;
-    /**
-     * MyApplication
-     */
-    private MyApplication application;
-    /**
-     * PopupWindow操作工具
-     */
-    private PopupWindowUtil popupWindowUtil = PopupWindowUtil.getInstance();
-    /**
      * Loading
      */
     private PopupWindow loading;
@@ -78,8 +60,8 @@ public class FinishOrderFrag extends UtilFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater,container,savedInstanceState);
-        init(inflater,container);
+        super.onCreateView(inflater, container, savedInstanceState);
+        init(inflater, container);
         loadObjectAttribute();
         setListener();
         setFragView();
@@ -94,48 +76,58 @@ public class FinishOrderFrag extends UtilFragment {
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
         root = inflater.inflate(R.layout.finishorder, container, false);
-        finish_list = (ListView) root.findViewById(R.id.finish_list);
-        nodata_show = (LinearLayout) root.findViewById(R.id.nodata_show);
+        ButterKnife.bind(this, root);
     }
 
     @Override
     public void loadObjectAttribute() {
-        context = getActivity();
-        application = (MyApplication) getActivity().getApplication();
-        completeOrderDao = new CompleteOrderDaoImpl(context,handler,msgOrder);
+        completeOrderDao = new CompleteOrderDaoImpl(context, handler, msgOrder);
     }
 
     @Override
     public void setListener() {
+        setListItemClickListener();
     }
 
     @Override
     public void setFragView() {
-        loading = popupWindowUtil.startLoading(context,root,"加载中");
+        loading = popupWindowUtil.startLoading(context, root, "加载中");
         Login.DataEntity data = application.getLoginDao().getData();
         completeOrderDao.getCompleteOrderDaos(data.getToken(), data.getCustID());
     }
 
 
+    /**
+     * 设置List的Item的点击事件
+     */
+    public void setListItemClickListener(){
+        finishList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CompleteOrder.EvcOrdersGetEntity evcOrdersGetEntity  = ((CompleteOrder) adapter.getItem(position)).getEvc_orders_get();
+                OrderInfoActivity.startActivity(context,evcOrdersGetEntity.getOrderNo());
+            }
+        });
+    }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == msgOrder){
+            if (msg.what == msgOrder) {
                 loading.dismiss();
-                if(completeOrderDao.completeOrderDaos == null || completeOrderDao.completeOrderDaos.size() == 0){
+                if (completeOrderDao.completeOrderDaos == null || completeOrderDao.completeOrderDaos.size() == 0) {
                     return;
                 }
-                if(TextUtils.equals(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getIsSuccess(),"N")){
+                if (TextUtils.equals(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getIsSuccess(), "N")) {
                     Error errorDao = errorParamUtil.checkReturnState(completeOrderDao.completeOrderDaos.get(0).getEvc_orders_get().getReturnStatus());
-                    toastUtil.toastError(context,errorDao,null);
-                    nodata_show.setVisibility(View.VISIBLE);
+                    toastUtil.toastError(context, errorDao, null);
+                    nodataShow.setVisibility(View.VISIBLE);
                     return;
                 }
                 ArrayList<CompleteOrder> arrayList = new ArrayList<CompleteOrder>();
                 arrayList.addAll(completeOrderDao.completeOrderDaos);
-                adapter = new AllOrderListAdapter(context,arrayList,application.getLoginDao());
-                finish_list.setAdapter(adapter);
+                adapter = new AllOrderListAdapter(context, arrayList, application.getLoginDao());
+                finishList.setAdapter(adapter);
             }
         }
     };
@@ -143,6 +135,12 @@ public class FinishOrderFrag extends UtilFragment {
     @Override
     public String getTAG() {
         return TAG;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }
 

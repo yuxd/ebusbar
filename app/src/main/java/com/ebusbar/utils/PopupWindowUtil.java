@@ -84,4 +84,33 @@ public class PopupWindowUtil {
         return loading;
     }
 
+    /**
+     * 隐藏PopupWindow,为空则抛出异常
+     * @param popupWindow
+     */
+    public void dismissPopupWindow(PopupWindow popupWindow){
+        if(popupWindow != null){
+            popupWindow.dismiss();
+        }else{
+
+        }
+    }
+
+    /**
+     * 隐藏PopupWindow,为空则抛出异常
+     * @param popupWindow
+     * @param isShow
+     * @return
+     */
+    public boolean dismissPopupWindow(PopupWindow popupWindow,boolean isShow){
+        if(popupWindow == null){
+            return isShow;
+        }
+        if(isShow){
+            popupWindow.dismiss();
+            isShow = !isShow;
+        }
+        return isShow;
+    }
 }
+
