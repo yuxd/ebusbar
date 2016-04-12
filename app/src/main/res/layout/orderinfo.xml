@@ -10,23 +10,6 @@
         android:id="@+id/actionBar_layout"
         layout="@layout/orderinfo_actionbar"></include>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        >
-
-        <TextView
-            android:id="@+id/orderType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="电桩充电"
-            android:textColor="@color/actionbar_bg"
-            android:textSize="20sp" />
-
-    </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +19,7 @@
             android:id="@+id/top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:background="@drawable/orderinfo_bg1"
             android:padding="10dp">
 
             <TextView
@@ -136,8 +119,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/top"
             android:layout_marginTop="1dp"
-            android:background="#FFFFFF"
-            android:padding="10dp">
+            android:background="@drawable/orderinfo_bg2"
+            android:padding="10dp"
+            >
 
             <LinearLayout
                 android:id="@+id/startTime_layout"

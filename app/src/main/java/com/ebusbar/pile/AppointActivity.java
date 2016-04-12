@@ -316,15 +316,15 @@ public class AppointActivity extends UtilActivity implements View.OnClickListene
                     break;
                 case msgLoading:
                     Login.DataEntity entity = application.getLoginDao().getData();
-                    orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), appointDao.dao.getData().getOrderNo(), entity.getCustID());
+                    orderInfoDao.getOrderInfo(entity.getToken(), appointDao.dao.getData().getOrderNo(), entity.getCustID());
                     break;
                 case msgInfo:
-                    if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        Error errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                    if(orderInfoDao.orderInfo == null || TextUtils.equals(orderInfoDao.orderInfo.getEvc_order_get().getIsSuccess(),"N")){
+                        Error errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfo.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
-                    if(TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getOrderStatus(), "1")){
+                    if(TextUtils.equals(orderInfoDao.orderInfo.getEvc_order_get().getOrderStatus(), "1")){
                         isSuccess = true;
                         Toast.makeText(AppointActivity.this,"预约成功，请进入我的预约界面查看预约结果！",Toast.LENGTH_SHORT).show();
                         setResult(SUCCESS);

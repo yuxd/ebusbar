@@ -20,9 +20,16 @@ public abstract class BaseFragment extends Fragment{
      */
     public View root;
 
+    public BaseFragment(){
+        if(getArguments() == null){
+            setArguments(new Bundle());
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         return root;
     }
 

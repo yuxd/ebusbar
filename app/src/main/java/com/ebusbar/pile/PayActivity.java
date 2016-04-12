@@ -203,7 +203,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
     public void setActivityView() {
         Login.DataEntity entity = application.getLoginDao().getData();
         if(TextUtils.equals(intent.getStringExtra("type"),CHARGE)){
-            orderInfoDao.getOrderInfoDaoImpl(entity.getToken(), intent.getStringExtra("OrderNo"), entity.getCustID());
+            orderInfoDao.getOrderInfo(entity.getToken(), intent.getStringExtra("OrderNo"), entity.getCustID());
         }
         if(!TextUtils.isEmpty(entity.getBalanceAmt())){
             tran_text.setText(resourceUtil.getResourceString(PayActivity.this, R.string.money_sign)+entity.getBalanceAmt());
@@ -487,13 +487,13 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
                     }
                     break;
                 case msgInfo:
-                    if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        Error errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                    if(orderInfoDao.orderInfo == null || TextUtils.equals(orderInfoDao.orderInfo.getEvc_order_get().getIsSuccess(),"N")){
+                        Error errorDao = errorParamUtil.checkReturnState(orderInfoDao.orderInfo.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context, errorDao, null);
                         ActivityControl.finishAct(PayActivity.this);
                         return;
                     }
-                    OrderInfo.EvcOrderGetEntity entity = orderInfoDao.orderInfoDao.getEvc_order_get();
+                    OrderInfo.EvcOrderGetEntity entity = orderInfoDao.orderInfo.getEvc_order_get();
                     if(TextUtils.equals(entity.getOrderStatus(),"4")){
                         price = DoubleUtil.add(entity.getChargingAmt(),entity.getServiceAmt());
                         payType_text.setText("电桩充电");

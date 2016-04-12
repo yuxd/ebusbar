@@ -48,4 +48,9 @@ public class FixAppointFragment extends UtilFragment {
     public void setFragView() {
 
     }
+
+    @Override
+    public String getTAG() {
+        return TAG;
+    }
 }

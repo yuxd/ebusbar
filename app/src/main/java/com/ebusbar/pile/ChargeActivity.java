@@ -233,7 +233,7 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
             return;
         }else{
             Login.DataEntity entity = application.getLoginDao().getData();
-            startOrderInfoDao.getOrderInfoDaoImpl(entity.getToken(),intent.getStringExtra("OrderNo"),entity.getCustID());
+            startOrderInfoDao.getOrderInfo(entity.getToken(),intent.getStringExtra("OrderNo"),entity.getCustID());
         }
         if(intent.getParcelableExtra("Entity") instanceof PendingOrder.EvcOrdersGetEntity){
             PendingOrder.EvcOrdersGetEntity entity = intent.getParcelableExtra("Entity");
@@ -350,15 +350,15 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                     break;
                 case msgLoading:
                     Login.DataEntity loginEntity = application.getLoginDao().getData();
-                    orderInfoDao.getOrderInfoDaoImpl(loginEntity.getToken(),finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),loginEntity.getCustID());
+                    orderInfoDao.getOrderInfo(loginEntity.getToken(),finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),loginEntity.getCustID());
                     break;
                 case msgInfo:
-                    if(orderInfoDao.orderInfoDao == null || TextUtils.equals(orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
+                    if(orderInfoDao.orderInfo == null || TextUtils.equals(orderInfoDao.orderInfo.getEvc_order_get().getIsSuccess(),"N")){
                         Error errorDao = errorParamUtil.checkReturnState(pileInfoDao.pileInfoDao.getEvc_facility_get().getReturnStatus());
                         toastUtil.toastError(context, errorDao, null);
                         return;
                     }
-                    OrderInfo.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
+                    OrderInfo.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfo.getEvc_order_get();
                     if(!TextUtils.equals(evcOrderGetEntity.getOrderStatus(), "4")){
                         if(TextUtils.equals(evcOrderGetEntity.getOrderStatus(),"8") || TextUtils.isEmpty(evcOrderGetEntity.getChargingAmt())){
                             Toast.makeText(ChargeActivity.this,"您的充电时间过短，系统暂未产生金额!",Toast.LENGTH_SHORT).show();
@@ -385,12 +385,12 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                     PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo(),PayActivity.CHARGE,PAYREQUEST);
                     break;
                 case startOrderInfo: //进入界面时获取订单详情
-                    if(startOrderInfoDao.orderInfoDao == null || TextUtils.equals(startOrderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess(),"N")){
-                        Error errorDao = errorParamUtil.checkReturnState(startOrderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                    if(startOrderInfoDao.orderInfo == null || TextUtils.equals(startOrderInfoDao.orderInfo.getEvc_order_get().getIsSuccess(),"N")){
+                        Error errorDao = errorParamUtil.checkReturnState(startOrderInfoDao.orderInfo.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context,errorDao,null);
                         return;
                     }
-                    OrderInfo.EvcOrderGetEntity evcOrderGetEntity1 = startOrderInfoDao.orderInfoDao.getEvc_order_get();
+                    OrderInfo.EvcOrderGetEntity evcOrderGetEntity1 = startOrderInfoDao.orderInfo.getEvc_order_get();
                     facilityName.setText(evcOrderGetEntity1.getFacilityName().replace("号桩","").replace("号充电桩",""));
                     charge_degress_text.setText(evcOrderGetEntity1.getChargingQty()+"度");
                     charge_time_text.setText(evcOrderGetEntity1.getChargingTime() + "分钟");

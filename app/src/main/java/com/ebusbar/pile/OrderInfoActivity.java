@@ -29,8 +29,6 @@ public class OrderInfoActivity extends UtilActivity {
     public String TAG = "OrderInfoActivity";
 
 
-    @Bind(R.id.orderType)
-    TextView orderType;
     @Bind(R.id.orgName)
     TextView orgName;
     @Bind(R.id.facilityName)
@@ -77,6 +75,12 @@ public class OrderInfoActivity extends UtilActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void init() {
         this.setContentView(R.layout.orderinfo);
         ButterKnife.bind(this);
@@ -95,7 +99,7 @@ public class OrderInfoActivity extends UtilActivity {
     @Override
     public void setActivityView() {
         Login.DataEntity dataEntity = application.getLoginDao().getData();
-        orderInfoDao.getOrderInfoDaoImpl(dataEntity.getToken(),intent.getStringExtra("OrderNo"),dataEntity.getCustID());
+        orderInfoDao.getOrderInfo(dataEntity.getToken(),intent.getStringExtra("OrderNo"),dataEntity.getCustID());
     }
 
     private Handler handler = new Handler(){
@@ -103,22 +107,31 @@ public class OrderInfoActivity extends UtilActivity {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case msgOrderInfo:
-                    if(orderInfoDao.orderInfoDao == null){
+                    if(orderInfoDao.orderInfo == null){
                         return;
                     }
-                    if(TextUtils.equals("N",orderInfoDao.orderInfoDao.getEvc_order_get().getIsSuccess())){
-                        Error error = errorParamUtil.checkReturnState(orderInfoDao.orderInfoDao.getEvc_order_get().getReturnStatus());
+                    if(TextUtils.equals("N",orderInfoDao.orderInfo.getEvc_order_get().getIsSuccess())){
+                        Error error = errorParamUtil.checkReturnState(orderInfoDao.orderInfo.getEvc_order_get().getReturnStatus());
                         toastUtil.toastError(context,error,null);
                     }
-                    OrderInfo.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfoDao.getEvc_order_get();
+                    OrderInfo.EvcOrderGetEntity evcOrderGetEntity = orderInfoDao.orderInfo.getEvc_order_get();
                     orgName.setText(evcOrderGetEntity.getOrgName());
                     facilityName.setText(evcOrderGetEntity.getFacilityName());
                     facilityId.setText(evcOrderGetEntity.getFacilityID());
-                    startTime.setText(evcOrderGetEntity.getPlanBeginDateTime());
-                    endTime.setText(evcOrderGetEntity.getPlanEndDateTime());
+                    if(TextUtils.equals(OrderInfoDaoImpl.CANCEL,evcOrderGetEntity.getOrderStatus())){
+                        startTime.setText(evcOrderGetEntity.getPlanBeginDateTime());
+                        endTime.setText(evcOrderGetEntity.getPlanEndDateTime());
+                    }else if(TextUtils.equals(OrderInfoDaoImpl.COMPLETE,evcOrderGetEntity.getOrderStatus()) && TextUtils.isEmpty(evcOrderGetEntity.getPlanBeginDateTime())){
+                        startTime.setText(evcOrderGetEntity.getRealBeginDateTime());
+                        endTime.setText(evcOrderGetEntity.getRealEndDateTime());
+                    }else if(TextUtils.equals(OrderInfoDaoImpl.COMPLETE,evcOrderGetEntity.getOrderStatus()) && !TextUtils.isEmpty(evcOrderGetEntity.getPlanBeginDateTime())){
+                        startTime.setText(evcOrderGetEntity.getPlanBeginDateTime());
+                        endTime.setText(evcOrderGetEntity.getRealEndDateTime());
+                    }
                     chargingTime.setText(evcOrderGetEntity.getChargingTime());
                     chargingQty.setText(evcOrderGetEntity.getChargingQty());
                     amt.setText(DoubleUtil.add(evcOrderGetEntity.getChargingAmt(),evcOrderGetEntity.getServiceAmt()));
+                    mobile.setText(evcOrderGetEntity.getTel());
                     break;
             }
         }

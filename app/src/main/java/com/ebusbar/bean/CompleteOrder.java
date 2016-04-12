@@ -18,6 +18,7 @@ public class CompleteOrder {
      * FacilityID : F000001
      * PlanBeginDateTime : 2016-03-22 14:12:35
      * PlanEndDateTime : 2016-03-22 14:42:35
+     *
      */
 
     private EvcOrdersGetEntity evc_orders_get;
@@ -43,6 +44,24 @@ public class CompleteOrder {
         private String FacilityID;
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
+        private String RealBeginDateTime;
+        private String RealEndDateTime;
+
+        public String getRealBeginDateTime() {
+            return RealBeginDateTime;
+        }
+
+        public void setRealBeginDateTime(String realBeginDateTime) {
+            RealBeginDateTime = realBeginDateTime;
+        }
+
+        public String getRealEndDateTime() {
+            return RealEndDateTime;
+        }
+
+        public void setRealEndDateTime(String realEndDateTime) {
+            RealEndDateTime = realEndDateTime;
+        }
 
         public String getReturnStatus() {
             return returnStatus;

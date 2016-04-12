@@ -104,11 +104,12 @@ public class AllOrderListAdapter extends BaseAdapter{
         final CompleteOrder.EvcOrdersGetEntity data = ((CompleteOrder)getItem(position)).getEvc_orders_get();
         if(TextUtils.equals(data.getOrderStatus(),"8")){
             viewHolder.state_text.setText("充电完成");
+            viewHolder.order_time.setText(data.getRealBeginDateTime());
         }else{
             viewHolder.state_text.setText("已取消");
+            viewHolder.order_time.setText(data.getPlanBeginDateTime());
         }
         viewHolder.position_text.setText(data.getOrgName());
-        viewHolder.order_time.setText(data.getPlanEndDateTime());
         viewHolder.EPId_text.setText(data.getOrgID());
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override

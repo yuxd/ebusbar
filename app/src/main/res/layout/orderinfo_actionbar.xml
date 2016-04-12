@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="订单详情"
+        android:text="电桩充电"
         android:textSize="@dimen/actionBar_title_size"
         android:textColor="@color/actionbar_title_color"
         />

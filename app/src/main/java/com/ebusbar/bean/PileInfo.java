@@ -1,21 +1,24 @@
 package com.ebusbar.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Jelly on 2016/3/22.
  */
-public class PileInfo {
+public class PileInfo implements Parcelable {
 
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * FacilityID : F000004
-     * FacilityName : 12号充电桩
-     * FacilityModel : 快充200V
-     * FacilityStatus : 1
+     * FacilityID : 0755300000000091
+     * FacilityName : 91号桩
+     * FacilityModel : 1
+     * FacilityStatus : 0
      * Price : 0
-     * FacilityNo : 00011
-     * OrgID : C00000002
+     * OrgID : C00000001
      * OrgName : 深大站
+     * addr : 深圳市南山区科园路南山科技园
      */
 
     private EvcFacilityGetEntity evc_facility_get;
@@ -28,27 +31,18 @@ public class PileInfo {
         this.evc_facility_get = evc_facility_get;
     }
 
-    public static class EvcFacilityGetEntity {
+    public static class EvcFacilityGetEntity implements Parcelable {
         private String returnStatus;
         private String isSuccess;
         private String FacilityID;
         private String FacilityName;
         private String FacilityModel;
         private String FacilityStatus;
-        private String FacilityType;
-
-        public String getFacilityType() {
-            return FacilityType;
-        }
-
-        public void setFacilityType(String facilityType) {
-            FacilityType = facilityType;
-        }
-
         private String Price;
-        private String FacilityNo;
         private String OrgID;
         private String OrgName;
+        private String addr;
+        private String FacilityType;
 
         public String getReturnStatus() {
             return returnStatus;
@@ -106,14 +100,6 @@ public class PileInfo {
             this.Price = Price;
         }
 
-        public String getFacilityNo() {
-            return FacilityNo;
-        }
-
-        public void setFacilityNo(String FacilityNo) {
-            this.FacilityNo = FacilityNo;
-        }
-
         public String getOrgID() {
             return OrgID;
         }
@@ -129,5 +115,99 @@ public class PileInfo {
         public void setOrgName(String OrgName) {
             this.OrgName = OrgName;
         }
+
+        public String getAddr() {
+            return addr;
+        }
+
+        public void setAddr(String addr) {
+            this.addr = addr;
+        }
+
+        public String getFacilityType() {
+            return FacilityType;
+        }
+
+        public void setFacilityType(String facilityType) {
+            FacilityType = facilityType;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.returnStatus);
+            dest.writeString(this.isSuccess);
+            dest.writeString(this.FacilityID);
+            dest.writeString(this.FacilityName);
+            dest.writeString(this.FacilityModel);
+            dest.writeString(this.FacilityStatus);
+            dest.writeString(this.Price);
+            dest.writeString(this.OrgID);
+            dest.writeString(this.OrgName);
+            dest.writeString(this.addr);
+            dest.writeString(this.FacilityType);
+        }
+
+        public EvcFacilityGetEntity() {
+        }
+
+        protected EvcFacilityGetEntity(Parcel in) {
+            this.returnStatus = in.readString();
+            this.isSuccess = in.readString();
+            this.FacilityID = in.readString();
+            this.FacilityName = in.readString();
+            this.FacilityModel = in.readString();
+            this.FacilityStatus = in.readString();
+            this.Price = in.readString();
+            this.OrgID = in.readString();
+            this.OrgName = in.readString();
+            this.addr = in.readString();
+            this.FacilityType = in.readString();
+        }
+
+        public static final Parcelable.Creator<EvcFacilityGetEntity> CREATOR = new Parcelable.Creator<EvcFacilityGetEntity>() {
+            @Override
+            public EvcFacilityGetEntity createFromParcel(Parcel source) {
+                return new EvcFacilityGetEntity(source);
+            }
+
+            @Override
+            public EvcFacilityGetEntity[] newArray(int size) {
+                return new EvcFacilityGetEntity[size];
+            }
+        };
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.evc_facility_get, flags);
+    }
+
+    public PileInfo() {
+    }
+
+    protected PileInfo(Parcel in) {
+        this.evc_facility_get = in.readParcelable(EvcFacilityGetEntity.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<PileInfo> CREATOR = new Parcelable.Creator<PileInfo>() {
+        @Override
+        public PileInfo createFromParcel(Parcel source) {
+            return new PileInfo(source);
+        }
+
+        @Override
+        public PileInfo[] newArray(int size) {
+            return new PileInfo[size];
+        }
+    };
 }

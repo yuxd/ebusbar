@@ -18,7 +18,15 @@ public class OrderInfoDaoImpl extends BaseDaoImpl {
     /**
      * 操作数据
      */
-    public OrderInfo orderInfoDao;
+    public OrderInfo orderInfo;
+    /**
+     * 扫码开始充电
+     */
+    public static final String COMPLETE = "8";
+    /**
+     * 关闭
+     */
+    public static final String CANCEL = "16";
 
     public OrderInfoDaoImpl(Context context, Handler handler, int msg) {
         super(context, handler, msg);
@@ -32,7 +40,7 @@ public class OrderInfoDaoImpl extends BaseDaoImpl {
     /**
      * 获得数据
      */
-    public void getOrderInfoDaoImpl(String Token,String OrderNo,String custid){
+    public void getOrderInfo(String Token, String OrderNo, String custid){
         if(NetParam.isEmpty(Token,OrderNo,custid)){
             return;
         }
@@ -47,7 +55,7 @@ public class OrderInfoDaoImpl extends BaseDaoImpl {
             public void response(boolean b, String s) {
                 Log.v("json12312321",s.trim());
                 if(NetParam.isSuccess(b,s)){
-                    orderInfoDao = JsonUtil.arrayFormJson(s,OrderInfo[].class).get(0);
+                    orderInfo = JsonUtil.arrayFormJson(s,OrderInfo[].class).get(0);
                 }
                 handler.sendEmptyMessage(msg);
             }

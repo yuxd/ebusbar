@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Jelly on 2016/4/10.
  */
-public class StationInfoActivity extends UtilActivity {
+public class StationInfoActivity extends UtilActivity implements StationDetailFragment.OrgIdFragmentListener{
 
     public String TAG = "StationInfoActivity";
     @Bind(R.id.detail_icon)
@@ -38,10 +38,10 @@ public class StationInfoActivity extends UtilActivity {
     ImageView commentIcon;
     @Bind(R.id.comment_text)
     TextView commentText;
-    @Bind(R.id.vp)
-    ViewPager vp;
     @Bind(R.id.tabLine)
     TextView tabLine;
+    @Bind(R.id.vp)
+    ViewPager vp;
     /**
      * 视图适配器
      */
@@ -62,11 +62,11 @@ public class StationInfoActivity extends UtilActivity {
     /**
      * 标签选中时的图片
      */
-    private int[] onIcons = new int[]{R.drawable.ondetail,R.drawable.onphoto,R.drawable.oncomment};
+    private int[] onIcons = new int[]{R.drawable.ondetail, R.drawable.onphoto, R.drawable.oncomment};
     /**
      * 标签未选中时的图片
      */
-    private int[] icons = new int[]{R.drawable.detail,R.drawable.photo,R.drawable.comment};
+    private int[] icons = new int[]{R.drawable.detail, R.drawable.photo, R.drawable.comment};
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +78,12 @@ public class StationInfoActivity extends UtilActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public void init() {
         this.setContentView(R.layout.stationinfo);
         ButterKnife.bind(this);
@@ -86,7 +92,7 @@ public class StationInfoActivity extends UtilActivity {
     @Override
     public void loadObjectAttribute() {
         fragments = new BaseFragment[]{new StationDetailFragment(), new StationPhotoFragment(), new StationCommentFragment()};
-        pageAdapter = new ViewPageAdapter(getSupportFragmentManager(),fragments);
+        pageAdapter = new ViewPageAdapter(getSupportFragmentManager(), fragments);
         currText = detailText;
         currIcon = detailIcon;
     }
@@ -98,12 +104,12 @@ public class StationInfoActivity extends UtilActivity {
 
     @Override
     public void setActivityView() {
-        tabLine.getLayoutParams().width = windowUtil.getScreenWidth(this)/3;
+        tabLine.getLayoutParams().width = windowUtil.getScreenWidth(this) / 3;
         vp.setAdapter(pageAdapter);
     }
 
 
-    public void setViewPageListener(){
+    public void setViewPageListener() {
         vp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -112,11 +118,11 @@ public class StationInfoActivity extends UtilActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if(currText != null && currIcon != null){
-                    currText.setTextColor(resourceUtil.getResourceColor(context,R.color.defaultTabColor));
+                if (currText != null && currIcon != null) {
+                    currText.setTextColor(resourceUtil.getResourceColor(context, R.color.defaultTabColor));
                     currIcon.setImageResource(icons[Integer.parseInt(currIcon.getTag().toString())]);
                 }
-                switch (position){
+                switch (position) {
                     case 0:
                         currText = detailText;
                         currIcon = detailIcon;
@@ -131,11 +137,11 @@ public class StationInfoActivity extends UtilActivity {
                         break;
                 }
                 currIcon.setImageResource(onIcons[position]);
-                currText.setTextColor(resourceUtil.getResourceColor(context,R.color.tab_select_color));
+                currText.setTextColor(resourceUtil.getResourceColor(context, R.color.tab_select_color));
 
-                Animation animation = AnimationUtil.startTabLineAnimation(windowUtil,StationInfoActivity.this,previousPosition,position,fragments.length);
+                Animation animation = AnimationUtil.startTabLineAnimation(windowUtil, StationInfoActivity.this, previousPosition, position, fragments.length);
                 tabLine.startAnimation(animation);
-                previousPosition = position * windowUtil.getScreenWidth(StationInfoActivity.this)/fragments.length;
+                previousPosition = position * windowUtil.getScreenWidth(StationInfoActivity.this) / fragments.length;
             }
 
             @Override
@@ -145,13 +151,19 @@ public class StationInfoActivity extends UtilActivity {
         });
     }
 
+    @Override
+    public String getOrgId() {
+        return intent.getStringExtra("OrgId");
+    }
+
     /**
      * 开启界面
      *
      * @param context
      */
-    public static void startActivity(Context context) {
+    public static void startActivity(Context context,String OrgId) {
         Intent intent = new Intent(context, StationInfoActivity.class);
+        intent.putExtra("OrgId",OrgId);
         context.startActivity(intent);
     }
 

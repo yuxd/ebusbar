@@ -9,26 +9,26 @@ public class OrderInfo {
     /**
      * returnStatus : 100
      * isSuccess : Y
-     * OrderNo : O-20160405-00480
-     * OrderStatus : 2
+     * OrderNo : O-20160409-00564
+     * OrderStatus : 8
      * OrderType : EVCR
      * CompanyID : C01
-     * CustID : 86201604010000000709
+     * CustID : 86201604070000000784
      * OrgID : C00000001
      * OrgName : 深大站
-     * FacilityID : 0755300000000033
-     * FacilityName : 99号充电桩
+     * FacilityID : 0755300000000091
+     * FacilityName : 91号桩
      * Longitude : 113.938000
-     * Latitude : 22.540692
      * ChargingAmt : 0.00
      * ServiceAmt : 0.00
      * ChargingQty : 0.00
      * ChargingTime : 0
      * PlanCost : 1.50
      * PlanCostPayed : 1
-     * PlanBeginDateTime : 2016-04-05 17:31:16
-     * PlanEndDateTime : 2016-04-05 17:46:16
-     * RealBeginDateTime : 2016-04-05 17:31:28
+     * PlanBeginDateTime : 2016-04-09 12:42:24
+     * PlanEndDateTime : 2016-04-09 12:57:24
+     * RealBeginDateTime : 2016-04-09 12:42:48
+     * RealEndDateTime : 2016-04-09 12:42:54
      * Tel : 0755-82891087
      */
 
@@ -55,7 +55,6 @@ public class OrderInfo {
         private String FacilityID;
         private String FacilityName;
         private String Longitude;
-        private String Latitude;
         private String ChargingAmt;
         private String ServiceAmt;
         private String ChargingQty;
@@ -65,6 +64,7 @@ public class OrderInfo {
         private String PlanBeginDateTime;
         private String PlanEndDateTime;
         private String RealBeginDateTime;
+        private String RealEndDateTime;
         private String Tel;
 
         public String getReturnStatus() {
@@ -163,14 +163,6 @@ public class OrderInfo {
             this.Longitude = Longitude;
         }
 
-        public String getLatitude() {
-            return Latitude;
-        }
-
-        public void setLatitude(String Latitude) {
-            this.Latitude = Latitude;
-        }
-
         public String getChargingAmt() {
             return ChargingAmt;
         }
@@ -241,6 +233,14 @@ public class OrderInfo {
 
         public void setRealBeginDateTime(String RealBeginDateTime) {
             this.RealBeginDateTime = RealBeginDateTime;
+        }
+
+        public String getRealEndDateTime() {
+            return RealEndDateTime;
+        }
+
+        public void setRealEndDateTime(String RealEndDateTime) {
+            this.RealEndDateTime = RealEndDateTime;
         }
 
         public String getTel() {

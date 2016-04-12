@@ -39,10 +39,6 @@ public class SelectPileActivity extends UtilActivity {
      */
     public static final int msgPiles = 0x001;
     /**
-     * Intent
-     */
-    private Intent intent;
-    /**
      * 预约
      */
     private static final int APPOINT = 0x002;
@@ -69,7 +65,6 @@ public class SelectPileActivity extends UtilActivity {
 
     @Override
     public void loadObjectAttribute() {
-        intent = getIntent();
         pileListItemDao = new PileListItemDaoImpl(this,handler,msgPiles);
     }
 

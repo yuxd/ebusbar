@@ -17,6 +17,7 @@ public class StationPhotoFragment extends UtilFragment{
 
     public String TAG = "StationPhotoFragment";
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +47,8 @@ public class StationPhotoFragment extends UtilFragment{
     public void setFragView() {
 
     }
+
+
 
     @Override
     public String getTAG() {

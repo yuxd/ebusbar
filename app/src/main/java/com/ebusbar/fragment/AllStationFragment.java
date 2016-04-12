@@ -165,8 +165,8 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     public void onResume() {
         super.onResume();
         mapView.onResume();
-        aMap.clear(true);
-        setFragView(); //每次获取焦点时，重新刷新充电点
+//        aMap.clear(true);
+//        setFragView(); //每次获取焦点时，重新刷新充电点
     }
 
     /**
@@ -243,7 +243,6 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         loadPosition();
     }
 
-
     /**
      * 加载电桩位置
      */
@@ -255,10 +254,6 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             allStationDao.getDaos();
         }
     }
-
-
-
-
 
     /**
      * 设置地图上所有电桩的位置
@@ -515,7 +510,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             @Override
             public void onClick(View v) {
                 popupWindowUtil.dismissPopupWindow(markerPw);
-                StationInfoActivity.startActivity(context);
+                StationInfoActivity.startActivity(context,entity.getOrgId());
             }
         });
 

@@ -1,6 +1,8 @@
 package com.ebusbar.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +33,7 @@ import com.ebusbar.pile.NaviEmulatorActivity;
 import com.ebusbar.pile.R;
 import com.ebusbar.utils.ActivityControl;
 import com.ebusbar.utils.DateUtil;
+import com.ebusbar.utils.LogUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,8 +62,6 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     TextView facilityMode;
     @Bind(R.id.appoint_price_text)
     TextView appointPriceText;
-    @Bind(R.id.phone_title)
-    TextView phoneTitle;
     @Bind(R.id.phone_text)
     TextView phoneText;
     @Bind(R.id.start)
@@ -73,6 +74,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     TextView startTime;
     @Bind(R.id.endTime)
     TextView endTime;
+
     /**
      * GetChargeAppointDaoImpl
      */
@@ -117,7 +119,11 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         init(inflater, container);
         loadObjectAttribute();
         setListener();
-        setFragView();
+        if (!loadSavedInstanceState()) {
+            LogUtil.v(TAG, "从网络加载预约充电数据");
+            setFragView();
+        }
+        ButterKnife.bind(this, root);
         return root;
     }
 
@@ -126,11 +132,30 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         super.onResume();
     }
 
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+        LogUtil.v(TAG, "销毁界面");
+        saveInstanceState(getArguments());
+    }
+
+    public void saveInstanceState(Bundle outState) {
+        LogUtil.v(TAG, "保存预约充电数据");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("OrderData", getChargeAppointDao.getChargeAppointDao);
+        bundle.putParcelable("PileData", pileInfoDao.pileInfoDao);
+        outState.putBundle("saveData", bundle);
+    }
+
+
     @Override
     public void init(LayoutInflater inflater, ViewGroup container) {
         root = inflater.inflate(R.layout.chargeappoint, container, false);
         ButterKnife.bind(this, root);
     }
+
 
     @Override
     public void loadObjectAttribute() {
@@ -151,8 +176,50 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         getChargeAppointDao.getNetGetChargeAppointDao(data.getToken(), data.getCustID());
     }
 
+    /**
+     * 加载
+     */
+    public boolean loadSavedInstanceState() {
+        if (getArguments() == null) {
+            return false;
+        }
+        if (getArguments().getBundle("saveData") == null) {
+            return false;
+        }
+        Bundle savedInstanceState = getArguments().getBundle("saveData");
+        if (savedInstanceState == null) {
+            return false;
+        }
+        getChargeAppointDao.getChargeAppointDao = (GetChargeAppoint) savedInstanceState.get("OrderData");
+        pileInfoDao.pileInfoDao = (PileInfo) savedInstanceState.get("PileData");
+        if (getChargeAppointDao.getChargeAppointDao == null || pileInfoDao.pileInfoDao == null) {
+            nodataShow.setVisibility(View.VISIBLE);
+            return true;
+        }
+        GetChargeAppoint.EvcOrdersGetEntity evcOrdersGetEntity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
+        PileInfo.EvcFacilityGetEntity evcFacilityGetEntity = pileInfoDao.pileInfoDao.getEvc_facility_get();
+        orderNo.setText(evcOrdersGetEntity.getOrderNo());
+        phoneText.setText(evcOrdersGetEntity.getTel());
+        appointPriceText.setText("¥" + evcOrdersGetEntity.getPlanCost());
+        startTime.setText(DateUtil.getSdfDate(evcOrdersGetEntity.getPlanBeginDateTime(), "HH:mm"));
+        endTime.setText(DateUtil.getSdfDate(evcOrdersGetEntity.getPlanEndDateTime(), "HH:mm"));
+        if (TextUtils.equals("00", DateUtil.DifferDate(evcOrdersGetEntity.getPlanEndDateTime(), evcOrdersGetEntity.getPlanBeginDateTime()))) {
+            time.setText("60");
+        } else {
+            time.setText(DateUtil.DifferDate(evcOrdersGetEntity.getPlanEndDateTime(), evcOrdersGetEntity.getPlanBeginDateTime()));
+        }
+        orgName.setText(evcFacilityGetEntity.getOrgName());
+        facilityName.setText(evcFacilityGetEntity.getFacilityName());
+        if (TextUtils.equals("1", evcFacilityGetEntity.getFacilityType())) {
+            facilityType.setText("直流桩");
+        } else if (TextUtils.equals("2", evcFacilityGetEntity.getFacilityType())) {
+            facilityType.setText("交流桩");
+        }
+        addr.setText(evcFacilityGetEntity.getAddr());
+        return true;
+    }
 
-    @OnClick({R.id.start, R.id.cancel, R.id.navigation})
+    @OnClick({R.id.start, R.id.cancel, R.id.navigation, R.id.phone_btn})
     public void onClick(View view) {
         Login.DataEntity entity = application.getLoginDao().getData(); //用户数据
         switch (view.getId()) {
@@ -183,6 +250,10 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                 GetChargeAppoint.EvcOrdersGetEntity entity1 = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
                 NaviEmulatorActivity.startAppActivity(context, Double.parseDouble(location.getLatitude()), Double.parseDouble(location.getLongitude()), Double.parseDouble(entity1.getLatitude()), Double.parseDouble(entity1.getLongitude()));
                 break;
+            case R.id.phone_btn:
+                Intent intent=new Intent("android.intent.action.CALL", Uri.parse("tel:"+phoneText.getText().toString()));
+                startActivity(intent);
+                break;
         }
     }
 
@@ -204,9 +275,13 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                     phoneText.setText(entity.getTel());
                     appointPriceText.setText("¥" + entity.getPlanCost());
                     pileInfoDao.getPileInfoDao(entity.getFacilityID(), PileInfoDaoImpl.FACILITYID);
-                    startTime.setText(DateUtil.getSdfDate(entity.getPlanBeginDateTime(),"HH:mm"));
-                    endTime.setText(DateUtil.getSdfDate(entity.getPlanEndDateTime(),"HH:mm"));
-                    time.setText(DateUtil.DifferDate(entity.getPlanEndDateTime(),entity.getPlanBeginDateTime()));
+                    startTime.setText(DateUtil.getSdfDate(entity.getPlanBeginDateTime(), "HH:mm"));
+                    endTime.setText(DateUtil.getSdfDate(entity.getPlanEndDateTime(), "HH:mm"));
+                    if (TextUtils.equals("00", DateUtil.DifferDate(entity.getPlanEndDateTime(), entity.getPlanBeginDateTime()))) {
+                        time.setText("60");
+                    } else {
+                        time.setText(DateUtil.DifferDate(entity.getPlanEndDateTime(), entity.getPlanBeginDateTime()));
+                    }
                     break;
                 case msgFinish: //结束预约
                     if (finishOrderDao.finishOrderDao == null) {
@@ -247,6 +322,7 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                     } else if (TextUtils.equals("2", evcFacilityGetEntity.getFacilityType())) {
                         facilityType.setText("交流桩");
                     }
+                    addr.setText(evcFacilityGetEntity.getAddr());
                     break;
             }
         }
@@ -255,12 +331,6 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     @Override
     public String getTAG() {
         return TAG;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
 
