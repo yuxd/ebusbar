@@ -1,6 +1,8 @@
 package com.ebusbar.fragment;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,6 +30,7 @@ import com.ebusbar.utils.FloatUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * 电站详情
@@ -74,6 +77,7 @@ public class StationDetailFragment extends UtilFragment {
      */
     private OrgIdFragmentListener orgIdFragmentListener;
 
+
     /**
      * 获取充电点Id的接口
      */
@@ -89,6 +93,7 @@ public class StationDetailFragment extends UtilFragment {
         loadObjectAttribute();
         setListener();
         setFragView();
+        ButterKnife.bind(this, root);
         return root;
     }
 
@@ -126,6 +131,12 @@ public class StationDetailFragment extends UtilFragment {
         stationInfoDao.getStationInfo(orgIdFragmentListener.getOrgId());
     }
 
+    @OnClick(R.id.phone_btn)
+    public void onClick() {
+        Intent intent=new Intent("android.intent.action.CALL", Uri.parse("tel:"+phoneText.getText().toString()));
+        startActivity(intent);
+    }
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -139,47 +150,47 @@ public class StationDetailFragment extends UtilFragment {
                     final StationInfo.DataEntity dataEntity = stationInfoDao.stationInfo.getData();
                     orgName.setText(dataEntity.getOrgName());
 
-                    if(TextUtils.equals(dataEntity.getIsAvailable(),"1")){
+                    if (TextUtils.equals(dataEntity.getIsAvailable(), "1")) {
                         openText.setText("有空闲");
-                    }else{
+                    } else {
                         openText.setText("繁忙中");
                     }
 
-                    LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()));
-                    LatLng endLatLng = new LatLng(Double.parseDouble(dataEntity.getLatitude()),Double.parseDouble(dataEntity.getLongitude()));
-                    distanceText.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
+                    LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()), Double.parseDouble(application.getLocation().getLongitude()));
+                    LatLng endLatLng = new LatLng(Double.parseDouble(dataEntity.getLatitude()), Double.parseDouble(dataEntity.getLongitude()));
+                    distanceText.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng, endLatLng)) + "km");
 
                     addr.setText(dataEntity.getAddr());
 
                     String sum = "0";
-                    if(!TextUtils.isEmpty(dataEntity.getAvailableNum()) && !TextUtils.isEmpty(dataEntity.getUnavailableNum())){
-                        sum = Integer.parseInt(dataEntity.getAvailableNum()) + Integer.parseInt(dataEntity.getUnavailableNum())+"";
+                    if (!TextUtils.isEmpty(dataEntity.getAvailableNum()) && !TextUtils.isEmpty(dataEntity.getUnavailableNum())) {
+                        sum = Integer.parseInt(dataEntity.getAvailableNum()) + Integer.parseInt(dataEntity.getUnavailableNum()) + "";
                     }
                     sumText.setText(sum);
-                    if(!TextUtils.equals(sum,"0")){
+                    if (!TextUtils.equals(sum, "0")) {
                         spareText.setText(dataEntity.getAvailableNum());
-                    }else{
+                    } else {
                         spareText.setText("0");
                     }
 
                     company.setText(dataEntity.getCompanyName());
-                    companyText.setText("该充电点由"+dataEntity.getCompanyName()+"负责运营");
+                    companyText.setText("该充电点由" + dataEntity.getCompanyName() + "负责运营");
                     phoneText.setText(dataEntity.getTel());
 
                     navLayout.setOnClickListener(new View.OnClickListener() { //导航
                         @Override
                         public void onClick(View v) {
-                            NaviEmulatorActivity.startAppActivity(context, Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()), Double.parseDouble(dataEntity.getLatitude()), Double.parseDouble(dataEntity.getLongitude()));
+                            NaviEmulatorActivity.startAppActivity(context, Double.parseDouble(application.getLocation().getLatitude()), Double.parseDouble(application.getLocation().getLongitude()), Double.parseDouble(dataEntity.getLatitude()), Double.parseDouble(dataEntity.getLongitude()));
                         }
                     });
 
                     appointLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) { //预约
-                            if(!application.isLogin()){
+                            if (!application.isLogin()) {
                                 LoginActivity.startAppActivity(context);
-                            }else {
-                                SelectPileActivity.startAppActivity(context, dataEntity.getOrgId(),dataEntity.getAddr());
+                            } else {
+                                SelectPileActivity.startAppActivity(context, dataEntity.getOrgId(), dataEntity.getAddr());
                             }
                         }
                     });

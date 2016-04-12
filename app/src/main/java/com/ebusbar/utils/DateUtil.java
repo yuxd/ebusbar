@@ -1,5 +1,7 @@
 package com.ebusbar.utils;
 
+import android.text.TextUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -63,7 +65,11 @@ public class DateUtil {
         Long dateL = date1.getTime() - date2.getTime();
         Date dateResult = new Date(dateL);
         SimpleDateFormat sdf = new SimpleDateFormat("mm");
-        return sdf.format(dateResult);
+        String result = sdf.format(dateResult);
+        if(TextUtils.equals(result,"00")){
+            result = "60";
+        }
+        return result;
     }
 
 }

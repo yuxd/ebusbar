@@ -160,11 +160,12 @@
         </RelativeLayout>
 
         <ImageView
+            android:id="@+id/orgSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="85dp"
             android:src="@drawable/orderfinish" />
 
 
@@ -206,15 +207,16 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/use_time_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="充电时间：" />
 
             <TextView
-                android:id="@+id/chargingTime"
+                android:id="@+id/use_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12:23"
+                android:text="30分钟"
                 android:textColor="#000000" />
         </LinearLayout>
 
@@ -233,7 +235,7 @@
                 android:id="@+id/chargingQty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12.33度"
+                android:text="0度"
                 android:textColor="#000000" />
         </LinearLayout>
     </LinearLayout>
@@ -259,7 +261,7 @@
                 android:id="@+id/amt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12:23"
+                android:text="0元"
                 android:textColor="#000000" />
         </LinearLayout>
 

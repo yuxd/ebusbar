@@ -65,7 +65,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="图片" />
+                android:text="图片"
+                android:textColor="@color/defaultTabColor"
+                />
 
         </LinearLayout>
 
@@ -92,7 +94,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="点评" />
+                android:text="点评"
+                android:textColor="@color/defaultTabColor"
+                />
 
         </LinearLayout>
 

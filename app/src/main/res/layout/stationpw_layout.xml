@@ -24,23 +24,6 @@
             android:textStyle="bold"
             />
 
-        <ImageView
-            android:id="@+id/share_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/share"
-            />
-
-        <ImageView
-            android:id="@+id/collect_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/share_btn"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/collect"
-            />
-
         <LinearLayout
             android:id="@+id/bottom_layout"
             android:layout_width="match_parent"
