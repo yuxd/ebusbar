@@ -116,14 +116,18 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        init(inflater, container);
-        loadObjectAttribute();
-        setListener();
-        if (!loadSavedInstanceState()) {
-            LogUtil.v(TAG, "从网络加载预约充电数据");
+        if(root == null){
+            root = inflater.inflate(R.layout.chargeappoint, container, false);
+            ButterKnife.bind(this, root);
+            init();
+            loadObjectAttribute();
+            setListener();
             setFragView();
         }
-        ButterKnife.bind(this, root);
+        ViewGroup parent = (ViewGroup) root.getParent();
+        if (parent != null) {
+            parent.removeView(root);
+        }
         return root;
     }
 
@@ -138,22 +142,14 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         super.onDestroyView();
         ButterKnife.unbind(this);
         LogUtil.v(TAG, "销毁界面");
-        saveInstanceState(getArguments());
     }
 
-    public void saveInstanceState(Bundle outState) {
-        LogUtil.v(TAG, "保存预约充电数据");
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("OrderData", getChargeAppointDao.getChargeAppointDao);
-        bundle.putParcelable("PileData", pileInfoDao.pileInfoDao);
-        outState.putBundle("saveData", bundle);
-    }
+
 
 
     @Override
-    public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.chargeappoint, container, false);
-        ButterKnife.bind(this, root);
+    public void init() {
+
     }
 
 
@@ -174,49 +170,6 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
         loading = popupWindowUtil.startLoading(context, start, "加载中");
         Login.DataEntity data = application.getLoginDao().getData();
         getChargeAppointDao.getNetGetChargeAppointDao(data.getToken(), data.getCustID());
-    }
-
-    /**
-     * 加载
-     */
-    public boolean loadSavedInstanceState() {
-        if (getArguments() == null) {
-            return false;
-        }
-        if (getArguments().getBundle("saveData") == null) {
-            return false;
-        }
-        Bundle savedInstanceState = getArguments().getBundle("saveData");
-        if (savedInstanceState == null) {
-            return false;
-        }
-        getChargeAppointDao.getChargeAppointDao = (GetChargeAppoint) savedInstanceState.get("OrderData");
-        pileInfoDao.pileInfoDao = (PileInfo) savedInstanceState.get("PileData");
-        if (getChargeAppointDao.getChargeAppointDao == null || pileInfoDao.pileInfoDao == null) {
-            nodataShow.setVisibility(View.VISIBLE);
-            return true;
-        }
-        GetChargeAppoint.EvcOrdersGetEntity evcOrdersGetEntity = getChargeAppointDao.getChargeAppointDao.getEvc_orders_get();
-        PileInfo.EvcFacilityGetEntity evcFacilityGetEntity = pileInfoDao.pileInfoDao.getEvc_facility_get();
-        orderNo.setText(evcOrdersGetEntity.getOrderNo());
-        phoneText.setText(evcOrdersGetEntity.getTel());
-        appointPriceText.setText("¥" + evcOrdersGetEntity.getPlanCost());
-        startTime.setText(DateUtil.getSdfDate(evcOrdersGetEntity.getPlanBeginDateTime(), "HH:mm"));
-        endTime.setText(DateUtil.getSdfDate(evcOrdersGetEntity.getPlanEndDateTime(), "HH:mm"));
-        if (TextUtils.equals("00", DateUtil.DifferDate(evcOrdersGetEntity.getPlanEndDateTime(), evcOrdersGetEntity.getPlanBeginDateTime()))) {
-            time.setText("60");
-        } else {
-            time.setText(DateUtil.DifferDate(evcOrdersGetEntity.getPlanEndDateTime(), evcOrdersGetEntity.getPlanBeginDateTime()));
-        }
-        orgName.setText(evcFacilityGetEntity.getOrgName());
-        facilityName.setText(evcFacilityGetEntity.getFacilityName());
-        if (TextUtils.equals("1", evcFacilityGetEntity.getFacilityType())) {
-            facilityType.setText("直流桩");
-        } else if (TextUtils.equals("2", evcFacilityGetEntity.getFacilityType())) {
-            facilityType.setText("交流桩");
-        }
-        addr.setText(evcFacilityGetEntity.getAddr());
-        return true;
     }
 
     @OnClick({R.id.start, R.id.cancel, R.id.navigation, R.id.phone_btn})

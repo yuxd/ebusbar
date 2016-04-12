@@ -23,7 +23,8 @@ public class CarAppointFragment extends UtilFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        init(inflater,container);
+        root = inflater.inflate(R.layout.carappoint,container,false);
+        init();
         loadObjectAttribute();
         setListener();
         setFragView();
@@ -32,8 +33,8 @@ public class CarAppointFragment extends UtilFragment {
 
 
     @Override
-    public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.carappoint,container,false);
+    public void init() {
+
     }
 
     @Override

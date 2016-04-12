@@ -59,6 +59,8 @@ public class MyAppointActivity extends UtilActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.myappoint);
+        ButterKnife.bind(this);
         init();
         loadObjectAttribute();
         setListener();
@@ -67,8 +69,7 @@ public class MyAppointActivity extends UtilActivity {
 
     @Override
     public void init() {
-        this.setContentView(R.layout.myappoint);
-        ButterKnife.bind(this);
+
     }
 
     @Override

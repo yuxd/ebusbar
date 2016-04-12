@@ -18,7 +18,7 @@
             android:layout_weight="1"
             android:layout_width="match_parent"></FrameLayout>
 
-        <android.support.v4.app.FragmentTabHost
+        <com.ebusbar.view.NoLoadFragmentTabHost
             android:id="@android:id/tabhost"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
@@ -30,7 +30,7 @@
                 android:layout_weight="0"
                 android:layout_width="0dp"></FrameLayout>
 
-        </android.support.v4.app.FragmentTabHost>
+        </com.ebusbar.view.NoLoadFragmentTabHost>
 
     </LinearLayout>
 

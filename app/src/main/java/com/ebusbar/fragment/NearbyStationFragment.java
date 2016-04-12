@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +13,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.ebusbar.adpater.NearbyListItemAdapter;
 import com.ebusbar.bean.NearbyStation;
 import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.NearbyStationDaoImpl;
-import com.ebusbar.view.SlideSwitch;
-import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
-import com.ebusbar.pile.SearchActivity;
 import com.ebusbar.utils.LogUtil;
+import com.ebusbar.view.SlideSwitch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,18 +43,6 @@ public class NearbyStationFragment extends UtilFragment {
      * 充电点的列表
      */
     private ListView list;
-    /**
-     * 地图切换
-     */
-    private TextView map;
-    /**
-     * 会员头像
-     */
-    private ImageView member;
-    /**
-     * 搜索
-     */
-    private TextView search;
     /**
      * 筛选
      */
@@ -105,11 +88,13 @@ public class NearbyStationFragment extends UtilFragment {
      */
     private boolean isUse = false;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        init(inflater, container);
+        root = inflater.inflate(R.layout.nearby,container,false);
+        init();
         loadObjectAttribute();
         setListener();
         setFragView();
@@ -122,12 +107,9 @@ public class NearbyStationFragment extends UtilFragment {
     }
 
     @Override
-    public void init(LayoutInflater inflater,ViewGroup container) {
-        root = inflater.inflate(R.layout.nearby,container,false);
+    public void init() {
+
         list = (ListView) root.findViewById(R.id.list);
-        map = (TextView) root.findViewById(R.id.map);
-        member = (ImageView) root.findViewById(R.id.member);
-        search = (TextView) root.findViewById(R.id.search);
         screen = (RelativeLayout) root.findViewById(R.id.screen);
         actionBar_layout = (RelativeLayout) root.findViewById(R.id.actionBar_layout);
         arrow = (ImageView) root.findViewById(R.id.arrow);
@@ -142,9 +124,6 @@ public class NearbyStationFragment extends UtilFragment {
 
     @Override
     public void setListener() {
-        setMapListener();
-        setOpenDrawerListener();
-        setSearchListener();
         setScreenListener();
     }
 
@@ -158,20 +137,6 @@ public class NearbyStationFragment extends UtilFragment {
         }
     }
 
-
-    /**
-     * 当点击会员头像的时候,打开抽屉
-     */
-    public void setOpenDrawerListener(){
-        member.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.drawerLayout.openDrawer(Gravity.LEFT); //打开左边抽屉
-            }
-        });
-    }
-
     /**
      * 设置筛选按钮的监听器
      */
@@ -180,14 +145,14 @@ public class NearbyStationFragment extends UtilFragment {
             @Override
             public void onClick(View v) {
                 if(screenPw != null && isShow){
-                    screenPw.dismiss();
+                    isShow = popupWindowUtil.dismissPopupWindow(screenPw,isShow);
                     arrow.setImageResource(R.drawable.down);
-                    isShow = false;
                     return;
                 }else if(screenPw != null && !isShow){
+                    LogUtil.v(TAG,"复用PopupWindow");
                     screenPw.showAsDropDown(v);
                     arrow.setImageResource(R.drawable.up);
-                    isShow = true;
+                    isShow = !isShow;
                     return;
                 }
                 View root = LayoutInflater.from(context).inflate(R.layout.nearby_screen_layout,null);
@@ -232,8 +197,6 @@ public class NearbyStationFragment extends UtilFragment {
                     }
                 });
 
-
-
                 ImageView bg = (ImageView) root.findViewById(R.id.bg);
                 bg.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -244,9 +207,10 @@ public class NearbyStationFragment extends UtilFragment {
                         }
                     }
                 });
-                screenPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) - actionBar_layout.getHeight() - screen.getHeight() - windowUtil.getStateBarHeight(context));
-                screenPw.showAsDropDown(v);
                 arrow.setImageResource(R.drawable.up);
+                Tab1Fragment tab1Fragment = (Tab1Fragment) getParentFragment();
+                screenPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(getActivity()), windowUtil.getScreenHeight(getActivity()) - tab1Fragment.getActionBarHeight() - screen.getHeight() - windowUtil.getStateBarHeight(context));
+                screenPw.showAsDropDown(v);
                 isShow = true;
             }
         });
@@ -266,32 +230,9 @@ public class NearbyStationFragment extends UtilFragment {
         return show;
     }
 
-    /**
-     * 设置切换Map的点击事件
-     */
-    public void setMapListener(){
-        map.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.remove(NearbyStationFragment.this);
-                ft.add(R.id.content, new AllStationFragment());
-                ft.commit();
-            }
-        });
-    }
 
-    /**
-     * 设置搜索监听
-     */
-    public void setSearchListener(){
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SearchActivity.startAppActivity(context);
-            }
-        });
-    }
+
+
 
     private Handler handler = new Handler(){
         @Override

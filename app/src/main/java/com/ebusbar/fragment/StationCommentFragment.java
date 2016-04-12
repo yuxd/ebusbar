@@ -20,7 +20,9 @@ public class StationCommentFragment extends UtilFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        init(inflater,container);
+        super.onCreateView(inflater,container,savedInstanceState);
+        root = inflater.inflate(R.layout.station_comment_fragment,container,false);
+        init();
         loadObjectAttribute();
         setListener();
         setFragView();
@@ -28,8 +30,8 @@ public class StationCommentFragment extends UtilFragment{
     }
 
     @Override
-    public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.station_comment_fragment,container,false);
+    public void init() {
+
     }
 
     @Override

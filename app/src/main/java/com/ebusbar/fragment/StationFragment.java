@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -15,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -43,7 +41,6 @@ import com.ebusbar.pile.MainActivity;
 import com.ebusbar.pile.NaviEmulatorActivity;
 import com.ebusbar.pile.QRActivity;
 import com.ebusbar.pile.R;
-import com.ebusbar.pile.SearchActivity;
 import com.ebusbar.pile.SelectPileActivity;
 import com.ebusbar.pile.StationInfoActivity;
 import com.ebusbar.utils.FloatUtil;
@@ -53,23 +50,27 @@ import com.ebusbar.view.SlideSwitch;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * 电桩模块
  * Created by Jelly on 2016/2/25.
  */
-public class AllStationFragment extends UtilFragment implements AMapLocationListener{
+public class StationFragment extends UtilFragment implements AMapLocationListener {
+
+    @Bind(R.id.qrcode)
+    ImageView qrcode;
+    @Bind(R.id.screen)
+    ImageView screen;
+    @Bind(R.id.location)
+    ImageView location;
+    @Bind(R.id.map)
+    MapView mapView;
     /**
      * TAG
      */
-    private String TAG = "AllStationFragment";
-    /**
-     * 地图
-     */
-    private MapView mapView;
-    /**
-     * 会员
-     */
-    private ImageView member;
+    private String TAG = "StationFragment";
     /**
      * aMap
      */
@@ -87,29 +88,9 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      */
     private LocationSource.OnLocationChangedListener locationChangedListener;
     /**
-     * 定位按钮
-     */
-    private ImageView location;
-    /**
-     * 筛选按钮
-     */
-    private ImageView screen;
-    /**
      * 关闭筛选菜单
      */
     private ImageView close;
-    /**
-     * 验证码扫码
-     */
-    private ImageView qrcode;
-    /**
-     * 附近
-     */
-    private TextView nearby;
-    /**
-     * 搜索
-     */
-    private TextView search;
     /**
      * 筛选菜单
      */
@@ -142,17 +123,20 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
      * 是否筛选使用
      */
     private boolean isUse = false;
-
+    /**
+     * 被隐藏掉的数据
+     */
     private List<AllStation> dismissList = new ArrayList<>();
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater,container,savedInstanceState);
-        init(inflater, container);
+        super.onCreateView(inflater, container, savedInstanceState);
+        root = inflater.inflate(R.layout.station, container, false);
+        ButterKnife.bind(this, root);
+        init();
         loadObjectAttribute();
-        loadMap(savedInstanceState);
+        loadMap(savedInstanceState); //加载地图
         setListener();
         setFragView();
         return root;
@@ -176,7 +160,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     public void onPause() {
         super.onPause();
         mapView.onPause(); //必须调用高德地图的这个方法
-        if(locationClient != null) {
+        if (locationClient != null) {
             locationClient.stopLocation(); //停止定位
         }
         MainActivity activity = (MainActivity) getActivity();
@@ -200,42 +184,39 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
-        if(null != locationClient){
+        if(mapView != null){
+            mapView.onDestroy();
+        }
+        if (null != locationClient) {
             locationClient.onDestroy();
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
     /**
      * 获取视图中的控件
-     * @param inflater
-     * @param container
      */
     @Override
-    public void init(LayoutInflater inflater,ViewGroup container){
-        root = inflater.inflate(R.layout.dianzhuan, container, false);
-        qrcode = (ImageView) root.findViewById(R.id.qrcode);
-        member = (ImageView)root.findViewById(R.id.member);
-        location = (ImageView)root.findViewById(R.id.location);
-        screen = (ImageView) root.findViewById(R.id.screen);
-        nearby = (TextView) root.findViewById(R.id.nearby);
-        search = (TextView) root.findViewById(R.id.search);
+    public void init() {
+
     }
 
     @Override
     public void loadObjectAttribute() {
-        allStationDao = new AllStationDaoImpl(context,handler, msgAllStation);
+        allStationDao = new AllStationDaoImpl(context, handler, msgAllStation);
     }
 
     @Override
     public void setListener() {
-        setOpenDrawerListener(); //设置点击会员头像，打开抽屉
         setMarkerClickListener();
         setQRListener();
         setToLocationListener(); //设置定位按钮的监听事件
         setToScreenListener(); //设置筛选PopupWindow的监听事件
-        setNearbyListener();
-        setSearchListener();
     }
 
     @Override
@@ -246,11 +227,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 加载电桩位置
      */
-    public void loadPosition(){
-        if(application.getLocation() != null){
+    public void loadPosition() {
+        if (application.getLocation() != null) {
             String adCode = application.getLocation().getAdCode();
-            LogUtil.v(TAG,"获取充电点："+adCode);
-            adCode = adCode.substring(0,adCode.length()-2) + "00";
+            LogUtil.v(TAG, "获取充电点：" + adCode);
+            adCode = adCode.substring(0, adCode.length() - 2) + "00";
             allStationDao.getDaos();
         }
     }
@@ -258,16 +239,16 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置地图上所有电桩的位置
      */
-    public void setAllStationOnMap(List<AllStation> daos){
+    public void setAllStationOnMap(List<AllStation> daos) {
         markers.clear();
         aMap.clear(true);
         LogUtil.v(TAG, "此次获取到了：" + daos.size());
         MarkerOptions markerOptions = null;
-        for(AllStation dao : daos){
+        for (AllStation dao : daos) {
             markerOptions = new MarkerOptions();
-            if(TextUtils.equals(dao.getEvc_stations_getall().getIsAvailable(),"1")) { //可用
+            if (TextUtils.equals(dao.getEvc_stations_getall().getIsAvailable(), "1")) { //可用
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.blue_marker));
-            }else{
+            } else {
                 markerOptions.anchor(0.5f, 0.5f).draggable(false).position(new LatLng(Double.parseDouble(dao.getEvc_stations_getall().getLatitude()), Double.parseDouble(dao.getEvc_stations_getall().getLongitude()))).icon(BitmapDescriptorFactory.fromResource(R.drawable.red_marker));
             }
             markers.add(aMap.addMarker(markerOptions));
@@ -275,42 +256,13 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     }
 
 
-    /**
-     * 设置搜索监听
-     */
-    public void setSearchListener(){
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (allStationDao.daos == null) {
-                    Toast.makeText(context, "对不起，暂无数据，无法搜索！", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                SearchActivity.startAppActivity(context, (ArrayList<AllStation>) allStationDao.daos);
-            }
-        });
-    }
 
-    /**
-     * 设置附近电桩
-     */
-    public void setNearbyListener(){
-        nearby.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction fm = AllStationFragment.this.getFragmentManager().beginTransaction();
-                fm.remove(AllStationFragment.this);
-                fm.add(R.id.content, new NearbyStationFragment());
-                fm.commit();
-            }
-        });
-    }
 
 
     /**
      * 定位按钮,设置跳转到当前位置
      */
-    public void setToLocationListener(){
+    public void setToLocationListener() {
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -325,28 +277,28 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置筛选按钮,点击筛选按钮时，打开PopupWindow
      */
-    public void setToScreenListener(){
-       screen.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               //打开PopupWindow,显示操作栏
-               screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout, windowUtil.getScreenWidth(getActivity()) / 4 * 3, v.getHeight());
-               int[] location = windowUtil.getViewLocation(v); //获取筛选按钮的x坐标
-               //设置显示的属性，x=筛选按钮在屏幕的x坐标-PopupWindow的宽度+筛选按钮的宽度，y=筛选按钮在屏幕的y坐标
-               screenPw.showAtLocation(v, Gravity.NO_GRAVITY, location[0] - screenPw.getWidth() + v.getWidth(), location[1]);
-               setScreenClose(); //设置筛选关闭按钮的监听事件
-               setSwitchListener();
-           }
-       });
+    public void setToScreenListener() {
+        screen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //打开PopupWindow,显示操作栏
+                screenPw = popupWindowUtil.getPopupWindow(getActivity(), R.layout.screen_layout, windowUtil.getScreenWidth(getActivity()) / 4 * 3, v.getHeight());
+                int[] location = windowUtil.getViewLocation(v); //获取筛选按钮的x坐标
+                //设置显示的属性，x=筛选按钮在屏幕的x坐标-PopupWindow的宽度+筛选按钮的宽度，y=筛选按钮在屏幕的y坐标
+                screenPw.showAtLocation(v, Gravity.NO_GRAVITY, location[0] - screenPw.getWidth() + v.getWidth(), location[1]);
+                setScreenClose(); //设置筛选关闭按钮的监听事件
+                setSwitchListener();
+            }
+        });
     }
 
-    public List<AllStation> screenUse(List<AllStation> list){
+    public List<AllStation> screenUse(List<AllStation> list) {
         dismissList.clear();
         List<AllStation> show = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            if(TextUtils.equals("1", list.get(i).getEvc_stations_getall().getIsAvailable())){
+        for (int i = 0; i < list.size(); i++) {
+            if (TextUtils.equals("1", list.get(i).getEvc_stations_getall().getIsAvailable())) {
                 show.add(list.get(i));
-            }else{
+            } else {
                 dismissList.add(list.get(i));
             }
         }
@@ -356,11 +308,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置点击开关的父容器的布局的时候能够改变开关状态
      */
-    public void setSwitchListener(){
+    public void setSwitchListener() {
         LinearLayout use_layout = (LinearLayout) screenPw.getContentView().findViewById(R.id.use_layout);
         final SlideSwitch use_ss = (SlideSwitch) screenPw.getContentView().findViewById(R.id.use_switch);
         use_ss.setEnabled(false);
-        if(isUse){
+        if (isUse) {
             use_ss.changeSwitchStatus();
         }
         use_layout.setOnClickListener(new View.OnClickListener() {
@@ -372,11 +324,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         use_ss.setOnSwitchChangedListener(new SlideSwitch.OnSwitchChangedListener() {
             @Override
             public void onSwitchChanged(SlideSwitch obj, int status) {
-                if(status == 1){
+                if (status == 1) {
                     isUse = true;
                     allStationDao.daos = screenUse(allStationDao.daos);
                     setAllStationOnMap(allStationDao.daos);
-                }else{
+                } else {
                     isUse = false;
                     allStationDao.daos.addAll(dismissList);
                     setAllStationOnMap(allStationDao.daos);
@@ -399,7 +351,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置筛选菜单的关闭
      */
-    public void setScreenClose(){
+    public void setScreenClose() {
         close = (ImageView) screenPw.getContentView().findViewById(R.id.close);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -413,7 +365,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置Marker的点击事件
      */
-    public void setMarkerClickListener(){
+    public void setMarkerClickListener() {
         aMap.setOnMarkerClickListener(new AMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -421,7 +373,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                     return true;
                 }
                 int index = markers.indexOf(marker);
-                LogUtil.v(TAG,"marker:" + marker.getId());
+                LogUtil.v(TAG, "marker:" + marker.getId());
                 LogUtil.v(TAG, "index:" + index);
                 if (index == -1) { //集合中必须有
                     return true;
@@ -435,18 +387,19 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
 
     /**
      * 显示电桩，所有列表
+     *
      * @param v
      * @param dao
      */
-    public void showAllStationPw(View v, final AllStation dao){
+    public void showAllStationPw(View v, final AllStation dao) {
         ViewHolder viewHolder = null;
         View pwRoot = null;
-        if(markerPw != null){
+        if (markerPw != null) {
             pwRoot = markerPw.getContentView();
             viewHolder = (ViewHolder) pwRoot.getTag();
-        }else{
+        } else {
             viewHolder = new ViewHolder();
-            pwRoot = getActivity().getLayoutInflater().inflate(R.layout.stationpw_layout,null);
+            pwRoot = getActivity().getLayoutInflater().inflate(R.layout.stationpw_layout, null);
             viewHolder.orgName = (TextView) pwRoot.findViewById(R.id.orgName);
             viewHolder.open_text = (TextView) pwRoot.findViewById(R.id.open_text);
             viewHolder.addr = (TextView) pwRoot.findViewById(R.id.addr);
@@ -461,28 +414,28 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
 
         final AllStation.EvcStationsGetallEntity entity = dao.getEvc_stations_getall();
 
-        LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()),Double.parseDouble(application.getLocation().getLongitude()));
-        LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()),Double.parseDouble(entity.getLongitude()));
-        viewHolder.distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng,endLatLng)) + "km");
+        LatLng startLatLng = new LatLng(Double.parseDouble(application.getLocation().getLatitude()), Double.parseDouble(application.getLocation().getLongitude()));
+        LatLng endLatLng = new LatLng(Double.parseDouble(entity.getLatitude()), Double.parseDouble(entity.getLongitude()));
+        viewHolder.distance_text.setText(FloatUtil.mToKm(AMapUtils.calculateLineDistance(startLatLng, endLatLng)) + "km");
 
         viewHolder.orgName.setText(entity.getOrgName());
 
-        if(TextUtils.equals(entity.getIsAvailable(),"1")){
+        if (TextUtils.equals(entity.getIsAvailable(), "1")) {
             viewHolder.open_text.setText("有空闲");
-        }else{
+        } else {
             viewHolder.open_text.setText("繁忙中");
         }
 
         viewHolder.addr.setText(entity.getAddr());
 
         String sum = "0";
-        if(!TextUtils.isEmpty(entity.getAvailableNum()) && !TextUtils.isEmpty(entity.getUnavailableNum())){
-            sum = Integer.parseInt(entity.getAvailableNum()) + Integer.parseInt(entity.getUnavailableNum())+"";
+        if (!TextUtils.isEmpty(entity.getAvailableNum()) && !TextUtils.isEmpty(entity.getUnavailableNum())) {
+            sum = Integer.parseInt(entity.getAvailableNum()) + Integer.parseInt(entity.getUnavailableNum()) + "";
         }
         viewHolder.sum_text.setText(sum);
-        if(!TextUtils.equals(sum,"0")){
+        if (!TextUtils.equals(sum, "0")) {
             viewHolder.spare_text.setText(entity.getAvailableNum());
-        }else{
+        } else {
             viewHolder.spare_text.setText("0");
         }
 
@@ -498,10 +451,10 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             @Override
             public void onClick(View v) { //预约
                 popupWindowUtil.dismissPopupWindow(markerPw);
-                if(!application.isLogin()){
+                if (!application.isLogin()) {
                     LoginActivity.startAppActivity(context);
-                }else {
-                    SelectPileActivity.startAppActivity(context, entity.getOrgId(),entity.getAddr());
+                } else {
+                    SelectPileActivity.startAppActivity(context, entity.getOrgId(), entity.getAddr());
                 }
             }
         });
@@ -510,7 +463,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
             @Override
             public void onClick(View v) {
                 popupWindowUtil.dismissPopupWindow(markerPw);
-                StationInfoActivity.startActivity(context,entity.getOrgId());
+                StationInfoActivity.startActivity(context, entity.getOrgId());
             }
         });
 
@@ -520,11 +473,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
 
     /**
      * 加载地图
+     *
      * @param savedInstanceState 退出界面时缓存的数据
      */
-    public void loadMap(Bundle savedInstanceState){
+    public void loadMap(Bundle savedInstanceState) {
         //下面两句话在加载地图时是必须得写的
-        mapView = (MapView) root.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         aMap = mapView.getMap(); //获取地图对象
         aMap.animateCamera(CameraUpdateFactory.newCameraPosition(application.getCameraPosition())); //初始化位置和缩放
@@ -538,7 +491,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         // 自定义定位蓝点图标
         myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.location));
         myLocationStyle.radiusFillColor(resourceUtil.getResourceColor(context, R.color.location_round_fill_color));//设置圆形边框的填充颜色
-        myLocationStyle.strokeColor(resourceUtil.getResourceColor(context,R.color.location_round_fill_color)); //设置圆形边框的边框颜色
+        myLocationStyle.strokeColor(resourceUtil.getResourceColor(context, R.color.location_round_fill_color)); //设置圆形边框的边框颜色
         aMap.setMyLocationStyle(myLocationStyle);
     }
 
@@ -546,7 +499,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
     /**
      * 设置定位
      */
-    public void setLocation(){
+    public void setLocation() {
         aMap.setLocationSource(new LocationSource() {
             @Override
             public void activate(OnLocationChangedListener onLocationChangedListener) {
@@ -559,7 +512,7 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
                 locationClientOption = new AMapLocationClientOption();
                 locationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
                 locationClientOption.setNeedAddress(true); //设置需要返回地址
-                locationClient.setLocationListener(AllStationFragment.this);
+                locationClient.setLocationListener(StationFragment.this);
                 locationClient.setLocationOption(locationClientOption);
                 locationClient.startLocation();
             }
@@ -578,43 +531,32 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
 
     /**
      * 定位改变后的监听事件
+     *
      * @param aMapLocation
      */
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        if(TextUtils.isEmpty(aMapLocation.getCity())){ //定位失败
+        if (TextUtils.isEmpty(aMapLocation.getCity())) { //定位失败
             return;
         }
         LogUtil.v(TAG, "缓存位置数据");
-        MyLocation location = new MyLocation(aMapLocation.getAdCode(),aMapLocation.getLatitude()+"",aMapLocation.getAddress(),aMapLocation.getLongitude()+"");
+        MyLocation location = new MyLocation(aMapLocation.getAdCode(), aMapLocation.getLatitude() + "", aMapLocation.getAddress(), aMapLocation.getLongitude() + "");
         spCacheUtil.cacheMyLocation(context, location);
         application.setLocation(location);
         locationChangedListener.onLocationChanged(aMapLocation);
         //缓存当前位置和城市代码
-        if(isFirst){
+        if (isFirst) {
             loadPosition(); //加载充电点
             aMap.moveCamera(CameraUpdateFactory.zoomTo(DefaultParam.ZOOM)); //修改缩放位置
             isFirst = !isFirst;
         }
     }
 
-    /**
-     * 当点击会员头像的时候,打开抽屉
-     */
-    public void setOpenDrawerListener(){
-        member.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.drawerLayout.openDrawer(Gravity.LEFT); //打开左边抽屉
-            }
-        });
-    }
 
     /**
      * 设置验证码扫码按钮的点击事件
      */
-    public void setQRListener(){
+    public void setQRListener() {
         qrcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -627,17 +569,17 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         });
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case msgAllStation:
-                    if(allStationDao.daos == null){
+                    if (allStationDao.daos == null) {
                         return;
                     }
-                    if(TextUtils.equals(allStationDao.daos.get(0).getEvc_stations_getall().getIsSuccess(), "N")){
+                    if (TextUtils.equals(allStationDao.daos.get(0).getEvc_stations_getall().getIsSuccess(), "N")) {
                         Error errorDao = errorParamUtil.checkReturnState(allStationDao.daos.get(0).getEvc_stations_getall().getReturnStatus());
-                        toastUtil.toastError(context,errorDao,null);
+                        toastUtil.toastError(context, errorDao, null);
                         return;
                     }
                     setAllStationOnMap(allStationDao.daos);
@@ -652,10 +594,11 @@ public class AllStationFragment extends UtilFragment implements AMapLocationList
         return TAG;
     }
 
+
     /**
      * 用于缓存PopupWindow中的控件
      */
-    private class ViewHolder{
+    private class ViewHolder {
         TextView orgName;
         TextView open_text;
         TextView addr;

@@ -28,7 +28,7 @@ public class FixFragment extends UtilFragment {
     }
 
     @Override
-    public void init(LayoutInflater inflater, ViewGroup container) {
+    public void init() {
 
     }
 

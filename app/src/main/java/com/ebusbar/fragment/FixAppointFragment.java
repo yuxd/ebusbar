@@ -22,7 +22,8 @@ public class FixAppointFragment extends UtilFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        init(inflater,container);
+        root = inflater.inflate(R.layout.fixappoint,container,false);
+        init();
         loadObjectAttribute();
         setListener();
         setFragView();
@@ -30,8 +31,8 @@ public class FixAppointFragment extends UtilFragment {
     }
 
     @Override
-    public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.fixappoint,container,false);
+    public void init() {
+
     }
 
     @Override

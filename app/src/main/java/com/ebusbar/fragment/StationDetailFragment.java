@@ -89,11 +89,12 @@ public class StationDetailFragment extends UtilFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        init(inflater, container);
+        root = inflater.inflate(R.layout.station_detail_fragment, container, false);
+        ButterKnife.bind(this, root);
+        init();
         loadObjectAttribute();
         setListener();
         setFragView();
-        ButterKnife.bind(this, root);
         return root;
     }
 
@@ -111,9 +112,8 @@ public class StationDetailFragment extends UtilFragment {
     }
 
     @Override
-    public void init(LayoutInflater inflater, ViewGroup container) {
-        root = inflater.inflate(R.layout.station_detail_fragment, container, false);
-        ButterKnife.bind(this, root);
+    public void init() {
+
     }
 
     @Override

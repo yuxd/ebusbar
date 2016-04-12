@@ -41,7 +41,7 @@ public abstract class SimpleFragment extends BaseFragment{
     /**
      * 初始化控件
      */
-    public abstract void init(LayoutInflater inflater,ViewGroup container);
+    public abstract void init();
 
     /**
      * 加载Activity中的属性,比如：Application和数据持久化的对象

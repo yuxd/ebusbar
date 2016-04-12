@@ -18,25 +18,25 @@
         android:src="@drawable/head" />
 
     <TextView
-        android:id="@+id/map"
+        android:id="@+id/nearby"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:padding="10dp"
-        android:text="地图"
-        android:textColor="@color/actionbar_title_color"
-        />
+        android:text="附近"
+        android:textColor="@color/actionbar_title_color" />
 
     <TextView
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@id/map"
+        android:layout_toLeftOf="@id/nearby"
         android:layout_toRightOf="@id/member"
         android:background="@drawable/search_bg"
-        android:gravity="center"
-        android:text="请输入目的地" />
+        android:gravity="center_vertical|left"
+        android:paddingLeft="10dp"
+        android:text="搜索" />
 
 </RelativeLayout>

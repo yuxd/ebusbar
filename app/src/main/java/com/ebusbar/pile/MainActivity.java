@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTabHost;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,10 +19,11 @@ import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.bean.Login;
-import com.ebusbar.fragment.CarFragment;
 import com.ebusbar.fragment.FixFragment;
+import com.ebusbar.fragment.RentCarFragment;
 import com.ebusbar.fragment.Tab1Fragment;
 import com.ebusbar.impl.BitmapImpl;
+import com.ebusbar.view.NoLoadFragmentTabHost;
 
 
 /**
@@ -42,7 +42,7 @@ public class MainActivity extends UtilActivity {
     /**
      * 下方的菜单栏
      */
-    private FragmentTabHost tabHost;
+    private NoLoadFragmentTabHost tabHost;
     /**
      * 栏目标题
      */
@@ -60,7 +60,7 @@ public class MainActivity extends UtilActivity {
     /**
      * 内容区
      */
-    private Fragment[] contents = new Fragment[]{new Tab1Fragment(),new CarFragment(),new FixFragment()};
+    private Fragment[] contents = new Fragment[]{new Tab1Fragment(),new RentCarFragment(),new FixFragment()};
     /**
      * 侧滑栏,设为public是为了在Fragment中能够直接调用
      */
@@ -105,10 +105,14 @@ public class MainActivity extends UtilActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.fragment);
-        loadObjectAttribute();
         init();
+        loadObjectAttribute();
         setListener();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
     }
 
     @Override
@@ -123,6 +127,7 @@ public class MainActivity extends UtilActivity {
 
     @Override
     public void init(){
+        this.setContentView(R.layout.main);
         money = (TextView) this.findViewById(R.id.money);
         order_layout = (LinearLayout) this.findViewById(R.id.order_layout);
         appoint_layout = (LinearLayout) this.findViewById(R.id.appoint_layout);
@@ -132,7 +137,7 @@ public class MainActivity extends UtilActivity {
         drawerLayout = (DrawerLayout) this.findViewById(R.id.drawer_layout);
         user_layout = (RelativeLayout) this.findViewById(R.id.user_layout);
         //获得TabHost
-        tabHost = (FragmentTabHost) this.findViewById(android.R.id.tabhost);
+        tabHost = (NoLoadFragmentTabHost) this.findViewById(android.R.id.tabhost);
         //关联真正的正文区
         tabHost.setup(this, getSupportFragmentManager(), R.id.real_content);
         //设置下面的栏目
@@ -316,10 +321,6 @@ public class MainActivity extends UtilActivity {
         }
     };
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
 
     /**
      * 开启界面

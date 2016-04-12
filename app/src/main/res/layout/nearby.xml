@@ -6,11 +6,6 @@
     android:background="#F5F5F5"
     >
 
-    <include
-        android:id="@+id/actionBar_layout"
-        layout="@layout/nearby_actionbar"
-        ></include>
-
     <RelativeLayout
         android:id="@+id/screen"
         android:layout_width="match_parent"

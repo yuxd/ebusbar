@@ -37,7 +37,7 @@
 
     <!-- 支付PW弹出动画 -->
     <style name="paypw_anim">
-        <item name="android:windowEnterAnimation">@anim/paypw_show</item>
-        <item name="android:windowExitAnimation">@anim/paypw_dismiss</item>
+        <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_right_out</item>
     </style>
 </resources>

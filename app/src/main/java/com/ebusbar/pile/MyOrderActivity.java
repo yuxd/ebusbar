@@ -56,6 +56,8 @@ public class MyOrderActivity extends UtilActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.myorder);
+        ButterKnife.bind(this);
         init();
         loadObjectAttribute();
         setListener();
@@ -64,8 +66,7 @@ public class MyOrderActivity extends UtilActivity {
 
     @Override
     public void init() {
-        this.setContentView(R.layout.myorder);
-        ButterKnife.bind(this);
+
     }
 
     @Override
