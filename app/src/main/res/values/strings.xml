@@ -51,7 +51,7 @@
     <string name="free_text">免费充电</string>
     <string name="open_text">对外开放</string>
     <string name="noopen_text">对外封闭</string>
-    <string name="kdappid">56de3ed7</string>
+    <string name="kdappid">570de38e</string>
     <string name="preference_default_tts_role">xiaoyan</string>
     <string name="preference_key_tts_speed">tts_speed</string>
     <string name="preference_key_tts_volume">tts_volume</string>

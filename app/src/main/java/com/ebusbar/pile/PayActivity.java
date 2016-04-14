@@ -116,7 +116,7 @@ public class PayActivity extends UtilActivity implements View.OnClickListener , 
     /**
      * 支付测试
      */
-    private boolean isTest = true;
+    private boolean isTest = false;
     /**
      * 支付订单ID
      */

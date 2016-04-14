@@ -80,7 +80,7 @@ public class RechargeActivity extends UtilActivity implements View.OnClickListen
     /**
      * 是否为支付测试
      */
-    private Boolean isTest = true;
+    private Boolean isTest = false;
     /**
      * 支付订单ID
      */

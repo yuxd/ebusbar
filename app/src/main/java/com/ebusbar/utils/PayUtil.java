@@ -10,13 +10,11 @@ import java.util.Random;
  */
 public class PayUtil {
     // 商户PID
-    public static final String PARTNER = "2088311706095565";
+    public static final String PARTNER = "2088021278222169";
     // 商户收款账号
-    public static final String SELLER = "liming@tsinghua.org.cn";
+    public static final String SELLER = "774819744@qq.com";
     // 商户私钥，pkcs8格式
-    public static final String RSA_PRIVATE = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALVTmrxJDzh4y65vw3jtdTB657ju1qx1VvYv+FJJ8JSi0MzSgEWDB8t4iHnKnuf7v8+HtC/UfBE+RXErkvQPlFdMKUKCKqZeg5BZwYlt6GdCM01qutmdLiQNCbbkxfnNukSsC+m2k5FdnbfGAuJvpUD8PECMLTLDnSEUSlpDBF1hAgMBAAECgYATybvpME/o6cXQk4HRgJh5YfBHzki/KU8ELtf6ovcOQXZn49D7xQDkw5KhN+t/hYm5LCYN0jJ370PExeyTld+qOCs8rR+u/9ETXBLjS939QX9pVTPHNwCdyHjUv2YFWMcf9nYIx7iyfo9PHiCA/fu+tGuuOVW+ZzYuW4nzuUhTwQJBAN0DoOKVeK3NWn1E9F9LqKrR6PxZjPQKxMsbjYEcguW4nNZu4CqGBD0uyT84kVqrwJn5SfNXJjrwicOmPeuUZo8CQQDSB61Z18BSNmIPzoB79ArHm2u2EmTmtdBUBStitC0R8Lv3MEAI2aRZERdHzltx3rPr6Ya9WOv/ohU/vDDX3XUPAkEAnT8LpKp8JgxJKX957qNB6edXQNPl+WwAABImZ4oFh7QFwns4eojHU1CKVrTEliJE8kfvWXbT+HNTUSRiQc5f+QJAbSGqFGXDu7QgTgBJyJ5sv3zlgcya+zn7jrzE51uhk5HXyUAb9b1I5TK5OwlhgJBsQqer6FT9A24vxlc9tdyPRwJAOUHXzr6fwhZi21kvjbfzpxHApfOBtgMYskZPj+3mvIq6PXWkvjhuStYtyRadlardOsQRN2cyyfA3haFFi8jOIA==";
-    // 支付宝公钥
-    public static final String RSA_PUBLIC = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB";
+    public static final String RSA_PRIVATE = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAMhHEZtlShWXBQeorNMoItE0smdnvReTpncw9EZD4wNcwPs4R0Yv+cvEROaHIa/ICnsG8iTJTw8WC1Qc3nYURWOSMJVwPPB02YW7NVaeISrsxAq39RJqo//Y4wbignZWcGfri5OcaHWEz9Myag+udNTySxYU+jMbyasWtt7S+JRfAgMBAAECgYAFVScZ3SOQ2ZmPr6USZkIvEdkiObfmNc874zjN2ibkQwb8aW40ZziefVZcUQLLnGbzCadO5XFOdIbOsYoW2MlUJkvF5DEXAHfdEZgo8sg6271QeHHcBrn175h7FQ6wZLfE59PengTrKDVfqJuP+rQlYt98svrZQtc+uOu8vKtGyQJBAPQNfpLj0ne4XQ0zkQXsKFVZ1JvFwTDRxTIJaiOxdwthRzy42tstiVqS70y2nA7zImCHrPzjXADuXdd8yA7fsgUCQQDSFPpouHJorxcnl3pX7Jc1PnZm9LaDUn+rCxldlamO0BmNs2iGB4zJxl9HX75nTN7fGGpYjxpXXxtXzk+gvUYTAkBLLoEIhTBH+z6HG5SYa3i9Wk/5sMDj5itGT8ontrrCgbQtS5D4Jh4DDfK0AikvHc1ASWuL+ApWqxezk1gZ5OV1AkA1eZWMFnc44mi4cTx5KQYMTYwCBQR4RQWuWjLouXHhomL+yM4wX7ecnNwf5OUokk6g5ywawsJnvxPMs/1c4xD1AkEA8IUz0fBMzH/QDc+cGi9GKF8uNvrVNVi4VbYDFCLx8k2ni3moZnFYJnENBcxjAvikmvy6fJIISl9a+/Tl3YkSRw==";
 
     public static final int SDK_PAY_FLAG = 1;
     /**
@@ -43,7 +41,7 @@ public class PayUtil {
         orderInfo += "&total_fee=" + "\"" + price + "\"";
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://notify.msp.hk/notify.htm" + "\"";
+        orderInfo += "&notify_url=" + "\"" + "http://192.168.0.151:8081/create_direct_pay_by_user-JAVA-UTF-8/notify_url.jsp" + "\"";
 
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";

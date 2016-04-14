@@ -204,6 +204,9 @@ public class ChargeAppointFragment extends UtilFragment implements View.OnClickL
                 NaviEmulatorActivity.startAppActivity(context, Double.parseDouble(location.getLatitude()), Double.parseDouble(location.getLongitude()), Double.parseDouble(entity1.getLatitude()), Double.parseDouble(entity1.getLongitude()));
                 break;
             case R.id.phone_btn:
+                if(TextUtils.isEmpty(phoneText.getText())){
+                    return;
+                }
                 Intent intent=new Intent("android.intent.action.CALL", Uri.parse("tel:"+phoneText.getText().toString()));
                 startActivity(intent);
                 break;

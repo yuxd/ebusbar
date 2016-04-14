@@ -364,7 +364,6 @@ public class ChargeActivity extends UtilActivity implements NetErrorHandlerListe
                             Toast.makeText(ChargeActivity.this,"您的充电时间过短，系统暂未产生金额!",Toast.LENGTH_SHORT).show();
                             isFinish = true;
 //                            PayActivity.startPayActivity(ChargeActivity.this,finishChargeDao.finishChargeDao.getEvc_order_change().getOrderNo());
-                            finisSuccess();
                         } else {
                             if(!isSecond){ //如果是第一次获取，不会出现提示信息
                                 return;

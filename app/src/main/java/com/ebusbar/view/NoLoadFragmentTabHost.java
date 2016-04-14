@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 
+import com.ebusbar.utils.LogUtil;
+
 import java.util.ArrayList;
 
 /**
@@ -31,6 +33,11 @@ public class NoLoadFragmentTabHost extends TabHost implements TabHost.OnTabChang
     private TabHost.OnTabChangeListener mOnTabChangeListener;
     private TabInfo mLastTab;
     private boolean mAttached;
+    /**
+     * 上一个Tag
+     */
+    private String lastTag;
+
 
     static final class TabInfo {
         private final String tag;
@@ -292,6 +299,7 @@ public class NoLoadFragmentTabHost extends TabHost implements TabHost.OnTabChang
         }
     }
 
+
     private FragmentTransaction doTabChanged(String tabId, FragmentTransaction ft) {
         TabInfo newTab = null;
         for (int i=0; i<mTabs.size(); i++) {
@@ -323,6 +331,8 @@ public class NoLoadFragmentTabHost extends TabHost implements TabHost.OnTabChang
             }
 
             mLastTab = newTab;
+        }else{
+            LogUtil.v("tag","空");
         }
         return ft;
     }

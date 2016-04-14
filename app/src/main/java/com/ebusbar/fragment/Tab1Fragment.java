@@ -3,7 +3,6 @@ package com.ebusbar.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 模块一
  * Created by Jelly on 2016/3/24.
  */
 public class Tab1Fragment extends SimpleFragment {
@@ -33,12 +33,10 @@ public class Tab1Fragment extends SimpleFragment {
      * 根布局
      */
     private View root;
-
-
     /**
      * 所有电桩的fragment
      */
-    private StationFragment stationFragment = new StationFragment();
+    private MapFragment stationFragment = new MapFragment();
     /**
      * 附近的电桩的Fragment
      */
@@ -59,6 +57,16 @@ public class Tab1Fragment extends SimpleFragment {
         setFragView();
         ButterKnife.bind(this, root);
         return root;
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+            stationFragment.mapView.setVisibility(View.INVISIBLE);
+        }else{
+            stationFragment.mapView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -93,7 +101,7 @@ public class Tab1Fragment extends SimpleFragment {
         switch (view.getId()) {
             case R.id.member:
                 MainActivity activity = (MainActivity) getActivity();
-                activity.drawerLayout.openDrawer(Gravity.LEFT); //打开左边抽屉
+                activity.switchDrawLayout(true); //打开左边抽屉
                 break;
             case R.id.map:
                 FragmentTransaction ft = getChildFragmentManager().beginTransaction();
@@ -127,6 +135,7 @@ public class Tab1Fragment extends SimpleFragment {
         }
         ft.commit();
     }
+
 
     /**
      * 获得ActionBar的高度

@@ -6,24 +6,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.ebusbar.activities.UtilActivity;
 import com.ebusbar.bean.Login;
 import com.ebusbar.fragment.FixFragment;
-import com.ebusbar.fragment.RentCarFragment;
 import com.ebusbar.fragment.Tab1Fragment;
 import com.ebusbar.impl.BitmapImpl;
-import com.ebusbar.view.NoLoadFragmentTabHost;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /**
@@ -34,86 +34,110 @@ public class MainActivity extends UtilActivity {
     /**
      * TAG
      */
-    public String TAG="MainActivity";
+    public String TAG = "MainActivity";
     /**
      * STAG
      */
     public static String STAG = "MainActivity";
     /**
-     * 下方的菜单栏
-     */
-    private NoLoadFragmentTabHost tabHost;
-    /**
-     * 栏目标题
-     */
-    private String[] lables = new String[]{
-            "电桩","租车","服务"
-    };
-    /**
-     * 图标
-     */
-    private int[] icons = new int[]{R.drawable.dianzhuan,R.drawable.car,R.drawable.fix};
-    /**
-     * 当前的模块的图标
-     */
-    private int[] onicons = new int[]{R.drawable.ondianzhuan,R.drawable.oncar,R.drawable.onfix};
-    /**
-     * 内容区
-     */
-    private Fragment[] contents = new Fragment[]{new Tab1Fragment(),new RentCarFragment(),new FixFragment()};
-    /**
      * 侧滑栏,设为public是为了在Fragment中能够直接调用
      */
-    public DrawerLayout drawerLayout;
-    /**
-     * 用户布局
-     */
-    private RelativeLayout user_layout;
-    /**
-     * 我的预约
-     */
-    private LinearLayout appoint_layout;
-    /**
-     * 我的订单
-     */
-    private LinearLayout order_layout;
-    /**
-     * 用户名称
-     */
-    private TextView draw_user_name;
-    /**
-     * 用户手机
-     */
-    private TextView draw_user_phone;
-    /**
-     * 用户头像
-     */
-    private ImageView draw_user_icon;
-    /**
-     * 侧滑栏余额
-     */
-    private TextView money;
+    @Bind(R.id.user_icon)
+    ImageView userIcon;
+    @Bind(R.id.user_name)
+    TextView userName;
+    @Bind(R.id.user_phone)
+    TextView userPhone;
+    @Bind(R.id.money)
+    TextView money;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @Bind(R.id.station_icon)
+    ImageView stationIcon;
+    @Bind(R.id.station_title)
+    TextView stationTitle;
+    @Bind(R.id.rentCar_icon)
+    ImageView rentCarIcon;
+    @Bind(R.id.rentCar_title)
+    TextView rentCarTitle;
+    @Bind(R.id.fix_icon)
+    ImageView fixIcon;
+    @Bind(R.id.fix_text)
+    TextView fixText;
     /**
      * bitmapImpl
      */
-    private  BitmapImpl bitmapImpl;
+    private BitmapImpl bitmapImpl;
     /**
      * 获取头像的消息
      */
     private final int msgIcon = 0x001;
+    /**
+     * 地图模块
+     */
+    private Tab1Fragment tab1Fragment;
+    /**
+     * FixFragment
+     */
+    private FixFragment fixFragment;
+    /**
+     * FragmentManager
+     */
+    private FragmentManager fm;
+    /**
+     * 当前Tab图片
+     */
+    private ImageView currTabImage;
+    /**
+     * 当前Tab文字
+     */
+    private TextView currTabText;
+    /**
+     * 当前Tab
+     */
+    private int currTab;
+    /**
+     * 没有选中是的Tab图片
+     */
+    private int[] tabImage = new int[]{R.drawable.dianzhuan,R.drawable.car,R.drawable.fix};
+
+    /**
+     * 选中时的Tab图片
+     */
+    private int[] onTabImage = new int[]{R.drawable.ondianzhuan,R.drawable.oncar,R.drawable.onfix};
+
+    /**
+     * 充电Tab
+     */
+    public static final int stationTab = 0;
+    /**
+     * 租车Tab
+     */
+    public static final int rentCarTab = 1;
+
+    /**
+     * Tab改变监听
+     */
+    public interface TabChangeListener{
+        void tabChange(int tab);
+    }
+
+    /**
+     * Tab改变监听
+     */
+    private TabChangeListener tabChangeListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.main);
+        ButterKnife.bind(this);
         init();
         loadObjectAttribute();
         setListener();
+        setActivityView();
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
 
     @Override
     protected void onResume() {
@@ -122,200 +146,208 @@ public class MainActivity extends UtilActivity {
     }
 
     @Override
-    public void loadObjectAttribute() {
+    public void init() {
+
     }
 
     @Override
-    public void init(){
-        this.setContentView(R.layout.main);
-        money = (TextView) this.findViewById(R.id.money);
-        order_layout = (LinearLayout) this.findViewById(R.id.order_layout);
-        appoint_layout = (LinearLayout) this.findViewById(R.id.appoint_layout);
-        draw_user_icon = (ImageView) this.findViewById(R.id.user_icon);
-        draw_user_name = (TextView) this.findViewById(R.id.user_name);
-        draw_user_phone = (TextView) this.findViewById(R.id.user_phone);
-        drawerLayout = (DrawerLayout) this.findViewById(R.id.drawer_layout);
-        user_layout = (RelativeLayout) this.findViewById(R.id.user_layout);
-        //获得TabHost
-        tabHost = (NoLoadFragmentTabHost) this.findViewById(android.R.id.tabhost);
-        //关联真正的正文区
-        tabHost.setup(this, getSupportFragmentManager(), R.id.real_content);
-        //设置下面的栏目
-        for(int i=0;i<lables.length;i++){
-            TabHost.TabSpec tab = tabHost.newTabSpec(lables[i]);
-            tab.setIndicator(getItem(lables[i], icons[i]));
-            tabHost.addTab(tab,contents[i].getClass(), null);
+    public void loadObjectAttribute() {
+        if(currTabImage == null){
+            currTabImage = stationIcon;
         }
-        //去掉按钮之间的分割线
-        tabHost.getTabWidget().setDividerDrawable(null);
-        tabHost.setBackgroundResource(R.drawable.tab_bg);
+        if(currTabText == null){
+            currTabText = stationTitle;
+        }
+        if(currTab == 0){
+            currTab = R.id.station;
+        }
     }
 
     @Override
     public void setListener() {
-        setTabChangedListener(); //设置Tab切换的监听器
+
     }
 
     @Override
     public void setActivityView() {
-
+        if (tab1Fragment == null) {
+            tab1Fragment = new Tab1Fragment();
+        }
+        if (fm == null) {
+            fm = getSupportFragmentManager();
+        }
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.real_content, tab1Fragment);
+        ft.commit();
     }
+
+    /**
+     * 设置Tab监听器
+     * @param tabChangeListener
+     */
+    public void setTabChangeListener(TabChangeListener tabChangeListener) {
+        this.tabChangeListener = tabChangeListener;
+    }
+
+    @OnClick({R.id.user_layout, R.id.wallet_layout, R.id.appoint_layout, R.id.order_layout, R.id.forum_layout, R.id.news_layout, R.id.collect_layout, R.id.set_layout, R.id.station, R.id.rentCar,R.id.fix})
+    public void onClick(View view) {
+        if (fm == null) {
+            fm = getSupportFragmentManager();
+        }
+        FragmentTransaction ft = fm.beginTransaction();
+        switch (view.getId()) {
+            case R.id.user_layout:
+                if (!application.isLogin()) { //没有登录，进入登录界面
+                    LoginActivity.startAppActivity(context);
+                    return;
+                }
+                AccountManageActivity.startAppActivity(context);
+                break;
+            case R.id.wallet_layout:
+                if (!application.isLogin()) { //没有登录，进入登录界面
+                    LoginActivity.startAppActivity(context);
+                    return;
+                }
+                MyWalletActivity.staticAppActivity(this);
+                break;
+            case R.id.appoint_layout:
+                if (!application.isLogin()) { //没有登录，进入登录界面
+                    LoginActivity.startAppActivity(context);
+                    return;
+                }
+                MyAppointActivity.startAppActivity(MainActivity.this);
+                break;
+            case R.id.order_layout:
+                if (!application.isLogin()) { //没有登录，进入登录界面
+                    LoginActivity.startAppActivity(context);
+                    return;
+                }
+                MyOrderActivity.startAppActivity(MainActivity.this);
+                break;
+            case R.id.forum_layout:
+                break;
+            case R.id.news_layout:
+                break;
+            case R.id.collect_layout:
+                break;
+            case R.id.set_layout:
+                break;
+            case R.id.station:
+                if(R.id.station == currTab){
+                    return;
+                }
+                if (tab1Fragment == null) {
+                    tab1Fragment = new Tab1Fragment();
+                }
+                if (fixFragment != null && !fixFragment.isHidden()) {
+                    ft.hide(fixFragment);
+                }
+                if (!tab1Fragment.isAdded()) {
+                    ft.add(R.id.real_content, tab1Fragment);
+                } else {
+                    ft.show(tab1Fragment);
+                }
+                ft.commit();
+                currTab = R.id.station;
+                currTabImage.setImageResource(tabImage[Integer.parseInt(currTabImage.getTag().toString())]);
+                currTabImage = stationIcon;
+                currTabImage.setImageResource(onTabImage[Integer.parseInt(currTabImage.getTag().toString())]);
+                currTabText.setTextColor(resourceUtil.getResourceColor(context,R.color.defaultTabColor));
+                currTabText = stationTitle;
+                currTabText.setTextColor(resourceUtil.getResourceColor(context,R.color.actionbar_bg));
+                if(tabChangeListener != null){
+                    tabChangeListener.tabChange(stationTab);
+                }
+                break;
+            case R.id.rentCar:
+                currTab = R.id.rentCar;
+                currTabImage.setImageResource(tabImage[Integer.parseInt(currTabImage.getTag().toString())]);
+                currTabImage = rentCarIcon;
+                currTabImage.setImageResource(onTabImage[Integer.parseInt(currTabImage.getTag().toString())]);
+                currTabText.setTextColor(resourceUtil.getResourceColor(context,R.color.defaultTabColor));
+                currTabText = rentCarTitle;
+                currTabText.setTextColor(resourceUtil.getResourceColor(context,R.color.actionbar_bg));
+                if(tabChangeListener != null){
+                    tabChangeListener.tabChange(rentCarTab);
+                }
+                break;
+            case R.id.fix:
+                if(R.id.fix == currTab){
+                    return;
+                }
+                if (fixFragment == null) {
+                    fixFragment = new FixFragment();
+                }
+                if (tab1Fragment != null && !tab1Fragment.isHidden()) {
+                    ft.hide(tab1Fragment);
+                }
+                if (!fixFragment.isAdded()) {
+                    ft.add(R.id.real_content, fixFragment);
+                } else {
+                    ft.show(fixFragment);
+                }
+                ft.commit();
+                currTab = R.id.fix;
+                currTabImage.setImageResource(tabImage[Integer.parseInt(currTabImage.getTag().toString())]);
+                currTabImage = fixIcon;
+                currTabImage.setImageResource(onTabImage[Integer.parseInt(currTabImage.getTag().toString())]);
+                currTabText.setTextColor(resourceUtil.getResourceColor(context,R.color.defaultTabColor));
+                currTabText = fixText;
+                currTabText.setTextColor(resourceUtil.getResourceColor(context,R.color.actionbar_bg));
+                break;
+        }
+    }
+
 
     /**
      * 加载侧滑栏里面的数据，如果用户没有登录直返回,在这里加载用户头像
      */
-    public void loadDrawLayout(){
+    public void loadDrawLayout() {
         application = (MyApplication) getApplication();
-        if(!application.isLogin()){ //没有登录
-            draw_user_name.setText(R.string.slide_login_hint);
-            draw_user_phone.setText(R.string.slide_login_phone_hint);
-            draw_user_icon.setImageResource(R.drawable.slide_portrait);
+        if (!application.isLogin()) { //没有登录
+            userName.setText(R.string.slide_login_hint);
+            userName.setText(R.string.slide_login_phone_hint);
+            userIcon.setImageResource(R.drawable.slide_portrait);
             money.setText("¥0.00");
             return;
         }
         Login loginDao = application.getLoginDao();
-        if(TextUtils.isEmpty(loginDao.getData().getCustName())){ //昵称
-            draw_user_name.setText("昵称");
-        }else{
-            draw_user_name.setText(loginDao.getData().getCustName());
+        if (TextUtils.isEmpty(loginDao.getData().getCustName())) { //昵称
+            userName.setText("昵称");
+        } else {
+            userName.setText(loginDao.getData().getCustName());
         }
-        if(!TextUtils.isEmpty(loginDao.getData().getBalanceAmt())){ //余额
-            money.setText("¥"+loginDao.getData().getBalanceAmt());
+        if (!TextUtils.isEmpty(loginDao.getData().getBalanceAmt())) { //余额
+            money.setText("¥" + loginDao.getData().getBalanceAmt());
         }
-        draw_user_phone.setText(loginDao.getData().getMobile());
-        bitmapImpl = new BitmapImpl(this,handler,msgIcon);
-        if(!TextUtils.isEmpty(loginDao.getData().getUsericon())) {
+        userPhone.setText(loginDao.getData().getMobile());
+        bitmapImpl = new BitmapImpl(this, handler, msgIcon);
+        if (!TextUtils.isEmpty(loginDao.getData().getUsericon())) {
             bitmapImpl.getBitmap(loginDao.getData().getUsericon());
         }
     }
 
-    /**
-     * 设置Tab切换的监听器
-     */
-    public void setTabChangedListener(){
-        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
-            @Override
-            public void onTabChanged(String tabId) {
-                if (TextUtils.equals(tabId, lables[0])) {
-                    updateTab(0);
-                } else if (TextUtils.equals(tabId, lables[1])) {
-                    updateTab(1);
-                } else if (TextUtils.equals(tabId, lables[2])) {
-                    updateTab(2);
-                } else {
-                    updateTab(3);
-                }
-            }
-        });
-    }
 
     /**
-     * 更新Tab的文字的颜色
+     * 切换侧滑栏
      */
-    public void updateTab(int tabId){
-        //将所有的模块按钮都设为默认
-        for(int i=0;i<lables.length;i++){
-            TextView label = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(R.id.label);
-            ImageView icon = (ImageView) tabHost.getTabWidget().getChildAt(i).findViewById(R.id.icon);
-            icon.setImageResource(icons[i]);
-            label.setTextColor(this.getResources().getColor(R.color.defaultTabColor));
+    public void switchDrawLayout(boolean isSwitch) {
+        if (isSwitch) {
+            drawerLayout.openDrawer(Gravity.LEFT);
+        } else {
+            drawerLayout.closeDrawer(Gravity.LEFT);
         }
-        //设置当前选中的模块按钮为红色
-        TextView curLabel = (TextView) tabHost.getTabWidget().getChildAt(tabId).findViewById(R.id.label);
-        ImageView curIcon = (ImageView) tabHost.getTabWidget().getChildAt(tabId).findViewById(R.id.icon);
-        curIcon.setImageResource(onicons[tabId]);
-        curLabel.setTextColor(this.getResources().getColor(R.color.onTabColor));
-    }
-
-    /**
-     * 加载item.xml，并且填充数据后以View的方式返回
-     * @param lable
-     * @param drawable
-     * @return
-     */
-    private View getItem(String lable, int drawable){
-        View v = this.getLayoutInflater().inflate(R.layout.item_layout,
-                null);
-        //找到ImageView
-        ImageView icon = (ImageView) v.findViewById(R.id.icon);
-        icon.setImageResource(drawable);
-        //找到TextView
-        TextView label = (TextView) v.findViewById(R.id.label);
-        label.setText(lable);
-        if(TextUtils.equals(lable,lables[0])){ //把当前模块的标题颜色变成红色
-            icon.setImageResource(onicons[0]);
-            label.setTextColor(this.getResources().getColor(R.color.onTabColor));
-        }
-        return v;
-    }
-
-    /**
-     * 用户是否可以登录
-     * @param view
-     * @return
-     */
-    public View login(View view){
-        if (application.isLogin()) { //已经登录,进入用户详情
-            AccountManageActivity.startAppActivity(MainActivity.this);
-            return view;
-        }
-        //没有登录
-        Log.v(TAG, "用户没有登录，直接进入登录界面");
-        LoginActivity.startAppActivity(MainActivity.this);
-        return view;
-    }
-
-    /**
-     * 进入我的预约界面
-     * @param view
-     * @return
-     */
-    public View myAppoint(View view){
-        if(!application.isLogin()){ //用户没有登录，进入登录界面
-            LoginActivity.startAppActivity(MainActivity.this);
-            return view;
-        }
-        MyAppointActivity.startAppActivity(MainActivity.this);
-        return view;
-    }
-
-    /**
-     * 进入我的钱包
-     * @param view
-     * @return
-     */
-    public View myWallet(View view){
-        if(!application.isLogin()){ //用户没有登录，进入登录界面
-            LoginActivity.startAppActivity(MainActivity.this);
-            return view;
-        }
-        MyWalletActivity.staticAppActivity(this);
-        return view;
-    }
-
-    /**
-     * 进入我的订单界面
-     * @param view
-     * @return
-     */
-    public View myOrder(View view){
-        if(!application.isLogin()){ //用户没有登录，进入登录界面
-            LoginActivity.startAppActivity(MainActivity.this);
-            return view;
-        }
-        MyOrderActivity.startAppActivity(MainActivity.this);
-        return view;
     }
 
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case msgIcon:
-                    if(bitmapImpl.img == null){
+                    if (bitmapImpl.img == null) {
                         return;
                     }
-                    draw_user_icon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmapImpl.img));
+                    userIcon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmapImpl.img));
                     break;
             }
         }
@@ -325,8 +357,8 @@ public class MainActivity extends UtilActivity {
     /**
      * 开启界面
      */
-    public static void startFragmentTabHostActivity(Context context){
-        Intent intent = new Intent(context,MainActivity.class);
+    public static void startFragmentTabHostActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
         context.startActivity(intent);
     }
 
@@ -334,4 +366,6 @@ public class MainActivity extends UtilActivity {
     public String getTAG() {
         return TAG;
     }
+
+
 }
