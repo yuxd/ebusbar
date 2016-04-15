@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -20,6 +21,7 @@ import com.ebusbar.fragments.UtilFragment;
 import com.ebusbar.impl.NearbyStationDaoImpl;
 import com.ebusbar.pile.MyApplication;
 import com.ebusbar.pile.R;
+import com.ebusbar.pile.StationInfoActivity;
 import com.ebusbar.utils.LogUtil;
 import com.ebusbar.view.SlideSwitch;
 
@@ -125,6 +127,7 @@ public class NearbyStationFragment extends UtilFragment {
     @Override
     public void setListener() {
         setScreenListener();
+        setListItemClickListener();
     }
 
     @Override
@@ -135,6 +138,20 @@ public class NearbyStationFragment extends UtilFragment {
             LogUtil.v(TAG,adCode);
             nearbyStationDao.getDaos(adCode);
         }
+    }
+
+    /**
+     * 设置List的点击监听器
+     */
+    public void setListItemClickListener(){
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(nearbyStationDao.daos.get(position) != null){
+                    StationInfoActivity.startActivity(context,nearbyStationDao.daos.get(position).getEvc_stations_get().getOrgId());
+                }
+            }
+        });
     }
 
     /**

@@ -225,6 +225,8 @@ public class MapFragment extends UtilFragment implements AMapLocationListener,Ma
     @Override
     public void loadObjectAttribute() {
         allStationDao = new AllStationDaoImpl(context, handler, msgAllStation);
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.setTabChangeListener(this);
     }
 
     @Override
@@ -244,13 +246,15 @@ public class MapFragment extends UtilFragment implements AMapLocationListener,Ma
      * 加载电桩位置
      */
     public void loadPosition() {
-        if (application.getLocation() != null) {
-            String adCode = application.getLocation().getAdCode();
-            adCode = adCode.substring(0, adCode.length() - 2) + "00";
-            allStationDao.getDaos();
+        if(currTab == MainActivity.stationTab){ //加载充电点
+            if (application.getLocation() != null) {
+                String adCode = application.getLocation().getAdCode();
+                adCode = adCode.substring(0, adCode.length() - 2) + "00";
+                allStationDao.getDaos();
+            }
+        }else if (currTab == MainActivity.rentCarTab){ //加载租车服务点
+
         }
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setTabChangeListener(this);
     }
 
     /**

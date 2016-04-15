@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
 
                 <ImageView
                     android:id="@+id/avatar_icon"
@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
 
                 <TextView
                     android:id="@+id/nickname_text"
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
 
                 <TextView
                     android:id="@+id/sex_text"
@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
 
                 <TextView
                     android:id="@+id/phone_text"
@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -208,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -233,7 +233,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
 
                 <TextView
                     android:id="@+id/shopaddress_text"
@@ -267,7 +267,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:src="@mipmap/lefticon" />
+                    android:src="@mipmap/right_arraw" />
 
                 <TextView
                     android:id="@+id/certification_text"

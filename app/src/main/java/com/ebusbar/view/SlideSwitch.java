@@ -23,7 +23,6 @@ public class SlideSwitch extends View
     public static final String TAG = "SlideSwitch";
     public static final int SWITCH_OFF = 0;//关闭状态
     public static final int SWITCH_ON = 1;//打开状态
-    public static final int SWITCH_SCROLING = 2;//滚动状态
     /**
      * 开关的状态
      */
@@ -33,25 +32,13 @@ public class SlideSwitch extends View
      */
     private boolean isClick = true;
     /**
-     * 是否可以滑动
-     */
-    private boolean isSlide = false;
-    /**
      * 按下的x坐标
      */
     private int downX;
     /**
-     * 移动时的x坐标
-     */
-    private int moveX;
-    /**
      * 抬起时的x坐标
      */
     private int upX;
-    /**
-     * 当前滑块中心的x坐标
-     */
-    private int thumbCenterX;
 
     private OnSwitchChangedListener mOnSwitchChangedListener = null;
 
@@ -130,21 +117,8 @@ public class SlideSwitch extends View
         return isClick;
     }
 
-    /**
-     *  设置是否可以滑动
-     * @param isSlide
-     */
-    public void setSlide(boolean isSlide) {
-        this.isSlide = isSlide;
-    }
 
-    /**
-     * 获得是否可以滑动状态
-     * @return
-     */
-    public boolean isSlide() {
-        return isSlide;
-    }
+
 
     /**
      * 改变开关状态
@@ -168,35 +142,24 @@ public class SlideSwitch extends View
         if(!isClick) return true;//如果不能点击直接返回
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
-            if(!isSlide) return true; // 不可滑动，直接返回
             downX = (int)event.getX();
-            if((mSwitchStatus == SWITCH_ON && downX>mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2) || (mSwitchStatus == SWITCH_OFF)&&downX<mSwitch_thumb.getWidth()/2) return true;//如果点击的位置不能滑动直接返回
-            mSwitchStatus = SWITCH_SCROLING;
-            thumbCenterX = downX;
-            invalidate();
-            break;
-        case MotionEvent.ACTION_MOVE: //移动
-            if(!isSlide) return true; //不可滑动，返回
-            moveX = (int) event.getX();
-            if((moveX > 0 &&moveX<mSwitch_thumb.getWidth()/2)||(moveX>(mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2)&&moveX<mSwitch_on.getWidth())) return true;
-            mSwitchStatus = SWITCH_SCROLING;
-            if(moveX < downX){ //左滑
-                thumbCenterX--;
-            }else{
-                thumbCenterX++;
-            }
-            if(thumbCenterX > (mSwitch_on.getWidth()-mSwitch_thumb.getWidth()/2) || thumbCenterX < (mSwitch_thumb.getWidth()/2)){
-                return true;
-            }
-            invalidate();
-            downX = thumbCenterX;
             break;
         case MotionEvent.ACTION_UP: //手指抬起
             upX = (int) event.getX();
-            if(upX > mSwitch_on.getWidth()/2){
-                mSwitchStatus = SWITCH_ON;
+            if((upX - downX) < 0){ //一次点击事件
+                if(mSwitchStatus == SWITCH_ON){
+                    mSwitchStatus = SWITCH_OFF;
+                }
+            }else if ((upX - downX) > 0){
+                if (mSwitchStatus == SWITCH_OFF) {
+                    mSwitchStatus = SWITCH_ON;
+                }
             }else{
-                mSwitchStatus = SWITCH_OFF;
+                if(mSwitchStatus == SWITCH_ON){
+                    mSwitchStatus = SWITCH_OFF;
+                }else{
+                    mSwitchStatus = SWITCH_ON;
+                }
             }
             invalidate();
             //状态改变的时候 回调事件函数
@@ -234,15 +197,6 @@ public class SlideSwitch extends View
             drawBitmap(canvas, null, null, mSwitch_on);
             Rect rect = new Rect(mSwitch_on.getWidth()-mSwitch_thumb.getWidth(),0,mSwitch_on.getWidth(),mSwitch_thumb.getHeight()); //把打开的点移动到后面
             drawBitmap(canvas, null, rect, mSwitch_thumb);
-        }
-        else //SWITCH_SCROLING
-        {
-            Rect onRect = new Rect(0,0,thumbCenterX,mSwitch_on.getHeight());
-            drawBitmap(canvas,null,onRect,mSwitch_on);
-            Rect closeRect = new Rect(thumbCenterX,0,mSwitch_off.getWidth(),mSwitch_off.getHeight());
-            drawBitmap(canvas,null,closeRect,mSwitch_off);
-            Rect thumbRect = new Rect(thumbCenterX-mSwitch_thumb.getWidth()/2,0,thumbCenterX+mSwitch_thumb.getWidth()/2,mSwitch_thumb.getHeight());
-            drawBitmap(canvas,null,thumbRect,mSwitch_thumb);
         }
  
     }

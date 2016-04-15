@@ -12,12 +12,17 @@ import java.util.Date;
 public class DateUtil {
 
     /**
+     * 能够转换成Date的日期格式
+     */
+    public static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
+
+    /**
      * 根据字符串获取日期对象
      * @param dateStr
      * @return
      */
     public static Date getDate(String dateStr){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         Date date = null;
         try {
             date = sdf.parse(dateStr);
@@ -35,7 +40,7 @@ public class DateUtil {
      */
     public static String getSdfDate(Date date,String sdfStr){
         SimpleDateFormat sdf = new SimpleDateFormat(sdfStr);
-        String dateStr = sdf.format(sdf);
+        String dateStr = sdf.format(date);
         return dateStr;
     }
 

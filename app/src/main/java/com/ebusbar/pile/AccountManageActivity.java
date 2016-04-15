@@ -31,36 +31,28 @@ import com.weidongjian.meitu.wheelviewdemo.view.OnItemSelectedListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * 账户管理
  * Created by Jelly on 2016/3/7.
  */
-public class AccountManageActivity extends UtilActivity implements NetErrorHandlerListener{
+public class AccountManageActivity extends UtilActivity implements NetErrorHandlerListener {
     /**
      * TAG
      */
     public String TAG = "AccountManageActivity";
-    /**
-     * 头像
-     */
-    private ImageView avatar_icon;
-    /**
-     * 昵称
-     */
-    private TextView nickname_text;
-    /**
-     * 性别
-     */
-    private TextView sex_text;
-
-    /**
-     * 手机号码
-     */
-    private TextView phone_text;
-    /**
-     * 实名认证
-     */
-    private TextView certification_text;
+    @Bind(R.id.avatar_icon)
+    ImageView avatarIcon;
+    @Bind(R.id.nickname_text)
+    TextView nicknameText;
+    @Bind(R.id.sex_text)
+    TextView sexText;
+    @Bind(R.id.phone_text)
+    TextView phoneText;
+    @Bind(R.id.certification_text)
+    TextView certificationText;
     /**
      * BitmapImpl
      */
@@ -106,6 +98,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.accountmanage);
+        ButterKnife.bind(this);
         init();
         loadObjectAttribute();
         setActivityView();
@@ -114,18 +107,13 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
 
     @Override
     public void init() {
-        avatar_icon = (ImageView) this.findViewById(R.id.avatar_icon);
-        nickname_text = (TextView) this.findViewById(R.id.nickname_text);
-        sex_text = (TextView) this.findViewById(R.id.sex_text);
-        phone_text = (TextView) this.findViewById(R.id.phone_text);
-        certification_text = (TextView) this.findViewById(R.id.certification_text);
     }
 
     @Override
     public void loadObjectAttribute() {
-        bitmap = new BitmapImpl(this,handler,msgIcon);
-        logoutDao = new LogoutDaoImpl(this,handler,msgLogout);
-        updateUserInfoDao = new UpdateUserInfoDaoImpl(this,handler,msgSex);
+        bitmap = new BitmapImpl(this, handler, msgIcon);
+        logoutDao = new LogoutDaoImpl(this, handler, msgLogout);
+        updateUserInfoDao = new UpdateUserInfoDaoImpl(this, handler, msgSex);
 
     }
 
@@ -137,49 +125,50 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
     @Override
     public void setActivityView() {
         Login loginDao = application.getLoginDao();
-        if(!TextUtils.isEmpty(loginDao.getData().getUsericon())){
+        if (!TextUtils.isEmpty(loginDao.getData().getUsericon())) {
             bitmap.getBitmap(loginDao.getData().getUsericon());
         }
-        if(!TextUtils.isEmpty(loginDao.getData().getCustName())){
-            nickname_text.setText(loginDao.getData().getCustName());
+        if (!TextUtils.isEmpty(loginDao.getData().getCustName())) {
+            nicknameText.setText(loginDao.getData().getCustName());
         }
-        sex_text.setText(loginDao.getData().getSex());
-        phone_text.setText(loginDao.getData().getMobile());
-        if(TextUtils.equals(loginDao.getData().getVerified(),"1")){
-            certification_text.setText("是");
-        }else{
-            certification_text.setText("否");
+        sexText.setText(loginDao.getData().getSex());
+        phoneText.setText(loginDao.getData().getMobile());
+        if (TextUtils.equals(loginDao.getData().getVerified(), "1")) {
+            certificationText.setText("是");
+        } else {
+            certificationText.setText("否");
         }
     }
 
     /**
      * 进入修改昵称界面
+     *
      * @param view
      * @return
      */
-    public View nickName(View view){
+    public View nickName(View view) {
         ModCustNameActivity.startAppActivity(context, NICKNAMEREQUEST);
         return view;
     }
 
     /**
      * 性别
+     *
      * @param view
      * @return
      */
-    public View sex(View view){
-
-        if(sexPw != null && isSex){
+    public View sex(View view) {
+        if (sexPw != null && isSex) {
             sexPw.dismiss();
             isSex = false;
             return view;
-        }else if(sexPw != null && !isSex){
+        } else if (sexPw != null && !isSex) {
             sexPw.showAtLocation(view, Gravity.NO_GRAVITY, 0, 0);
             isSex = true;
             return view;
         }
-        LogUtil.v(TAG,"重新构造一个SexPopupWindow");
-        View root = LayoutInflater.from(context).inflate(R.layout.sexpw_layout,null);
+        LogUtil.v(TAG, "重新构造一个SexPopupWindow");
+        View root = LayoutInflater.from(context).inflate(R.layout.sexpw_layout, null);
         LoopView loopView = (LoopView) root.findViewById(R.id.loopView);
         ImageView bg = (ImageView) root.findViewById(R.id.bg);
         TextView cancel = (TextView) root.findViewById(R.id.cancel);
@@ -190,10 +179,11 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
         loopView.setItems(items);
         loopView.setNotLoop();
         loopView.setTextSize(20);
+        loopView.setViewPadding(100,0,100,0);
         Login.DataEntity entity = application.getLoginDao().getData();
-        if(TextUtils.equals("男",entity.getSex())){
+        if (TextUtils.equals("男", entity.getSex())) {
             loopView.setInitPosition(0);
-        }else{
+        } else {
             loopView.setInitPosition(1);
         }
         loopView.setListener(new OnItemSelectedListener() {
@@ -219,18 +209,18 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(currSex) || TextUtils.equals(currSex,application.getLoginDao().getData().getSex())){
+                if (TextUtils.isEmpty(currSex) || TextUtils.equals(currSex, application.getLoginDao().getData().getSex())) {
                     sexPw.dismiss();
                     isSex = false;
                     return;
                 }
                 //修改性别
                 Login.DataEntity entity = application.getLoginDao().getData();
-                updateUserInfoDao.getDao(entity.getToken(),entity.getCustID(),"",currSex,"","");
+                updateUserInfoDao.getDao(entity.getToken(), entity.getCustID(), "", currSex, "", "");
             }
         });
         sexPw = popupWindowUtil.getPopupWindow(context, root, windowUtil.getScreenWidth(this), windowUtil.getScreenHeight(this));
-        sexPw.showAtLocation(view, Gravity.NO_GRAVITY,0,0);
+        sexPw.showAtLocation(view, Gravity.NO_GRAVITY, 0, 0);
         isSex = true;
         return view;
     }
@@ -238,7 +228,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
     /**
      * 注销
      */
-    public View loginOut(View view){
+    public View loginOut(View view) {
         dialogUtil.showSureListenerDialog(this, "是否要退出账户！", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -250,18 +240,18 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
         return view;
     }
 
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case msgIcon: //获取用户头像
-                    if(bitmap.img == null){ //用户头像获取失败
+                    if (bitmap.img == null) { //用户头像获取失败
                         return;
                     }
-                    avatar_icon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmap.img));
+                    avatarIcon.setImageBitmap(bitmapUtil.toRoundBitmap(bitmap.img));
                     break;
                 case msgLogout: //注销
-                    if(logoutDao.logoutDao == null || TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getIsSuccess(),"N")){
+                    if (logoutDao.logoutDao == null || TextUtils.equals(logoutDao.logoutDao.getCrm_logout().getIsSuccess(), "N")) {
                         Error errorDao = errorParamUtil.checkReturnState(logoutDao.logoutDao.getCrm_logout().getReturnStatus());
                         toastUtil.toastError(context, errorDao, AccountManageActivity.this);
                         return;
@@ -269,15 +259,15 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
                     application.loginOut();
                     ActivityControl.finishAct(AccountManageActivity.this);
                     break;
-                case  msgSex:
-                    if(TextUtils.equals("N",updateUserInfoDao.dao.getIsSuccess())){
+                case msgSex:
+                    if (TextUtils.equals("N", updateUserInfoDao.dao.getIsSuccess())) {
                         Error errorDao = errorParamUtil.checkReturnState(updateUserInfoDao.dao.getReturnStatus());
-                        toastUtil.toastError(context,errorDao,null);
+                        toastUtil.toastError(context, errorDao, null);
                         return;
                     }
                     application.getLoginDao().getData().setSex(currSex);
                     application.cacheLogin();
-                    sex_text.setText(currSex);
+                    sexText.setText(currSex);
                     sexPw.dismiss();
                     isSex = false;
                     break;
@@ -287,7 +277,7 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
 
     @Override
     public void handlerError(String returnState) {
-        if(TextUtils.equals(returnState, NetErrorEnum.Token失效.getState())){
+        if (TextUtils.equals(returnState, NetErrorEnum.Token失效.getState())) {
             application.loginOut();
             ActivityControl.finishAct(AccountManageActivity.this);
         }
@@ -295,12 +285,12 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case NICKNAMEREQUEST:
-                if(resultCode == ModCustNameActivity.SUCCESS){
+                if (resultCode == ModCustNameActivity.SUCCESS) {
                     Login.DataEntity entity = application.getLoginDao().getData();
-                    nickname_text.setText(entity.getCustName());
-                }else if(resultCode == ModCustNameActivity.FAILURE){
+                    nicknameText.setText(entity.getCustName());
+                } else if (resultCode == ModCustNameActivity.FAILURE) {
 
                 }
                 break;
@@ -309,10 +299,11 @@ public class AccountManageActivity extends UtilActivity implements NetErrorHandl
 
     /**
      * 启动AccountManageActivity
+     *
      * @param context
      */
-    public static void startAppActivity(Context context){
-        Intent intent = new Intent(context,AccountManageActivity.class);
+    public static void startAppActivity(Context context) {
+        Intent intent = new Intent(context, AccountManageActivity.class);
         context.startActivity(intent);
     }
 

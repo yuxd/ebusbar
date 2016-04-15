@@ -29,4 +29,11 @@
     <color name="actionbar_title_color">#FFFFFF</color>
     <color name="slidelayout_bg">#f4f4f4</color>
     <color name="slideitem_bg">#FFFFFF</color>
+    <color name="line_color">#e5e5e5</color>
+    <color name="white_bg">#FFFFFF</color>
+    <color name="bestTextColor">#333333</color>
+    <color name="middleTextColor">#666666</color>
+    <color name="lowTextColor">#999999</color>
+    <color name="whiteTextColor">#FFFFFF</color>
+    <color name="redTextColor">#f71d27</color>
 </resources>

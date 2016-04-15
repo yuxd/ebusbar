@@ -134,6 +134,8 @@
 
         <activity android:name=".StationInfoActivity"></activity>
 
+        <activity android:name=".RentCarTimeActivity"></activity>
+
         <!-- alipay sdk begin -->
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
